@@ -1,0 +1,4248 @@
+{
+  "startedAt": "2026-11-23T04:55:26.262Z",
+  "totalFiles": 623,
+  "loaded": 623,
+  "loadErrors": [],
+  "ok": [
+    {
+      "name": "add",
+      "file": "add.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 193
+    },
+    {
+      "name": "addowner",
+      "file": "addowner.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 192
+    },
+    {
+      "name": "adminonly",
+      "file": "adminonly.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 191
+    },
+    {
+      "name": "all",
+      "file": "all.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 190
+    },
+    {
+      "name": "allbox",
+      "file": "allbox.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 189
+    },
+    {
+      "name": "0admin",
+      "file": "0admin.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 200
+    },
+    {
+      "name": "account",
+      "file": "account.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 196
+    },
+    {
+      "name": "onlyadminbox",
+      "file": "adboxonly.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 193
+    },
+    {
+      "name": "admin",
+      "file": "admin.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 192
+    },
+    {
+      "name": "age",
+      "file": "age.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 191
+    },
+    {
+      "name": "ai",
+      "file": "ai.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 191
+    },
+    {
+      "name": "alert",
+      "file": "alert.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 191
+    },
+    {
+      "name": "alldl",
+      "file": "alldl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 190
+    },
+    {
+      "name": "allnoti",
+      "file": "allnoti.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 190
+    },
+    {
+      "name": "aniedit",
+      "file": "aniedit.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 189
+    },
+    {
+      "name": "4k",
+      "file": "4k.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 199
+    },
+    {
+      "name": "accept",
+      "file": "accept.js",
+      "replies": 1,
+      "calls": 3,
+      "ms": 198
+    },
+    {
+      "name": "acp",
+      "file": "acp.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 197
+    },
+    {
+      "name": "addadmin",
+      "file": "addadmin.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 193
+    },
+    {
+      "name": "activemember",
+      "file": "activemember.js",
+      "replies": 0,
+      "calls": 5,
+      "ms": 196
+    },
+    {
+      "name": "adminupdate",
+      "file": "adminupdate.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 192
+    },
+    {
+      "name": "aniinfo",
+      "file": "aniinfo.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 54
+    },
+    {
+      "name": "animate",
+      "file": "animate.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 65
+    },
+    {
+      "name": "animeinfo",
+      "file": "animeinfo.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 64
+    },
+    {
+      "name": "animesearch",
+      "file": "animesearch.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 62
+    },
+    {
+      "name": "animewallpaper",
+      "file": "animewallpaper.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 52
+    },
+    {
+      "name": "anipic",
+      "file": "anipic.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 51
+    },
+    {
+      "name": "anisearch",
+      "file": "anisearch.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 43
+    },
+    {
+      "name": "anisr",
+      "file": "anisr.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 42
+    },
+    {
+      "name": "anti18",
+      "file": "anti18.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 42
+    },
+    {
+      "name": "antichangeinfobox",
+      "file": "antichangeinfobox.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 40
+    },
+    {
+      "name": "antiflood",
+      "file": "antiflood.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 39
+    },
+    {
+      "name": "antilink2",
+      "file": "antilink2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 11
+    },
+    {
+      "name": "antiout",
+      "file": "antiout.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 6
+    },
+    {
+      "name": "antijoin",
+      "file": "antijoin.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 24
+    },
+    {
+      "name": "antiunsend",
+      "file": "antiunsend.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 133
+    },
+    {
+      "name": "ar",
+      "file": "ar.js",
+      "replies": 0,
+      "calls": 0,
+      "ms": 126
+    },
+    {
+      "name": "approve",
+      "file": "approve.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 127
+    },
+    {
+      "name": "autodl",
+      "file": "autodl.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 120
+    },
+    {
+      "name": "appstore",
+      "file": "appstore.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 127
+    },
+    {
+      "name": "arrest",
+      "file": "arrest.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 127
+    },
+    {
+      "name": "art",
+      "file": "art.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 127
+    },
+    {
+      "name": "audio",
+      "file": "audio.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 127
+    },
+    {
+      "name": "autobirthday",
+      "file": "autobirthday.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 127
+    },
+    {
+      "name": "autoseen",
+      "file": "autoseen.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "autoreadd",
+      "file": "autoreadd.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 4
+    },
+    {
+      "name": "autosetname",
+      "file": "autosetname.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 4
+    },
+    {
+      "name": "avatar",
+      "file": "avatar.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 29
+    },
+    {
+      "name": "baby",
+      "file": "baby.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 31
+    },
+    {
+      "name": "ball",
+      "file": "ball.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 32
+    },
+    {
+      "name": "banglatext",
+      "file": "banglatext.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 32
+    },
+    {
+      "name": "balance",
+      "file": "balance.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 35
+    },
+    {
+      "name": "bc",
+      "file": "bc.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 28
+    },
+    {
+      "name": "backupdata",
+      "file": "backupdata.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 35
+    },
+    {
+      "name": "badwords",
+      "file": "badwords.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 35
+    },
+    {
+      "name": "bday",
+      "file": "bday.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 23
+    },
+    {
+      "name": "bed",
+      "file": "bed.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 8
+    },
+    {
+      "name": "bestfriend",
+      "file": "bestfriend.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 5
+    },
+    {
+      "name": "besti",
+      "file": "besti.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 3
+    },
+    {
+      "name": "bestie",
+      "file": "bestie.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 28
+    },
+    {
+      "name": "bestu",
+      "file": "bestu.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 33
+    },
+    {
+      "name": "bet",
+      "file": "bet.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 33
+    },
+    {
+      "name": "bf",
+      "file": "bf.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 33
+    },
+    {
+      "name": "bigtext",
+      "file": "bigtext.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 34
+    },
+    {
+      "name": "bijiboy",
+      "file": "bijiboy.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 33
+    },
+    {
+      "name": "birthdayauto",
+      "file": "birthdayAuto.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 22
+    },
+    {
+      "name": "bijigirl",
+      "file": "bijigirl.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 30
+    },
+    {
+      "name": "birthday",
+      "file": "birthday.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 26
+    },
+    {
+      "name": "bkashf",
+      "file": "bkashf.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 11
+    },
+    {
+      "name": "blur",
+      "file": "blur.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 6
+    },
+    {
+      "name": "bn",
+      "file": "bn.js",
+      "replies": 0,
+      "calls": 0,
+      "ms": 10
+    },
+    {
+      "name": "board",
+      "file": "board.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 21
+    },
+    {
+      "name": "boldtext",
+      "file": "boldtext.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 21
+    },
+    {
+      "name": "bondu",
+      "file": "bondu.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 20
+    },
+    {
+      "name": "bonk",
+      "file": "bonk.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 19
+    },
+    {
+      "name": "boost",
+      "file": "boost.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 14
+    },
+    {
+      "name": "botautoban",
+      "file": "botautoban.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 12
+    },
+    {
+      "name": "bou",
+      "file": "bou.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 2
+    },
+    {
+      "name": "botnick",
+      "file": "botnick.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "boxadmin",
+      "file": "boxadmin.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 31
+    },
+    {
+      "name": "boxlist",
+      "file": "boxlist.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 34
+    },
+    {
+      "name": "bro",
+      "file": "bro.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 31
+    },
+    {
+      "name": "broken",
+      "file": "broken.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 13
+    },
+    {
+      "name": "brother",
+      "file": "brother.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 13
+    },
+    {
+      "name": "butslap",
+      "file": "butslap.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "busy",
+      "file": "busy.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "buttslap",
+      "file": "buttslap.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "buzz",
+      "file": "buzz.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 15
+    },
+    {
+      "name": "cachefile",
+      "file": "cachefile.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 17
+    },
+    {
+      "name": "calculator",
+      "file": "calculator.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 10
+    },
+    {
+      "name": "callad",
+      "file": "callad.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 21
+    },
+    {
+      "name": "call",
+      "file": "call.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 21
+    },
+    {
+      "name": "caption",
+      "file": "caption.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 21
+    },
+    {
+      "name": "catbox",
+      "file": "catbox.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 12
+    },
+    {
+      "name": "cdpvip",
+      "file": "cdpvip.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 16
+    },
+    {
+      "name": "check",
+      "file": "check.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 11
+    },
+    {
+      "name": "chess",
+      "file": "chess.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "chipa",
+      "file": "chipa.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "chipay",
+      "file": "chipay.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "chudi",
+      "file": "chudi.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 6
+    },
+    {
+      "name": "ckbot",
+      "file": "ckbot.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "ckuser",
+      "file": "ckuser.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "clear",
+      "file": "clear.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "clown",
+      "file": "clown.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "aniqz2",
+      "file": "aniqz2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1150
+    },
+    {
+      "name": "commandname",
+      "file": "commandName.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "condom",
+      "file": "condom.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "confession",
+      "file": "confession.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "convertmp3",
+      "file": "convertmp3.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "animealbum",
+      "file": "animealbum.js",
+      "replies": 2,
+      "calls": 0,
+      "ms": 1458
+    },
+    {
+      "name": "cot",
+      "file": "cot.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 5
+    },
+    {
+      "name": "countryinfo",
+      "file": "countryinfo.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "couple",
+      "file": "couple.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "copuledp2",
+      "file": "copuledp2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 464
+    },
+    {
+      "name": "calendar",
+      "file": "calendar.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1519
+    },
+    {
+      "name": "cpt",
+      "file": "cpt.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 7
+    },
+    {
+      "name": "cr",
+      "file": "cr.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "crash",
+      "file": "crash.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "creart",
+      "file": "creart.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "animalgame",
+      "file": "animalgame.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1896
+    },
+    {
+      "name": "crush",
+      "file": "crush.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "crush1",
+      "file": "crush1.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "cry",
+      "file": "cry.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 127
+    },
+    {
+      "name": "cs",
+      "file": "cs.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 24
+    },
+    {
+      "name": "customrankcard",
+      "file": "customrankcard.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "daily",
+      "file": "daily.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 22
+    },
+    {
+      "name": "dalle3",
+      "file": "dalle3.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "deepseek",
+      "file": "deepseek.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "delete",
+      "file": "delete.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "delmsg",
+      "file": "delmsg.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "dev",
+      "file": "dev.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "developer",
+      "file": "developer.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "cartoongame",
+      "file": "cartoongame.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1815
+    },
+    {
+      "name": "dice",
+      "file": "dice.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "dim",
+      "file": "dim.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "dog",
+      "file": "dog.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "cat",
+      "file": "cat.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1855
+    },
+    {
+      "name": "download",
+      "file": "download.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "doya",
+      "file": "doya.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "draw",
+      "file": "draw.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "drive",
+      "file": "drive.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "car",
+      "file": "car.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1916
+    },
+    {
+      "name": "edit",
+      "file": "edit.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "editpro",
+      "file": "editpro.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "emojimean",
+      "file": "emojimean.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "emojimix",
+      "file": "emojimix.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "en",
+      "file": "en.js",
+      "replies": 0,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "ephoto",
+      "file": "ephoto.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "event",
+      "file": "event.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "everyone",
+      "file": "everyone.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "facebookdl",
+      "file": "facebookdl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fakechat",
+      "file": "fakechat.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 5
+    },
+    {
+      "name": "fastx2",
+      "file": "fastx2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "fbcover",
+      "file": "fbcover.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "fbinfo",
+      "file": "fbinfo.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "fbkick",
+      "file": "fbkick.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "ffinfo",
+      "file": "ffinfo.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "file",
+      "file": "file.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "file2",
+      "file": "file2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 46
+    },
+    {
+      "name": "filteruser",
+      "file": "filteruser.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "fingering",
+      "file": "fingering.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "fire",
+      "file": "fire.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "fixspam",
+      "file": "fixspam.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "bankai",
+      "file": "bankai.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2301
+    },
+    {
+      "name": "flux",
+      "file": "flux.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fluxpro",
+      "file": "fluxpro.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fluxx",
+      "file": "fluxx.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fokir",
+      "file": "fokir.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "font",
+      "file": "font.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "ckban",
+      "file": "ckban.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 2133
+    },
+    {
+      "name": "bmdp",
+      "file": "bmdp.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2281
+    },
+    {
+      "name": "cmdstore",
+      "file": "cmdstore.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 2164
+    },
+    {
+      "name": "friends",
+      "file": "friends.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "fuck",
+      "file": "fuck.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fuck2",
+      "file": "fuck2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fuck3",
+      "file": "fuck3.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "fyp",
+      "file": "fyp.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "gcadmin",
+      "file": "gcadmin.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "gemini",
+      "file": "gemini.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "geminigen",
+      "file": "geminigen.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "gemma",
+      "file": "gemma.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "gen",
+      "file": "gen.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "getfbstate",
+      "file": "getfbstate.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "getlink",
+      "file": "getlink.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "gf",
+      "file": "gf.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 3
+    },
+    {
+      "name": "ghibli",
+      "file": "ghibli.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "gist",
+      "file": "gist.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "gistbin",
+      "file": "gistbin.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "github",
+      "file": "github.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "give",
+      "file": "give.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "goatstor",
+      "file": "goatstor.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "godbotdemo",
+      "file": "godbotdemo.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "gokgok",
+      "file": "gokgok.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "google",
+      "file": "google.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "googleimage",
+      "file": "googleimage.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "goru",
+      "file": "goru.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "goru2",
+      "file": "goru2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "gossip",
+      "file": "gossip.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "gpt",
+      "file": "gpt.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "gptgen",
+      "file": "gptgen.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "gray",
+      "file": "gray.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fork",
+      "file": "fork.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 489
+    },
+    {
+      "name": "group",
+      "file": "group.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "groupemoji",
+      "file": "groupemoji.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "groupimage",
+      "file": "groupimage.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "groupinfo",
+      "file": "groupinfo.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "groupname",
+      "file": "groupname.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "grouptag",
+      "file": "grouptag.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "gu",
+      "file": "gu.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "fastx",
+      "file": "fastx.js",
+      "replies": 2,
+      "calls": 1,
+      "ms": 853
+    },
+    {
+      "name": "gan",
+      "file": "gan.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 593
+    },
+    {
+      "name": "fp",
+      "file": "fp.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 693
+    },
+    {
+      "name": "cricket",
+      "file": "cricket.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1513
+    },
+    {
+      "name": "hi",
+      "file": "hi.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "flagquiz",
+      "file": "flagquiz.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1005
+    },
+    {
+      "name": "freetogame",
+      "file": "freetogame.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 927
+    },
+    {
+      "name": "hubble",
+      "file": "hubble.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "hug",
+      "file": "hug.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "hug2",
+      "file": "hug2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "i",
+      "file": "i.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "ignoreonlyad",
+      "file": "ignoreonlyad.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "ignoreonlyadbox",
+      "file": "ignoreonlyadbox.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "imagedetail",
+      "file": "imagedetail.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "imagen",
+      "file": "imagen.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "imagen3",
+      "file": "imagen3.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "imgbb",
+      "file": "imgbb.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "imgen",
+      "file": "imgen.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "imgur",
+      "file": "imgur.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "inbox",
+      "file": "inbox.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "fox",
+      "file": "fox.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1031
+    },
+    {
+      "name": "gopgop",
+      "file": "gopgop.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 614
+    },
+    {
+      "name": "instagramdl",
+      "file": "instagramdl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "duck",
+      "file": "duck.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1530
+    },
+    {
+      "name": "info",
+      "file": "info.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 545
+    },
+    {
+      "name": "jail2",
+      "file": "jail2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "join",
+      "file": "join.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "cricketgame",
+      "file": "cricketgame.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2256
+    },
+    {
+      "name": "jsontomongodb",
+      "file": "jsontomongodb.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "jsontosqlite",
+      "file": "jsontosqlite.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "gay",
+      "file": "gay.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1688
+    },
+    {
+      "name": "kickall",
+      "file": "kickall.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "kicked",
+      "file": "kicked.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "kidnap",
+      "file": "kidnap.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "kill",
+      "file": "kill.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "laguna",
+      "file": "laguna.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "latti",
+      "file": "latti.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "liner",
+      "file": "liner.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "listadmin",
+      "file": "listadmin.js",
+      "replies": 0,
+      "calls": 3,
+      "ms": 1
+    },
+    {
+      "name": "listbox",
+      "file": "listbox.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 2
+    },
+    {
+      "name": "listfriend",
+      "file": "listfriend.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "llama",
+      "file": "llama.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "load",
+      "file": "load.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "loadconfig",
+      "file": "loadconfig.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "lock",
+      "file": "lock.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "lofi",
+      "file": "lofi.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "love",
+      "file": "love.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 3
+    },
+    {
+      "name": "love1",
+      "file": "love1.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "lumin",
+      "file": "lumin.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "lv3",
+      "file": "lv3.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "lyrics",
+      "file": "lyrics.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "magi2",
+      "file": "magi2.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "manga",
+      "file": "manga.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "married",
+      "file": "married.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "married1",
+      "file": "married1.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "married3",
+      "file": "married3.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "marry",
+      "file": "marry.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "mention",
+      "file": "mention.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "meta",
+      "file": "meta.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "mia",
+      "file": "mia.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "minimax",
+      "file": "minimax.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "mistake",
+      "file": "mistake.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "mix",
+      "file": "mix.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "moon",
+      "file": "moon.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 6
+    },
+    {
+      "name": "msg",
+      "file": "msg.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "murgi2",
+      "file": "murgi2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "music",
+      "file": "music.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "my",
+      "file": "my.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "myboy",
+      "file": "myboy.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "mygirl",
+      "file": "mygirl.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "myking",
+      "file": "myking.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "myqueen",
+      "file": "myqueen.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "nagin",
+      "file": "nagin.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "nanobanana",
+      "file": "nanobanana.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "lucca",
+      "file": "lucca.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 347
+    },
+    {
+      "name": "joke",
+      "file": "joke.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1069
+    },
+    {
+      "name": "mathgame",
+      "file": "mathgame.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 404
+    },
+    {
+      "name": "nekha",
+      "file": "nekha.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "nemotron",
+      "file": "nemotron.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "newbox",
+      "file": "newbox.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "nokia",
+      "file": "nokia.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "numinfo",
+      "file": "numinfo.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "ocr",
+      "file": "ocr.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "nc",
+      "file": "nc.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 445
+    },
+    {
+      "name": "out",
+      "file": "out.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "kola",
+      "file": "kola.js",
+      "replies": 0,
+      "calls": 4,
+      "ms": 1401
+    },
+    {
+      "name": "pabna",
+      "file": "pabna.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 5
+    },
+    {
+      "name": "pain",
+      "file": "pain.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 2
+    },
+    {
+      "name": "pair",
+      "file": "pair.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 2
+    },
+    {
+      "name": "pair1",
+      "file": "pair1.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "pair2",
+      "file": "pair2.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "pair3",
+      "file": "pair3.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "pair4",
+      "file": "pair4.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "pair5",
+      "file": "pair5.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "pair6",
+      "file": "pair6.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "pair7",
+      "file": "pair7.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "pair8",
+      "file": "pair8.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "pair9",
+      "file": "pair9.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 0
+    },
+    {
+      "name": "pairing",
+      "file": "pairing.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 1
+    },
+    {
+      "name": "pastebin",
+      "file": "pastebin.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "pat",
+      "file": "pat.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "messi",
+      "file": "messi.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1009
+    },
+    {
+      "name": "pending-base",
+      "file": "pending-base.js",
+      "replies": 0,
+      "calls": 3,
+      "ms": 1
+    },
+    {
+      "name": "pending-base2",
+      "file": "pending-base2.js",
+      "replies": 1,
+      "calls": 3,
+      "ms": 1
+    },
+    {
+      "name": "pending-base3",
+      "file": "pending-base3.js",
+      "replies": 0,
+      "calls": 3,
+      "ms": 1
+    },
+    {
+      "name": "pending",
+      "file": "pending.js",
+      "replies": 0,
+      "calls": 3,
+      "ms": 2
+    },
+    {
+      "name": "pet",
+      "file": "pet.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 4
+    },
+    {
+      "name": "photo",
+      "file": "photo.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "pin",
+      "file": "pin.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "ping",
+      "file": "ping.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "pinterest",
+      "file": "pinterest.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "pinterestdl",
+      "file": "pinterestdl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "play",
+      "file": "play.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "pokemon",
+      "file": "pokemon.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "poli",
+      "file": "poli.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "poop",
+      "file": "poop.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "prefix",
+      "file": "prefix.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "pregnant",
+      "file": "pregnant.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "prompt",
+      "file": "prompt.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "propose",
+      "file": "propose.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 3
+    },
+    {
+      "name": "protect",
+      "file": "protect.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "punch",
+      "file": "punch.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 6
+    },
+    {
+      "name": "pussy",
+      "file": "pussy.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "qrcode",
+      "file": "qrcode.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "qwen",
+      "file": "qwen.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "kanda",
+      "file": "kanda.js",
+      "replies": 2,
+      "calls": 0,
+      "ms": 2046
+    },
+    {
+      "name": "rankup",
+      "file": "rankup.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "raw",
+      "file": "raw.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "rbg",
+      "file": "rbg.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "refine",
+      "file": "refine.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "refresh",
+      "file": "refresh.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "remini",
+      "file": "remini.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "removebg",
+      "file": "removebg.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "repitor",
+      "file": "repitor.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "rip",
+      "file": "rip.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "rip1",
+      "file": "rip1.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "namaz",
+      "file": "namaz.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 1233
+    },
+    {
+      "name": "rules",
+      "file": "rules.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "needgf",
+      "file": "needgf.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1243
+    },
+    {
+      "name": "sala",
+      "file": "sala.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "sanda-goat2",
+      "file": "sanda-goat2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "rajakar",
+      "file": "rajakar.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 329
+    },
+    {
+      "name": "say",
+      "file": "say.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "scan",
+      "file": "scan.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 24
+    },
+    {
+      "name": "sdxl",
+      "file": "sdxl.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "search",
+      "file": "search.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "sendnoti",
+      "file": "sendnoti.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "sendsms",
+      "file": "sendsms.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "magi",
+      "file": "magi.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 1648
+    },
+    {
+      "name": "setalias",
+      "file": "setalias.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "setavt",
+      "file": "setavt.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "setemoji",
+      "file": "setemoji.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "setexp",
+      "file": "setexp.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "setlang",
+      "file": "setlang.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "setleave",
+      "file": "setleave.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "setname",
+      "file": "setname.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "setpp",
+      "file": "setpp.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "setprefix",
+      "file": "setprefix.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "setprofile",
+      "file": "setprofile.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "setrole",
+      "file": "setrole.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "setupbot",
+      "file": "setupbot.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "setwelcome",
+      "file": "setwelcome.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "pic",
+      "file": "pic.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 587
+    },
+    {
+      "name": "math",
+      "file": "math.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1737
+    },
+    {
+      "name": "shortcut",
+      "file": "shortcut.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "pp",
+      "file": "pp.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 887
+    },
+    {
+      "name": "narutoquiz",
+      "file": "narutoquiz.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1893
+    },
+    {
+      "name": "silent",
+      "file": "silent.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "simpletext",
+      "file": "simpletext.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "sing",
+      "file": "sing.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "sing2",
+      "file": "sing2.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "sister",
+      "file": "sister.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "sl",
+      "file": "sl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "slap-juwel2",
+      "file": "slap-juwel2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "slap2",
+      "file": "slap2.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "slot",
+      "file": "slot.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "sms",
+      "file": "sms.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "song",
+      "file": "song.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "sorthelp",
+      "file": "sorthelp.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "spam",
+      "file": "spam.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "spamban",
+      "file": "spamban.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "spamkick",
+      "file": "spamkick.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 0
+    },
+    {
+      "name": "spank",
+      "file": "spank.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "spiderman",
+      "file": "spiderman.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "split",
+      "file": "split.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "spotify",
+      "file": "spotify.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "squeeze",
+      "file": "squeeze.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "stalk",
+      "file": "stalk.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "status",
+      "file": "status.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "stream",
+      "file": "stream.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "student",
+      "file": "student.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "supportgc",
+      "file": "supportgc.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 3
+    },
+    {
+      "name": "suspend",
+      "file": "suspend.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "tag",
+      "file": "tag.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "nigga",
+      "file": "nigga.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2327
+    },
+    {
+      "name": "text",
+      "file": "text.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 3
+    },
+    {
+      "name": "textoff",
+      "file": "textoff.js",
+      "replies": 0,
+      "calls": 2,
+      "ms": 2
+    },
+    {
+      "name": "texttoimage",
+      "file": "texttoimage.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 6
+    },
+    {
+      "name": "theme",
+      "file": "theme.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "thread",
+      "file": "thread.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "tid",
+      "file": "tid.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "tikedit",
+      "file": "tikedit.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "tiksr",
+      "file": "tiksr.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "tiktok",
+      "file": "tiktok.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 0
+    },
+    {
+      "name": "tiktokdl",
+      "file": "tiktokdl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "tinyurl",
+      "file": "tinyurl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "truthordare",
+      "file": "truthordare.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1
+    },
+    {
+      "name": "rickandmorty",
+      "file": "rickandmorty.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 2032
+    },
+    {
+      "name": "tv",
+      "file": "tv.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "typing",
+      "file": "typing.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "time",
+      "file": "time.js",
+      "replies": 1,
+      "calls": 2,
+      "ms": 665
+    },
+    {
+      "name": "unsplash",
+      "file": "unsplash.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "user",
+      "file": "user.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "v2a",
+      "file": "v2a.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "videocall",
+      "file": "videocall.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "videos",
+      "file": "videos.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 7
+    },
+    {
+      "name": "vip",
+      "file": "vip.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 5
+    },
+    {
+      "name": "viponly",
+      "file": "viponly.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "vslot",
+      "file": "vslot.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "wallpaper",
+      "file": "wallpaper.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 3
+    },
+    {
+      "name": "warn",
+      "file": "warn.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "weather",
+      "file": "weather.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "webinfo",
+      "file": "webinfo.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "webss",
+      "file": "webss.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1
+    },
+    {
+      "name": "weigen",
+      "file": "weigen.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "whitelists",
+      "file": "whitelists.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "whitelistthread",
+      "file": "whitelistthread.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "wl",
+      "file": "wl.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 4
+    },
+    {
+      "name": "word",
+      "file": "word.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "write",
+      "file": "write.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "xdi",
+      "file": "xdi.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "xlnub",
+      "file": "xlnub.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 2
+    },
+    {
+      "name": "xray",
+      "file": "xray.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "yt",
+      "file": "yt.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 2
+    },
+    {
+      "name": "ytb",
+      "file": "ytb.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 3
+    },
+    {
+      "name": "zuck",
+      "file": "zuck.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 4
+    },
+    {
+      "name": "tempmail",
+      "file": "tempmail.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 1434
+    },
+    {
+      "name": "youtube",
+      "file": "youtube.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 141
+    },
+    {
+      "name": "uptime",
+      "file": "uptime.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 985
+    },
+    {
+      "name": "wanted",
+      "file": "wanted.js",
+      "replies": 1,
+      "calls": 1,
+      "ms": 888
+    },
+    {
+      "name": "ytstalk",
+      "file": "ytstalk.js",
+      "replies": 0,
+      "calls": 1,
+      "ms": 481
+    },
+    {
+      "name": "wordgame",
+      "file": "wordgame.js",
+      "replies": 1,
+      "calls": 0,
+      "ms": 1480
+    }
+  ],
+  "weak": [
+    {
+      "name": "_",
+      "file": "_.js",
+      "ms": 169
+    },
+    {
+      "name": "adminmention",
+      "file": "adminmention.js",
+      "ms": 191
+    },
+    {
+      "name": "anti_isis_leave",
+      "file": "anti_isis_leave.js",
+      "ms": 40
+    },
+    {
+      "name": "autosticker",
+      "file": "autosticker.js",
+      "ms": 1
+    },
+    {
+      "name": "bot",
+      "file": "bot.js",
+      "ms": 12
+    },
+    {
+      "name": "boy pp",
+      "file": "boy pp.js",
+      "ms": 32
+    },
+    {
+      "name": "coupledp",
+      "file": "coupledp.js",
+      "ms": 440
+    },
+    {
+      "name": "family",
+      "file": "family.js",
+      "ms": 4
+    },
+    {
+      "name": "gclock",
+      "file": "gclock.js",
+      "ms": 1
+    },
+    {
+      "name": "girl pp",
+      "file": "girl pp.js",
+      "ms": 2
+    },
+    {
+      "name": "jwl",
+      "file": "jwl.js",
+      "ms": 0
+    },
+    {
+      "name": "night",
+      "file": "night.js",
+      "ms": 0
+    },
+    {
+      "name": "rag",
+      "file": "rag.js",
+      "ms": 1
+    },
+    {
+      "name": "rushia",
+      "file": "rushia.js",
+      "ms": 7
+    },
+    {
+      "name": "sakura",
+      "file": "sakura.js",
+      "ms": 1
+    },
+    {
+      "name": "setjoin",
+      "file": "setjoin.js",
+      "ms": 2
+    },
+    {
+      "name": "setrankup",
+      "file": "setrankup.js",
+      "ms": 1
+    },
+    {
+      "name": "shayri",
+      "file": "shayri.js",
+      "ms": 0
+    },
+    {
+      "name": "random",
+      "file": "random.js",
+      "ms": 444
+    },
+    {
+      "name": "shizuka",
+      "file": "shizuka.js",
+      "ms": 53
+    },
+    {
+      "name": "neymar",
+      "file": "neymar.js",
+      "ms": 2359
+    },
+    {
+      "name": "text_voice",
+      "file": "text_voice.js",
+      "ms": 0
+    },
+    {
+      "name": "translate",
+      "file": "translate.js",
+      "ms": 2
+    },
+    {
+      "name": "umma",
+      "file": "umma.js",
+      "ms": 2
+    },
+    {
+      "name": "women",
+      "file": "women.js",
+      "ms": 1
+    },
+    {
+      "name": "x",
+      "file": "x.js",
+      "ms": 2
+    }
+  ],
+  "failCode": [
+    {
+      "name": "animegarl",
+      "file": "animegarl.js",
+      "error": "request is not a function",
+      "ms": 64
+    },
+    {
+      "name": "animegirl",
+      "file": "animegirl.js",
+      "error": "request is not a function",
+      "ms": 64
+    },
+    {
+      "name": "attitude",
+      "file": "attitude.js",
+      "error": "request is not a function",
+      "ms": 127
+    },
+    {
+      "name": "batslap",
+      "file": "batslap.js",
+      "error": "Cannot read properties of undefined (reading 'replace')",
+      "ms": 30
+    },
+    {
+      "name": "boxinfo",
+      "file": "boxinfo.js",
+      "error": "info.userInfo is not iterable",
+      "ms": 34
+    },
+    {
+      "name": "casino",
+      "file": "casino.js",
+      "error": "Cannot read properties of undefined (reading 'getData')",
+      "ms": 19
+    },
+    {
+      "name": "actor (actor.js)|adminlist (adminlist.js)|ads (ads.js)|advice (advice.js)|album (album.js)|alya (alya.js)|amv (amv.js)|anicdp (anicdp.js)|anihot (anihot.js)|animalgame (animalgame.js)|anime (anime.js)|animealbum (animealbum.js)|animedp (animedp.js)|animequiz (animequiz.js)|aniqz2 (aniqz2.js)|aotquiz (aotquiz.js)|aotvideo (aotvideo.js)|aura (aura.js)|bankai (bankai.js)|bike (bike.js)|bmdp (bmdp.js)|bondhu (bondhu.js)|calendar (calendar.js)|car (car.js)|cartoongame (cartoongame.js)|cat (cat.js)|catvideo (catvideo.js)|cdp (cdp.js)|chagol (chagol.js)|chor (chor.js)|ckban (ckban.js)|cmdstore (cmdstore.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/tmp/threads-2026-11-23T04-55-26-694Z.json'"
+    },
+    {
+      "name": "actor (actor.js)|adminlist (adminlist.js)|ads (ads.js)|advice (advice.js)|album (album.js)|alya (alya.js)|amv (amv.js)|anicdp (anicdp.js)|anihot (anihot.js)|animalgame (animalgame.js)|anime (anime.js)|animealbum (animealbum.js)|animedp (animedp.js)|animequiz (animequiz.js)|aniqz2 (aniqz2.js)|aotquiz (aotquiz.js)|aotvideo (aotvideo.js)|aura (aura.js)|bankai (bankai.js)|bike (bike.js)|bmdp (bmdp.js)|bondhu (bondhu.js)|calendar (calendar.js)|car (car.js)|cartoongame (cartoongame.js)|cat (cat.js)|catvideo (catvideo.js)|cdp (cdp.js)|chagol (chagol.js)|chor (chor.js)|ckban (ckban.js)|cmdstore (cmdstore.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/tmp/users-2026-11-23T04-55-26-694Z.json'"
+    },
+    {
+      "name": "actor (actor.js)|adminlist (adminlist.js)|ads (ads.js)|advice (advice.js)|album (album.js)|alya (alya.js)|amv (amv.js)|anicdp (anicdp.js)|anihot (anihot.js)|animalgame (animalgame.js)|anime (anime.js)|animealbum (animealbum.js)|animedp (animedp.js)|animequiz (animequiz.js)|aniqz2 (aniqz2.js)|aotquiz (aotquiz.js)|aotvideo (aotvideo.js)|aura (aura.js)|bankai (bankai.js)|bike (bike.js)|bmdp (bmdp.js)|bondhu (bondhu.js)|calendar (calendar.js)|car (car.js)|cartoongame (cartoongame.js)|cat (cat.js)|catvideo (catvideo.js)|cdp (cdp.js)|chagol (chagol.js)|chor (chor.js)|ckban (ckban.js)|cmdstore (cmdstore.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/tmp/dashboard-2026-11-23T04-55-26-694Z.json'"
+    },
+    {
+      "name": "actor (actor.js)|adminlist (adminlist.js)|ads (ads.js)|advice (advice.js)|album (album.js)|alya (alya.js)|amv (amv.js)|anicdp (anicdp.js)|anihot (anihot.js)|animalgame (animalgame.js)|anime (anime.js)|animealbum (animealbum.js)|animedp (animedp.js)|animequiz (animequiz.js)|aniqz2 (aniqz2.js)|aotquiz (aotquiz.js)|aotvideo (aotvideo.js)|aura (aura.js)|bankai (bankai.js)|bike (bike.js)|bmdp (bmdp.js)|bondhu (bondhu.js)|calendar (calendar.js)|car (car.js)|cartoongame (cartoongame.js)|cat (cat.js)|catvideo (catvideo.js)|cdp (cdp.js)|chagol (chagol.js)|chor (chor.js)|ckban (ckban.js)|cmdstore (cmdstore.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/tmp/global-2026-11-23T04-55-26-694Z.json'"
+    },
+    {
+      "name": "animequiz",
+      "file": "animequiz.js",
+      "error": "reply is not a function",
+      "ms": 969
+    },
+    {
+      "name": "count",
+      "file": "count.js",
+      "error": "members is not iterable",
+      "ms": 3
+    },
+    {
+      "name": "actor (actor.js)|adminlist (adminlist.js)|ads (ads.js)|advice (advice.js)|album (album.js)|alya (alya.js)|amv (amv.js)|anicdp (anicdp.js)|anihot (anihot.js)|anime (anime.js)|animedp (animedp.js)|aotquiz (aotquiz.js)|aotvideo (aotvideo.js)|aura (aura.js)|bankai (bankai.js)|bike (bike.js)|bmdp (bmdp.js)|bondhu (bondhu.js)|car (car.js)|cartoongame (cartoongame.js)|cat (cat.js)|catvideo (catvideo.js)|cdp (cdp.js)|chagol (chagol.js)|chor (chor.js)|ckban (ckban.js)|cmdstore (cmdstore.js)|cockroach (cockroach.js)|cow (cow.js)|cricket (cricket.js)|cricketgame (cricketgame.js)|dhbc (dhbc.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/tmp/cry_1795409728461.png'"
+    },
+    {
+      "name": "girl",
+      "file": "girl.js",
+      "error": "Cannot read properties of undefined (reading 'getData')",
+      "ms": 29
+    },
+    {
+      "name": "girl2",
+      "file": "girl2.js",
+      "error": "Cannot read properties of undefined (reading 'getData')",
+      "ms": 47
+    },
+    {
+      "name": "guessnumber",
+      "file": "guessnumber.js",
+      "error": "canvas.createPNGStream is not a function",
+      "ms": 17
+    },
+    {
+      "name": "help2",
+      "file": "help2.js",
+      "error": "Cannot read properties of undefined (reading 'lang')",
+      "ms": 2
+    },
+    {
+      "name": "islam",
+      "file": "islam.js",
+      "error": "request is not a function",
+      "ms": 2
+    },
+    {
+      "name": "islamick",
+      "file": "islamick.js",
+      "error": "request is not a function",
+      "ms": 2
+    },
+    {
+      "name": "lv",
+      "file": "lv.js",
+      "error": "Cannot read properties of undefined (reading 'replace')",
+      "ms": 1
+    },
+    {
+      "name": "lv2",
+      "file": "lv2.js",
+      "error": "Cannot read properties of undefined (reading 'replace')",
+      "ms": 1
+    },
+    {
+      "name": "npx",
+      "file": "npx.js",
+      "error": "Cannot read properties of undefined (reading 'length')",
+      "ms": 3
+    },
+    {
+      "name": "pr",
+      "file": "pr.js",
+      "error": "all is not iterable",
+      "ms": 3
+    },
+    {
+      "name": "qr",
+      "file": "qr.js",
+      "error": "Cannot destructure property 'createReadStream' of 'global.nodemodule.fs-extra' as it is undefined.",
+      "ms": 3
+    },
+    {
+      "name": "qrgen",
+      "file": "qrgen.js",
+      "error": "message.reaction is not a function",
+      "ms": 4
+    },
+    {
+      "name": "instagram (instagram.js)|invert (invert.js)|jail (jail.js)|kanda (kanda.js)|karaba (karaba.js)|loco (loco.js)|magi (magi.js)|math (math.js)|meme (meme.js)|memevideo (memevideo.js)|monkey (monkey.js)|murgi (murgi.js)|namaz (namaz.js)|narutoquiz (narutoquiz.js)|narutovideo (narutovideo.js)|needgf (needgf.js)|neymar (neymar.js)|nigga (nigga.js)|notstonk (notstonk.js)|onepiece (onepiece.js)|onlyanimevideo (onlyanimevideo.js)|onlyanimevideo2 (onlyanimevideo2.js)|outall (outall.js)|owner (owner.js)|patkhet (patkhet.js)|pfp (pfp.js)|pic (pic.js)|pp (pp.js)|profile (profile.js)|quiz (quiz.js)|quote (quote.js)|rajakar (rajakar.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/cache/kola_1795409731976.png'"
+    },
+    {
+      "name": "instagram (instagram.js)|invert (invert.js)|jail (jail.js)|kanda (kanda.js)|karaba (karaba.js)|loco (loco.js)|magi (magi.js)|math (math.js)|meme (meme.js)|memevideo (memevideo.js)|monkey (monkey.js)|murgi (murgi.js)|namaz (namaz.js)|narutoquiz (narutoquiz.js)|narutovideo (narutovideo.js)|needgf (needgf.js)|neymar (neymar.js)|nigga (nigga.js)|notstonk (notstonk.js)|onepiece (onepiece.js)|onlyanimevideo (onlyanimevideo.js)|onlyanimevideo2 (onlyanimevideo2.js)|outall (outall.js)|owner (owner.js)|patkhet (patkhet.js)|pfp (pfp.js)|pic (pic.js)|pp (pp.js)|profile (profile.js)|quiz (quiz.js)|quote (quote.js)|rajakar (rajakar.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/cache/messi_1795409731430.jpg'"
+    },
+    {
+      "name": "self",
+      "file": "self.js",
+      "error": "Cannot destructure property 'writeFileSync' of 'global.nodemodule.fs-extra' as it is undefined.",
+      "ms": 5
+    },
+    {
+      "name": "setting",
+      "file": "setting.js",
+      "error": "global.GoatBot.onReply.set is not a function",
+      "ms": 1
+    },
+    {
+      "name": "sura",
+      "file": "sura.js",
+      "error": "request is not a function",
+      "ms": 2
+    },
+    {
+      "name": "system",
+      "file": "system.js",
+      "error": "Cannot destructure property 'cpu' of 'global.nodemodule.systeminformation' as it is undefined.",
+      "ms": 2
+    },
+    {
+      "name": "onlyanimevideo2 (onlyanimevideo2.js)|outall (outall.js)|owner (owner.js)|patkhet (patkhet.js)|pfp (pfp.js)|profile (profile.js)|quiz (quiz.js)|quote (quote.js)|rasian (rasian.js)|rickandmorty (rickandmorty.js)|root (root.js)|sad (sad.js)|sanda (sanda.js)|sepia (sepia.js)|sex (sex.js)|sexvid (sexvid.js)|shikimori (shikimori.js)|shoti (shoti.js)|sigma (sigma.js)|sigmaboy (sigmaboy.js)|slap (slap.js)|spy-base (spy-base.js)|spy (spy.js)|stonk (stonk.js)|takla (takla.js)|tatoo (tatoo.js)|tempmail (tempmail.js)|time (time.js)|toilet (toilet.js)|tokai (tokai.js)|top (top.js)|trash (trash.js)",
+      "file": "",
+      "error": "unhandledRejection: langCodeTrans.trim is not a function"
+    },
+    {
+      "name": "uid",
+      "file": "uid.js",
+      "error": "_0x1cd38a.unsend is not a function",
+      "ms": 27
+    },
+    {
+      "name": "pfp (pfp.js)|profile (profile.js)|quiz (quiz.js)|quote (quote.js)|rasian (rasian.js)|root (root.js)|sad (sad.js)|sanda (sanda.js)|sepia (sepia.js)|sex (sex.js)|sexvid (sexvid.js)|shikimori (shikimori.js)|shoti (shoti.js)|sigma (sigma.js)|sigmaboy (sigmaboy.js)|slap (slap.js)|spy-base (spy-base.js)|spy (spy.js)|stonk (stonk.js)|takla (takla.js)|tatoo (tatoo.js)|tempmail (tempmail.js)|toilet (toilet.js)|tokai (tokai.js)|top (top.js)|trash (trash.js)|trash2 (trash2.js)|trigger (trigger.js)|tuntun (tuntun.js)|uff (uff.js)|uptime (uptime.js)|vuda (vuda.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/cache/time_card_1795409734837.png'"
+    },
+    {
+      "name": "sigmaboy (sigmaboy.js)|slap (slap.js)|spy-base (spy-base.js)|spy (spy.js)|stonk (stonk.js)|takla (takla.js)|tatoo (tatoo.js)|toilet (toilet.js)|tokai (tokai.js)|top (top.js)|trash (trash.js)|trash2 (trash2.js)|trigger (trigger.js)|tuntun (tuntun.js)|uff (uff.js)|vuda (vuda.js)|waifu (waifu.js)|wanted (wanted.js)|wbquiz (wbquiz.js)|wifuvid (wifuvid.js)|wish (wish.js)|wordgame (wordgame.js)|xnxx (xnxx.js)|ytstalk (ytstalk.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/cache/uptime_1795409734885.png'"
+    },
+    {
+      "name": "spy-base (spy-base.js)|spy (spy.js)|stonk (stonk.js)|takla (takla.js)|tatoo (tatoo.js)|toilet (toilet.js)|tokai (tokai.js)|top (top.js)|trash (trash.js)|trash2 (trash2.js)|trigger (trigger.js)|tuntun (tuntun.js)|uff (uff.js)|vuda (vuda.js)|waifu (waifu.js)|wbquiz (wbquiz.js)|wifuvid (wifuvid.js)|wish (wish.js)|wordgame (wordgame.js)|xnxx (xnxx.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/cache/handsome_1795409729710.png'"
+    },
+    {
+      "name": "tokai (tokai.js)|top (top.js)|trash (trash.js)|trash2 (trash2.js)|trigger (trigger.js)|tuntun (tuntun.js)|uff (uff.js)|vuda (vuda.js)|waifu (waifu.js)|wbquiz (wbquiz.js)|wifuvid (wifuvid.js)|wish (wish.js)|wordgame (wordgame.js)|xnxx (xnxx.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/cache/fighter_1795409728861.png'"
+    },
+    {
+      "name": "tokai (tokai.js)|top (top.js)|trash (trash.js)|trash2 (trash2.js)|trigger (trigger.js)|tuntun (tuntun.js)|uff (uff.js)|vuda (vuda.js)|waifu (waifu.js)|wbquiz (wbquiz.js)|wifuvid (wifuvid.js)|wish (wish.js)|wordgame (wordgame.js)|xnxx (xnxx.js)",
+      "file": "",
+      "error": "uncaughtException: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/Bot1/scripts/cmds/cache/patkhet_1795409732355.png'"
+    }
+  ],
+  "failApi": [
+    {
+      "name": "dhbc",
+      "file": "dhbc.js",
+      "error": "Request failed with status code 503",
+      "ms": 753
+    }
+  ],
+  "timeout": [
+    {
+      "name": "actor",
+      "file": "actor.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2508
+    },
+    {
+      "name": "adminlist",
+      "file": "adminlist.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2521
+    },
+    {
+      "name": "ads",
+      "file": "ads.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2552
+    },
+    {
+      "name": "advice",
+      "file": "advice.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2562
+    },
+    {
+      "name": "album",
+      "file": "album.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2567
+    },
+    {
+      "name": "alya",
+      "file": "alya.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2569
+    },
+    {
+      "name": "amv",
+      "file": "amv.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2627
+    },
+    {
+      "name": "anicdp",
+      "file": "anicdp.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2631
+    },
+    {
+      "name": "anihot",
+      "file": "anihot.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2738
+    },
+    {
+      "name": "anime",
+      "file": "anime.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2572
+    },
+    {
+      "name": "animedp",
+      "file": "animedp.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2578
+    },
+    {
+      "name": "aotquiz",
+      "file": "aotquiz.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2545
+    },
+    {
+      "name": "aotvideo",
+      "file": "aotvideo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2556
+    },
+    {
+      "name": "aura",
+      "file": "aura.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2554
+    },
+    {
+      "name": "bike",
+      "file": "bike.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "bondhu",
+      "file": "bondhu.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "catvideo",
+      "file": "catvideo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2609
+    },
+    {
+      "name": "cdp",
+      "file": "cdp.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2612
+    },
+    {
+      "name": "chagol",
+      "file": "chagol.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2612
+    },
+    {
+      "name": "chor",
+      "file": "chor.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2601
+    },
+    {
+      "name": "cockroach",
+      "file": "cockroach.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "cow",
+      "file": "cow.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2538
+    },
+    {
+      "name": "donkey",
+      "file": "donkey.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2499
+    },
+    {
+      "name": "elephant",
+      "file": "elephant.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2499
+    },
+    {
+      "name": "facepalm",
+      "file": "facepalm.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "ffqz2",
+      "file": "ffqz2.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "ffvideo",
+      "file": "ffvideo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2509
+    },
+    {
+      "name": "fighter",
+      "file": "fighter.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2509
+    },
+    {
+      "name": "flaggame",
+      "file": "flaggame.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "flower",
+      "file": "flower.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "football2",
+      "file": "football2.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "footballgame",
+      "file": "footballgame.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "freefire",
+      "file": "freefire.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2502
+    },
+    {
+      "name": "fun",
+      "file": "fun.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "fun2",
+      "file": "fun2.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2508
+    },
+    {
+      "name": "gcimg",
+      "file": "gcimg.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2516
+    },
+    {
+      "name": "goatstore",
+      "file": "goatstore.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2511
+    },
+    {
+      "name": "goku",
+      "file": "goku.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2531
+    },
+    {
+      "name": "gorib",
+      "file": "gorib.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2535
+    },
+    {
+      "name": "greyscale",
+      "file": "greyscale.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2536
+    },
+    {
+      "name": "hack",
+      "file": "hack.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2604
+    },
+    {
+      "name": "hadis",
+      "file": "hadis.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2792
+    },
+    {
+      "name": "handsome",
+      "file": "handsome.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2772
+    },
+    {
+      "name": "help",
+      "file": "help.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2751
+    },
+    {
+      "name": "hinata",
+      "file": "hinata.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2635
+    },
+    {
+      "name": "hitler",
+      "file": "hitler.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2637
+    },
+    {
+      "name": "hot",
+      "file": "hot.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2612
+    },
+    {
+      "name": "instagram",
+      "file": "instagram.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2634
+    },
+    {
+      "name": "invert",
+      "file": "invert.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2631
+    },
+    {
+      "name": "jail",
+      "file": "jail.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2542
+    },
+    {
+      "name": "karaba",
+      "file": "karaba.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2571
+    },
+    {
+      "name": "loco",
+      "file": "loco.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2858
+    },
+    {
+      "name": "meme",
+      "file": "meme.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2686
+    },
+    {
+      "name": "memevideo",
+      "file": "memevideo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2642
+    },
+    {
+      "name": "monkey",
+      "file": "monkey.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2556
+    },
+    {
+      "name": "murgi",
+      "file": "murgi.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2550
+    },
+    {
+      "name": "narutovideo",
+      "file": "narutovideo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2633
+    },
+    {
+      "name": "notstonk",
+      "file": "notstonk.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2535
+    },
+    {
+      "name": "onepiece",
+      "file": "onepiece.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2669
+    },
+    {
+      "name": "onlyanimevideo",
+      "file": "onlyanimevideo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2666
+    },
+    {
+      "name": "onlyanimevideo2",
+      "file": "onlyanimevideo2.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2670
+    },
+    {
+      "name": "outall",
+      "file": "outall.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2642
+    },
+    {
+      "name": "owner",
+      "file": "owner.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2554
+    },
+    {
+      "name": "patkhet",
+      "file": "patkhet.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2550
+    },
+    {
+      "name": "pfp",
+      "file": "pfp.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2599
+    },
+    {
+      "name": "profile",
+      "file": "profile.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2564
+    },
+    {
+      "name": "quiz",
+      "file": "quiz.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2623
+    },
+    {
+      "name": "quote",
+      "file": "quote.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2623
+    },
+    {
+      "name": "rasian",
+      "file": "rasian.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2543
+    },
+    {
+      "name": "root",
+      "file": "root.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2510
+    },
+    {
+      "name": "sad",
+      "file": "sad.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2584
+    },
+    {
+      "name": "sanda",
+      "file": "sanda.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2545
+    },
+    {
+      "name": "sepia",
+      "file": "sepia.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2556
+    },
+    {
+      "name": "sex",
+      "file": "sex.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2530
+    },
+    {
+      "name": "sexvid",
+      "file": "sexvid.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2511
+    },
+    {
+      "name": "shikimori",
+      "file": "shikimori.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "shoti",
+      "file": "shoti.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2687
+    },
+    {
+      "name": "sigma",
+      "file": "sigma.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2646
+    },
+    {
+      "name": "sigmaboy",
+      "file": "sigmaboy.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2561
+    },
+    {
+      "name": "slap",
+      "file": "slap.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "spy-base",
+      "file": "spy-base.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2700
+    },
+    {
+      "name": "spy",
+      "file": "spy.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2694
+    },
+    {
+      "name": "stonk",
+      "file": "stonk.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2688
+    },
+    {
+      "name": "takla",
+      "file": "takla.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2670
+    },
+    {
+      "name": "tatoo",
+      "file": "tatoo.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2668
+    },
+    {
+      "name": "toilet",
+      "file": "toilet.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "tokai",
+      "file": "tokai.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "top",
+      "file": "top.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "trash",
+      "file": "trash.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "trash2",
+      "file": "trash2.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "trigger",
+      "file": "trigger.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "tuntun",
+      "file": "tuntun.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2503
+    },
+    {
+      "name": "uff",
+      "file": "uff.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "vuda",
+      "file": "vuda.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "waifu",
+      "file": "waifu.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2585
+    },
+    {
+      "name": "wbquiz",
+      "file": "wbquiz.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2506
+    },
+    {
+      "name": "wifuvid",
+      "file": "wifuvid.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2500
+    },
+    {
+      "name": "wish",
+      "file": "wish.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2501
+    },
+    {
+      "name": "xnxx",
+      "file": "xnxx.js",
+      "error": "Dry run timed out after 2500ms",
+      "ms": 2505
+    }
+  ],
+  "skipped": [
+    {
+      "name": "adduser",
+      "file": "adduser.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "apitest",
+      "file": "apitest.js",
+      "reason": "require\\([\"']child_process"
+    },
+    {
+      "name": "ban",
+      "file": "ban.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "cmd",
+      "file": "cmd.js",
+      "reason": "require\\([\"']child_process"
+    },
+    {
+      "name": "config",
+      "file": "config.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "eval",
+      "file": "eval.js",
+      "reason": "require\\([\"']child_process"
+    },
+    {
+      "name": "install",
+      "file": "install.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "kick",
+      "file": "kick.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "menu",
+      "file": "menu.js",
+      "reason": "process\\.exit\\s*\\("
+    },
+    {
+      "name": "noti",
+      "file": "noti.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "notification",
+      "file": "notification.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "npm",
+      "file": "npm.js",
+      "reason": "require\\([\"']child_process"
+    },
+    {
+      "name": "npmtest",
+      "file": "npmtest.js",
+      "reason": "require\\([\"']child_process"
+    },
+    {
+      "name": "offbot",
+      "file": "offbot.js",
+      "reason": "process\\.exit\\s*\\("
+    },
+    {
+      "name": "restart",
+      "file": "restart.js",
+      "reason": "process\\.exit\\s*\\("
+    },
+    {
+      "name": "setbal",
+      "file": "setbal.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "settings",
+      "file": "settings.js",
+      "reason": "process\\.exit\\s*\\("
+    },
+    {
+      "name": "shell",
+      "file": "shell.js",
+      "reason": "process\\.exit\\s*\\("
+    },
+    {
+      "name": "songfinder",
+      "file": "songfinder.js",
+      "reason": "require\\([\"']child_process"
+    },
+    {
+      "name": "unsend",
+      "file": "unsend.js",
+      "reason": "side-effect name"
+    },
+    {
+      "name": "update",
+      "file": "update.js",
+      "reason": "side-effect name"
+    }
+  ],
+  "finishedAt": "2026-11-23T04:55:37.927Z",
+  "durationSec": 12,
+  "consoleNoiseSample": [
+    "TypeError: Cannot read properties of undefined (reading 'attachments')\n    at module.exports.onStart (/data/data/com.termux/files/home/Bot1/scripts/cmds/add.js:24:38)\n    at /data/data/com.termux/files/home/Bot1/scripts/cmds/apitest.js:268:40\n    at process.processTicksAndRejections (node:internal/p",
+    "CDP2 Fetch Error: AxiosError: Request failed with status code 403\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at BrotliDecompress.handleStreamEnd (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:5033:11)\n    at",
+    "[cpt] ⛔ Credit changed — command disabled.",
+    "AxiosError: Request failed with status code 404\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at IncomingMessage.handleStreamEnd (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:5033:11)\n    at IncomingMessage.em",
+    "AxiosError: Request failed with status code 404\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at RedirectableRequest.handleResponse (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:4992:9)\n    at RedirectableRequ",
+    "[cricket] primary API failed: HTTP 403",
+    "AxiosError: Request failed with status code 404\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at RedirectableRequest.handleResponse (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:4992:9)\n    at RedirectableRequ",
+    "Error generating image: Request failed with status code 404",
+    "nc error: Error: getaddrinfo ENOTFOUND kaiz-apis.gleeze.com\n    at AxiosError.from (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:1684:24)\n    at RedirectableRequest.handleRequestError (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:5053:2",
+    "[MAGI] Error: TypeError: Invalid URL\n    at new URL (node:internal/url:911:25)\n    at dispatchHttpRequest (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:4612:20)\n    at /data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:4415:5\n    at new Promi",
+    "TypeError: Invalid URL\n    at new URL (node:internal/url:911:25)\n    at loadImage (/data/data/com.termux/files/home/Bot1/node_modules/canvas/load-image.js:47:16)\n    at async Object.onStart (/data/data/com.termux/files/home/Bot1/scripts/cmds/hack.js:87:26)",
+    "Namaz Error: AxiosError: Request failed with status code 403\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at BrotliDecompress.handleStreamEnd (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:5033:11)\n    at Brot",
+    "❌ Error: Request failed with status code 404",
+    "RAJAKAR ERROR: Error: socket hang up\n    at TLSSocket.socketOnEnd (node:_http_client:821:25)\n    at TLSSocket.emit (node:events:526:24)\n    at endReadableNT (node:internal/streams/readable:2147:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+    "TypeError: Cannot destructure property 'existsSync' of 'global.nodemodule.fs-extra' as it is undefined.\n    at module.exports.onStart (/data/data/com.termux/files/home/Bot1/scripts/cmds/setjoin.js:63:17)\n    at /data/data/com.termux/files/home/Bot1/scripts/cmds/apitest.js:268:40\n    at async runOne ",
+    "[gcimg] Error: AxiosError: Request failed with status code 404\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at RedirectableRequest.handleResponse (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:4992:9)\n    at R",
+    "TypeError: Cannot destructure property 'createReadStream' of 'global.nodemodule.fs-extra' as it is undefined.\n    at module.exports.onStart (/data/data/com.termux/files/home/Bot1/scripts/cmds/x.js:26:11)\n    at /data/data/com.termux/files/home/Bot1/scripts/cmds/apitest.js:268:40\n    at runNextTicks ",
+    "AxiosError: Request failed with status code 500\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at BrotliDecompress.handleStreamEnd (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:5033:11)\n    at BrotliDecompress.",
+    "ERROR: AxiosError: Request failed with status code 404\n    at settle (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:2671:12)\n    at BrotliDecompress.handleStreamEnd (/data/data/com.termux/files/home/Bot1/node_modules/axios/dist/node/axios.cjs:5033:11)\n    at BrotliDeco"
+  ]
+}
