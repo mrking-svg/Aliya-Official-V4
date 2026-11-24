@@ -1,14 +1,1 @@
-node_modules/
-.npm/
-# account.txt is tracked for deployment (contains Facebook session data)
-appstate.json
-bot/login/data/
-data/
-database/data/
-scripts/**/cache/
-*.log
-.env
-.env.*
-upload/
-.DS_Store
-Thumbs.db
+# Everything is tracked - private repo, upload all files
