@@ -57,8 +57,15 @@ module.exports = async function (api) {
 			catch (err) {
 				spin.stop();
 				process.stderr.clearLine = defaultClearLine;
-				log.err("MONGODB", getText("indexController", "connectMongoDBError"), err);
-				process.exit();
+				const detail = String(err && err.message || err);
+				if (config.database.fallbackToJson !== false) {
+					log.warn("MONGODB", `MongoDB connection failed (${detail.slice(0, 160)}). Switching to the built-in JSON database so the bot can start. Check database.uriMongodb / Atlas credentials.`);
+					databaseType = "json";
+				}
+				else {
+					log.err("MONGODB", getText("indexController", "connectMongoDBError"), err);
+					process.exit(1);
+				}
 			}
 			break;
 		}
