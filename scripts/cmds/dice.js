@@ -51,6 +51,7 @@ module.exports = {
 
 	onStart: async function ({ args, message, event, usersData }) {
 		const { senderID } = event;
+		if (usersData && typeof usersData.get === "function") global.dailyUsersData = usersData;
 		if (rolling.has(senderID))
 			return message.reply("⏳ | 𝐁𝐚𝐛𝐲, 𝐰𝐚𝐢𝐭 𝐟𝐨𝐫 𝐲𝐨𝐮𝐫 𝐥𝐚𝐬𝐭 𝐫𝐨𝐥𝐥!");
 

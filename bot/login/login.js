@@ -789,16 +789,49 @@ async function startBot(loginWithEmail) {
 				log.err("ERROR", "Can't get notifications data");
 				process.exit();
 			}
-			if (global.GoatBot.config.autoRefreshFbstate == true) {
+			// Save the live appState back to account.txt, then keep refreshing it.
+			// A cookie pasted once should stay usable for days instead of dying
+			// after the first MQTT reconnect (the old code refreshed only at boot).
+			global.__aliyaCurrentApi = api;
+			function saveFreshAppState(why) {
+				if (!api || typeof api.getAppState !== "function") return;
+				const fresh = filterKeysAppState(api.getAppState());
+				if (!fresh.length) return;
 				changeFbStateByCode = true;
 				try {
-					writeFileSync(dirAccount, JSON.stringify(filterKeysAppState(api.getAppState()), null, 2));
-					log.info("REFRESH FBSTATE", getText('login', 'refreshFbstateSuccess', path.basename(dirAccount)));
+					writeFileSync(dirAccount, JSON.stringify(fresh, null, 2));
+					latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
+					log.info("REFRESH FBSTATE", `${getText('login', 'refreshFbstateSuccess', path.basename(dirAccount))}${why === 'auto' ? ' (auto)' : ''}`);
 				}
 				catch (err) {
 					log.warn("REFRESH FBSTATE", getText('login', 'refreshFbstateError', path.basename(dirAccount)), err);
 				}
-				setTimeout(() => changeFbStateByCode = false, 1000);
+				setTimeout(() => { changeFbStateByCode = false; }, 1000);
+			}
+
+			// Preserve the newest cookies on planned restarts too, but never
+			// overwrite a state the user pasted manually while the bot was up.
+			if (!global.__aliyaStateExitHook) {
+				global.__aliyaStateExitHook = true;
+				process.on("exit", () => {
+					try {
+						if (fs.statSync(dirAccount).mtimeMs !== latestChangeContentAccount) return;
+						const currentApi = global.__aliyaCurrentApi;
+						if (!currentApi || typeof currentApi.getAppState !== "function") return;
+						const fresh = filterKeysAppState(currentApi.getAppState());
+						if (fresh.length) writeFileSync(dirAccount, JSON.stringify(fresh, null, 2));
+					}
+					catch (_e) { /* best effort only */ }
+				});
+			}
+
+			if (global.GoatBot.config.autoRefreshFbstate == true) {
+				saveFreshAppState("startup");
+				// 15 minutes by default; override with ALIYA_FBSTATE_REFRESH_MS if needed.
+				const FBSTATE_REFRESH_MS = Math.max(60000, Number(process.env.ALIYA_FBSTATE_REFRESH_MS) || 15 * 60 * 1000);
+				if (global.intervalRefreshFbstate) clearInterval(global.intervalRefreshFbstate);
+				global.intervalRefreshFbstate = setInterval(() => saveFreshAppState("auto"), FBSTATE_REFRESH_MS);
+				if (typeof global.intervalRefreshFbstate.unref === "function") global.intervalRefreshFbstate.unref();
 			}
 			if (hasBanned == true) {
 				log.err('GBAN', getText('login', 'youAreBanned'));
@@ -911,7 +944,9 @@ async function startBot(loginWithEmail) {
 			// —————— REAL READY CHECK (READY is sent only after Facebook MQTT really answers) —————— //
 			let mqttReady = false;
 			let mqttDeadline = null;
-			const MQTT_FIRST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_FIRST_TIMEOUT_MS) || 180000;
+			// Give cloud hosts (Render/Railway) enough time for a slow MQTT handshake.
+			// READY is now emitted on MQTT connect, so this is only a safety net.
+			const MQTT_FIRST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_FIRST_TIMEOUT_MS) || 300000;
 			const MQTT_LOST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_LOST_TIMEOUT_MS) || 300000;
 			function armMqttDeadline(ms, why) {
 				if (mqttDeadline) return;

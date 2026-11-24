@@ -11,7 +11,7 @@ const STYLE = {
 		core.drawAvatar(ctx, two, w - 213, 190, 170, "#ff80ab", "circle", "B");
 	},
 	message(a, b, p) {
-		return `MATCHMAKING COMPLETE\n\n${a} matches with ${b}\n\nDESTINY HAS WRITTEN YOUR NAMES TONIGHT. MAY YOUR BOND LAST FOREVER.\n\nCOMPATIBILITY: ${p}%`;
+		return `💞 𝗠𝗮𝘁𝗰𝗵𝗺𝗮𝗸𝗶𝗻𝗴 𝗖𝗼𝗺𝗽𝗹𝗲𝘁𝗲 💞\n\n🎀  ${a} ✨️\n🎀  ${b} ✨️\n\n🕊️ 𝓓𝓮𝓼𝓽𝓲𝓷𝔂 𝓱𝓪𝓼 𝔀𝓻𝓲𝓽𝓽𝓮𝓷 𝔂𝓸𝓾𝓻 𝓷𝓪𝓶𝓮𝓼 𝓽𝓸𝓷𝓲𝓰𝓱𝓽  🌹 𝓜𝓪𝔂 𝔂𝓸𝓾𝓻 𝓫𝓸𝓷𝓭 𝓵𝓪𝓼𝓽 𝓯𝓸𝓻𝓮𝓿𝓮𝓻  ✨️\n\n💘 𝙲𝚘𝚖𝚙𝚊𝚝𝚒𝚋𝚒𝚕𝚒𝚝𝚢: ${p}% 💘`;
 	}
 };
 

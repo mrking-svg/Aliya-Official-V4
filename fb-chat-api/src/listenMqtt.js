@@ -100,7 +100,29 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
   }
   ctx.mqttClient = new mqtt.Client(_ => websocket(host, options.wsOptions), options);
   var mqttClient = ctx.mqttClient;
+
+  // Some accounts never receive a /t_ms delta until somebody messages the bot.
+  // Emit READY on the MQTT connection itself, otherwise the login watchdog
+  // kills a perfectly healthy bot after MQTT_FIRST_TIMEOUT_MS (3 minutes).
+  let readyEmitted = false;
+  let rTimeout = null;
+  function emitReady() {
+    if (readyEmitted) return;
+    readyEmitted = true;
+    if (!ctx.globalOptions.emitReady) return;
+    try {
+      globalCallback(null, { type: "ready", error: null });
+    }
+    catch (err) {
+      utils.error("listenMqtt ready", err);
+    }
+  }
+
   function stopListening() {
+    if (rTimeout) {
+      clearTimeout(rTimeout);
+      rTimeout = null;
+    }
     if (mqttClient) {
       mqttClient.unsubscribe("/webrtc");
       mqttClient.unsubscribe("/rtc_multi");
@@ -113,14 +135,18 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     }
   }
   mqttClient.on('error', function(err) {
-    stopListening();
+    try { stopListening(); }
+    catch (e) { utils.error("listenMqtt stopListening", e); }
     if (ctx.globalOptions.autoReconnect) {
-      getSeqID();
+      try { getSeqID(); }
+      catch (e) { utils.error("listenMqtt getSeqID", e); }
     } else {
-      globalCallback({ type: "stop_listen", error: "Connection refused: Server unavailable" }, null);
+      try { globalCallback({ type: "stop_listen", error: "Connection refused: Server unavailable" }, null); }
+      catch (e) { utils.error("listenMqtt callback", e); }
     }
     utils.warn("Error detected. Will relogin automatically...");
-    api.ws3.relogin();
+    try { if (api.ws3 && typeof api.ws3.relogin === "function") api.ws3.relogin(); }
+    catch (e) { utils.error("listenMqtt relogin", e); }
     return;
   });
 
@@ -147,16 +173,21 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     mqttClient.publish(topic, JSON.stringify(queue), { qos: 1, retain: false });
     mqttClient.publish("/foreground_state", JSON.stringify({ foreground: chatOn }), { qos: 1 });
     mqttClient.publish("/set_client_settings", JSON.stringify({ make_user_available_when_in_foreground: true }), { qos: 1 });
-    const rTimeout = setTimeout(() => {
-      mqttClient.end();
+    emitReady();
+    rTimeout = setTimeout(() => {
+      rTimeout = null;
+      // stopListening() may already have nulled the client on an MQTT error.
+      if (!mqttClient) return;
+      try { mqttClient.end(); }
+      catch (e) { utils.error("listenMqtt reconnect", e); }
       listenMqtt(defaultFuncs, api, ctx, globalCallback);
     }, 3000);
     ctx.tmsWait = () => {
-      clearTimeout(rTimeout);
-      ctx.globalOptions.emitReady ? globalCallback(null, {
-        type: "ready",
-        error: null
-      }) : "";
+      if (rTimeout) {
+        clearTimeout(rTimeout);
+        rTimeout = null;
+      }
+      emitReady();
       delete ctx.tmsWait;
     };
   });

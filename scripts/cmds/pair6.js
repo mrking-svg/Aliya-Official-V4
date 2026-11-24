@@ -11,7 +11,7 @@ const STYLE = {
 		core.drawAvatar(ctx, two, 450, 50, 100, "#ffb7c5", "circle", "B");
 	},
 	message(a, b, p) {
-		return `CHERRY BLOSSOM LOVE\n\n${a}\n${b}\n\nUNDER THE BLOSSOMING BRANCHES, YOUR SOULS ARE BOUND TOGETHER.\n\nCOMPATIBILITY: ${p}%`;
+		return `🌸 𝓒𝓱𝓮𝓻𝓻𝔂 𝓑𝓵𝓸𝓼𝓸𝓸𝓶 𝓛𝓸𝓿𝓮 🌸\n\n🎀  ${a} ✨️\n🎀  ${b} ✨️\n\n🌸 𝓤𝓷𝓭𝓮𝓻 𝓽𝓱𝓮 𝓫𝓵𝓸𝓼𝓼𝓸𝓶𝓲𝓷𝓰 𝓫𝓻𝓪𝓷𝓬𝓱𝓮𝓼, 𝔂𝓸𝓾𝓻 𝓼𝓸𝓾𝓵𝓼 𝓪𝓻𝓮 𝓫𝓸𝓾𝓷𝓭 𝓽𝓸𝓰𝓮𝓽𝓱𝓮𝓻  🍡\n\n💘 𝙲𝚘𝚖𝚙𝚊𝚝𝚒𝚋𝚒𝚕𝚒𝚝𝚢: ${p}% 💘`;
 	}
 };
 

@@ -11,7 +11,7 @@ const STYLE = {
 		core.drawAvatar(ctx, two, w - 210, 240, 150, "#ff80ab", "circle", "B");
 	},
 	message(a, b, p) {
-		return `CONGRATULATIONS\n${a}\nLOVE WITH\n${b}\n\nLOVE MATCH: ${p}%`;
+		return `𝐂𝐎𝐍𝐆𝐑𝐀𝐓𝐔𝐋𝐀𝐓𝐈𝐎𝐍𝐒\n━━━━━━━━━━━━━━━━\n${a}\n❤️ LOVE WITH ❤️\n${b}\n\nLove Match: ${p}% ❤️`;
 	}
 };
 

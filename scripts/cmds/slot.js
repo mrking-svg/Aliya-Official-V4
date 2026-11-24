@@ -11,6 +11,7 @@ module.exports = {
 
   onStart: async function ({ args, api, event, usersData, message }) {
     const { senderID } = event;
+    if (usersData && typeof usersData.get === "function") global.dailyUsersData = usersData;
     const userData = await usersData.get(senderID);
     const money = userData.money || 0;
     const name = await usersData.getName(senderID);

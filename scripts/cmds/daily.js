@@ -96,14 +96,16 @@ function withLock(id, worker) {
 }
 
 let usersDataRef = null;
-function store() {
+function store(provided) {
+	if (provided && typeof provided.get === "function") return provided;
 	if (global.dailyUsersData && typeof global.dailyUsersData.get === "function") return global.dailyUsersData; //[span_28](start_span)[span_28](end_span)
 	if (global.db && global.db.usersData && typeof global.db.usersData.get === "function") return global.db.usersData; //[span_29](start_span)[span_29](end_span)
 	return usersDataRef; //[span_30](start_span)[span_30](end_span)
 }
 
-function bump(userID, keys) {
-	const usersData = store(); //[span_31](start_span)[span_31](end_span)
+function bump(userID, keys, providedUsersData) {
+	const usersData = store(providedUsersData); //[span_31](start_span)[span_31](end_span)
+	if (providedUsersData && typeof providedUsersData.get === "function") global.dailyUsersData = providedUsersData;
 	if (!usersData || typeof usersData.get !== "function" || !keys.length) return; //[span_32](start_span)[span_32](end_span)
 	withLock(String(userID), async () => { //[span_33](start_span)[span_33](end_span)
 		const user = await usersData.get(userID); //[span_34](start_span)[span_34](end_span)
@@ -118,22 +120,22 @@ function bump(userID, keys) {
 			changed = true; //[span_43](start_span)[span_43](end_span)
 		}
 		if (changed) await usersData.set(userID, { data: user.data }); //[span_44](start_span)[span_44](end_span)
-	}).catch(() => {}); //[span_45](start_span)[span_45](end_span)
+	}).catch(err => console.error("[DAILY_TRACKER] save failed:", err && err.message ? err.message : err)); //[span_45](start_span)[span_45](end_span)
 }
 
 if (!global.__aliyaDailyTaskTracker) {
 	global.__aliyaDailyTaskTracker = true; //[span_46](start_span)[span_46](end_span)
-	global.dailyTaskTracker = function (userID, commandName) { //[span_47](start_span)[span_47](end_span)
+	global.dailyTaskTracker = function (userID, commandName, usersData) { //[span_47](start_span)[span_47](end_span)
 		try {
 			const name = String(commandName || "").toLowerCase(); //[span_48](start_span)[span_48](end_span)
 			if (!name) return; //[span_49](start_span)[span_49](end_span)
 			const keys = TASKS.filter(t => typeof t.match === "function" && t.match(name)).map(t => t.key); //[span_50](start_span)[span_50](end_span)
-			if (keys.length) bump(userID, keys); //[span_51](start_span)[span_51](end_span)
-		} catch (e) { } //[span_52](start_span)[span_52](end_span)
+			if (keys.length) bump(userID, keys, usersData); //[span_51](start_span)[span_51](end_span)
+		} catch (e) { console.error("[DAILY_TRACKER] task match failed:", e && e.message ? e.message : e); } //[span_52](start_span)[span_52](end_span)
 	};
-	global.dailyMessageTracker = function (userID) { //[span_53](start_span)[span_53](end_span)
-		try { bump(userID, TASKS.filter(t => t.message).map(t => t.key)); } //[span_54](start_span)[span_54](end_span)
-		catch (e) { } //[span_55](start_span)[span_55](end_span)
+	global.dailyMessageTracker = function (userID, usersData) { //[span_53](start_span)[span_53](end_span)
+		try { bump(userID, TASKS.filter(t => t.message).map(t => t.key), usersData); } //[span_54](start_span)[span_54](end_span)
+		catch (e) { console.error("[DAILY_TRACKER] message match failed:", e && e.message ? e.message : e); } //[span_55](start_span)[span_55](end_span)
 	};
 }
 
@@ -418,7 +420,10 @@ module.exports = {
 		const { senderID, messageID, threadID, messageReply, mentions } = event; //[span_102](start_span)[span_102](end_span)
 		const p = safePrefix(prefix); //[span_103](start_span)[span_103](end_span)
 		const sub = String(args[0] || "").toLowerCase(); //[span_104](start_span)[span_104](end_span)
-		if (usersData && typeof usersData.get === "function") usersDataRef = usersData; //[span_105](start_span)[span_105](end_span)
+		if (usersData && typeof usersData.get === "function") {
+			usersDataRef = usersData; //[span_105](start_span)[span_105](end_span)
+			global.dailyUsersData = usersData;
+		}
 
 		const reply = body => (message && typeof message.reply === "function")
 			? message.reply(body)

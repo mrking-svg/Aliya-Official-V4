@@ -332,7 +332,7 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 				let botID = null;
 				try { botID = api.getCurrentUserID && api.getCurrentUserID(); } catch (e) { }
 				if (global.dailyMessageTracker && String(senderID) !== String(botID))
-					global.dailyMessageTracker(senderID);
+					global.dailyMessageTracker(senderID, usersData);
 			} catch (e) { }
 		}
 
@@ -533,7 +533,7 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			try {
 				trackAnalytics(globalData, commandName);
 				try {
-					if (typeof global.dailyTaskTracker === "function") global.dailyTaskTracker(senderID, commandName);
+					if (typeof global.dailyTaskTracker === "function") global.dailyTaskTracker(senderID, commandName, usersData);
 				}
 				catch (e) { /* task tracking must never break a command */ }
 

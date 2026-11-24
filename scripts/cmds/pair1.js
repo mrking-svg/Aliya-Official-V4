@@ -20,7 +20,7 @@ const STYLE = {
 		];
 	},
 	message(a, b, p) {
-		return `PAIRING COMPLETE\n\n${a}\n${b}\n\nPAIR ODDS: ${p}`;
+		return `💘 𝗣𝗮𝗶𝗿𝗶𝗻𝗴 𝗖𝗼𝗺𝗽𝗹𝗲𝘁𝗲 💘\n\n🎀  ${a}\n🎀  ${b}\n\n💞 Pair odds are: ${p}`;
 	}
 };
 

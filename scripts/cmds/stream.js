@@ -10,6 +10,20 @@ const MAX_FILE_BYTES = 35 * 1024 * 1024;
 const REQUEST_TIMEOUT_MS = 20000;
 const FFMPEG_TIMEOUT_MS = 30000;
 
+// Facebook reactions are fire-and-forget. A dead callback or socket error must
+// never become an uncaught exception (that used to kill the whole bot).
+function react(api, emoji, messageID) {
+	try {
+		const result = api && typeof api.setMessageReaction === "function"
+			? api.setMessageReaction(emoji, messageID, () => {}, true)
+			: null;
+		if (result && typeof result.catch === "function") result.catch(() => {});
+	}
+	catch (error) {
+		console.error("Stream reaction skipped:", error && error.message ? error.message : error);
+	}
+}
+
 function hasFFmpeg() {
 	return new Promise((resolve) => {
 		const proc = spawn("ffmpeg", ["-version"]);
@@ -35,7 +49,7 @@ function runFFmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS) {
 			}
 		}, timeoutMs);
 
-		proc.stderr.on("data", (chunk) => {
+		if (proc.stderr) proc.stderr.on("data", (chunk) => {
 			if (stderr.length < 4000) {
 				stderr += chunk.toString();
 			}
@@ -152,7 +166,7 @@ module.exports = {
 			return message.reply("⚠️ | Kono video, gif, sticker ba photo te reply kore command ti use korun!");
 		}
 
-		api.setMessageReaction("🛜", messageID, () => {}, true);
+		react(api, "🛜", messageID);
 
 		const cacheDir = path.join(__dirname, "cache");
 		const stamp = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -178,11 +192,13 @@ module.exports = {
 			}
 
 			let downloadedBytes = 0;
+			let tooLarge = false;
 			const writer = fs.createWriteStream(rawPath);
 
 			response.data.on("data", (chunk) => {
 				downloadedBytes += chunk.length;
-				if (downloadedBytes > MAX_FILE_BYTES) {
+				if (downloadedBytes > MAX_FILE_BYTES && !tooLarge) {
+					tooLarge = true;
 					response.data.destroy();
 					writer.destroy();
 				}
@@ -191,12 +207,26 @@ module.exports = {
 			response.data.pipe(writer);
 
 			await new Promise((resolve, reject) => {
-				writer.on("finish", resolve);
-				writer.on("error", reject);
-				response.data.on("error", reject);
+				let settled = false;
+				const done = (err) => {
+					if (settled) return;
+					settled = true;
+					if (err) reject(err);
+					else resolve();
+				};
+				writer.on("finish", () => done());
+				// "close" also fires after destroy(); without this the promise
+				// hangs forever when the size guard trips.
+				writer.on("close", () => {
+					if (!writer.writableFinished) done(tooLarge
+						? new Error("File size exceeds 35MB limit")
+						: new Error("Download interrupted"));
+				});
+				writer.on("error", done);
+				response.data.on("error", done);
 			});
 
-			if (downloadedBytes > MAX_FILE_BYTES) {
+			if (tooLarge || downloadedBytes > MAX_FILE_BYTES) {
 				throw new Error("File size exceeds 35MB limit");
 			}
 
@@ -215,18 +245,23 @@ module.exports = {
 				throw new Error("Output file is empty or too large");
 			}
 
-			api.setMessageReaction("🦢", messageID, () => {}, true);
+			react(api, "🦢", messageID);
 
 			await message.reply({
 				body: `🐇 | Stream ready (.${targetFormat})`,
 				attachment: fs.createReadStream(sendPath)
 			});
 
-			api.setMessageReaction("🫈", messageID, () => {}, true);
+			react(api, "🫈", messageID);
 		} catch (error) {
-			console.error("Stream Command Error:", error);
-			api.setMessageReaction("❌", messageID, () => {}, true);
-			return message.reply(`❌ | Stream process korte somossha hoyeche: ${error.message}`);
+			console.error("Stream Command Error:", error && error.message ? error.message : error);
+			react(api, "❌", messageID);
+			try {
+				return await message.reply(`❌ | Stream process korte somossha hoyeche: ${error && error.message ? error.message : error}`);
+			}
+			catch (replyError) {
+				console.error("Stream reply failed:", replyError && replyError.message ? replyError.message : replyError);
+			}
 		} finally {
 			await fs.remove(rawPath).catch(() => {});
 			if (outPath !== rawPath) {

@@ -11,7 +11,7 @@ const STYLE = {
 		core.drawAvatar(ctx, two, w - 170, 150, 130, "#9c27b0", "circle", "B");
 	},
 	message(a, b, p) {
-		return `LOVE CONNECTION FOUND\n\n${a}\n${b}\n\nUNDER THE STARRY NIGHT, YOUR HEARTS BEAT AS ONE.\n\nCOMPATIBILITY: ${p}%`;
+		return `✨ 𝗟𝗼𝘃𝗲 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗶𝗼𝗻 𝗙𝗼𝘂𝗻𝗱 ✨\n\n🎀  ${a} 💫\n🎀  ${b} 💫\n\n🌌 𝓤𝓷𝓭𝓮𝓻 𝓽𝓱𝓮 𝓼𝓽𝓪𝓻𝓻𝔂 𝓷𝓲𝓰𝓱𝓽, 𝔂𝓸𝓾𝓻 𝓱𝓮𝓪𝓻𝓽𝓼 𝓫𝓮𝓪𝓽 𝓪𝓼 𝓸𝓷𝓮  💜\n\n💘 𝙲𝚘𝚖𝚙𝚊𝚝𝚒𝚋𝚒𝚕𝚒𝚝𝚢: ${p}% 💘`;
 	}
 };
 

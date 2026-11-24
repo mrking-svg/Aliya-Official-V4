@@ -132,7 +132,6 @@ async function run({ api, event, style, usersData }) {
 		const mentionID = Object.keys(event.mentions || {})
 			.find(id => String(id) !== String(event.senderID));
 		let match = null;
-		let charged = false;
 
 		if (mentionID) {
 			match = users.find(u => String(u.id) === String(mentionID)) ||
@@ -147,7 +146,6 @@ async function run({ api, event, style, usersData }) {
 				return reply('INSUFFICIENT BALANCE\nYou do not have 2K coins to pair with a mentioned user.');
 
 			await usersData.set(event.senderID, { money: balance - PAIR_MENTION_COST });
-			charged = true;
 		}
 		else {
 			match = pickMatch(users, event.senderID);
@@ -180,9 +178,9 @@ async function run({ api, event, style, usersData }) {
 		const percent = style.percent
 			? style.percent()
 			: Math.floor(Math.random() * 31) + 70;
-		let body = style.message(senderName, matchName, percent);
-		if (charged) body = 'MENTION PAIR - 2K COINS DEDUCTED\n\n' + body;
-		body = bold(body);
+		// Keep the original pair caption syntax for every command. A mention
+		// charge is silent - no public "2K deducted" line in the caption.
+		const body = style.message(senderName, matchName, percent);
 
 		if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 		outputPath = path.join(CACHE_DIR, `pair_${event.senderID}_${Date.now()}.png`);

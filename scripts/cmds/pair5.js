@@ -11,7 +11,7 @@ const STYLE = {
 		core.drawAvatar(ctx, two, w - 180, 220, 130, "#d7ccc8", "circle", "B");
 	},
 	message(a, b, p) {
-		return `LOVE CONNECTION FOUND\n\n${a}\n${b}\n\nRESTING BY YOUR SIDE, FOREVER AND ALWAYS.\n\nCOMPATIBILITY: ${p}%`;
+		return `✨ 𝗟𝗼𝘃𝗲 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗶𝗼𝗻 𝗙𝗼𝘂𝗻𝗱 ✨\n\n🎀  ${a} 🤎\n🎀  ${b} 🤎\n\n☕ 𝓡𝓮𝓼𝓽𝓲𝓷𝓰 𝓫𝔂 𝔂𝓸𝓾𝓻 𝓼𝓲𝓭𝓮, 𝓯𝓸𝓻𝓮𝓿𝓮𝓻 𝓪𝓷𝓭 𝓪𝓵𝔀𝓪𝔂𝓼  🤎\n\n💘 𝙲𝚘𝚖𝚙𝚊𝚝𝚒𝚋𝚒𝚕𝚒𝚝𝚢: ${p}% 💘`;
 	}
 };
 
