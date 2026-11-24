@@ -1,301 +1,146 @@
-const axios = require("axios");
-const fs = require("fs-extra");
-const path = require("path");
-
-const FOLDER_ID = "1U4yM0YILj0dTx1tpYxK2Vasc3SSuoADC";
-
 const { getPrefix } = global.utils;
 const { commands } = global.GoatBot;
 
-function roleText(role) {
-  if (role === 0) return "Aʟʟ Usᴇʀs";
-  if (role === 1) return "Gʀᴏᴜᴘ Aᴅᴍɪɴs";
-  if (role === 2) return "Bᴏᴛ Aᴅᴍɪɴ";
-  if (role === 3) return "Bᴏᴛ Oᴡɴᴇʀ";
-  if (role === 4) return "Bᴏᴛ Dᴇᴠ";
-  return "Uɴᴋɴᴏᴡɴ";
+const PER_PAGE = 15;
+
+function valueOf(value, fallback = "") {
+	if (typeof value === "string") return value;
+	if (value && typeof value === "object") {
+		return value.en || value.bn || value.vi || Object.values(value)[0] || fallback;
+	}
+	return fallback;
 }
 
-function findCommand(name) {
-  name = name.toLowerCase();
-  for (const [, cmd] of commands) {
-    const a = cmd.config?.aliases;
-    if (cmd.config?.name === name) return cmd;
-    if (Array.isArray(a) && a.includes(name)) return cmd;
-    if (typeof a === "string" && a === name) return cmd;
-  }
-  return null;
+function clean(value) {
+	return String(value || "").replace(/\s+/g, " ").trim();
 }
 
-async function getRandomVideoPath() {
-  try {
-    const response = await axios.get(`https://drive.google.com/embeddedfolderview?id=${FOLDER_ID}`, { timeout: 12000 }).catch(async () => {
-      return await axios.get(`https://docs.google.com/uc?export=list&id=${FOLDER_ID}`, { timeout: 12000 });
-    });
-
-    const htmlData = response.data;
-    const matches = [...htmlData.matchAll(/"([^"]+)"\s*,\s*\[\s*"([^"]+)"\s*,\s*([0-9]+)\s*,\s*"([^"]+)"/g)];
-    
-    let fileId = "";
-    if (!matches || matches.length === 0) {
-      const fallbackMatches = [...htmlData.matchAll(/\/file\/d\/([a-zA-Z0-9_-]+)\/view/g)];
-      if (fallbackMatches.length === 0) return null;
-      fileId = fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)][1];
-    } else {
-      const randomMatch = matches[Math.floor(Math.random() * matches.length)];
-      fileId = randomMatch[1];
-    }
-
-    const downloadUrl = `https://docs.google.com/uc?export=download&id=${fileId}`;
-    const cacheDir = path.join(__dirname, "cache");
-    fs.ensureDirSync(cacheDir);
-
-    const filePath = path.join(cacheDir, `help_video_${Date.now()}.mp4`);
-    const downloadStream = await axios({
-      url: downloadUrl,
-      method: "GET",
-      responseType: "stream",
-      timeout: 20000
-    });
-
-    const writer = fs.createWriteStream(filePath);
-    downloadStream.data.pipe(writer);
-
-    return new Promise((resolve) => {
-      let done = false;
-      const cleanUp = () => {
-        try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch (e) { }
-        try { if (downloadStream.data) downloadStream.data.destroy(); } catch (e) { }
-      };
-      const finish = value => {
-        if (done) return;
-        done = true;
-        clearTimeout(timer);
-        resolve(value);
-      };
-      const timer = setTimeout(() => {
-        cleanUp();
-        finish(null);
-      }, 20000);
-      writer.on("finish", () => finish(filePath));
-      writer.on("error", () => {
-        cleanUp();
-        finish(null);
-      });
-    });
-  } catch (err) {
-    return null;
-  }
+function roleLabel(role) {
+	const labels = ["All users", "Group admin", "Bot admin", "Bot owner", "Bot developer"];
+	return labels[role] || "All users";
 }
 
-function sendAutoDeleteMessage(api, message, content) {
-  return message.reply(content, (err, info) => {
-    if (!err && info && info.messageID) {
-      setTimeout(() => {
-        if (api.unsendMessage) api.unsendMessage(info.messageID);
-      }, 120000);
-    }
-  });
+function getAllCommands() {
+	const list = [];
+	for (const [key, cmd] of commands) {
+		if (!cmd || !cmd.config) continue;
+		const c = cmd.config;
+		const name = clean(c.name || key);
+		if (!name) continue;
+		list.push({
+			name,
+			category: clean(c.category || "OTHER").toUpperCase(),
+			description: clean(valueOf(c.shortDescription, valueOf(c.description, valueOf(c.longDescription, "")))),
+			aliases: Array.isArray(c.aliases) ? c.aliases.map(clean).filter(Boolean) : [],
+			role: Number.isInteger(c.role) ? c.role : 0,
+			guide: valueOf(c.guide, ""),
+			countDown: c.countDown || 5
+		});
+	}
+	list.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+	return list;
+}
+
+function buildPage(list, page, totalPages, prefix) {
+	const items = list.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+	let out = `ALIYA V4 - COMMAND LIST\n`;
+	out += `Page ${page}/${totalPages} | Total commands: ${list.length} | Prefix: ${prefix}\n\n`;
+	for (const item of items) {
+		out += `${prefix}${item.name}`;
+		if (item.description) out += ` - ${item.description}`;
+		out += `\n`;
+	}
+	out += `\nUse ${prefix}help <page> to switch page`;
+	out += `\nUse ${prefix}help <command> for details`;
+	return out;
+}
+
+function buildDetail(item, prefix) {
+	const usage = clean(item.guide).replace(/\{pn\}/g, `${prefix}${item.name}`) || `${prefix}${item.name}`;
+	let duration = `${item.countDown}s`;
+	try {
+		if (global.utils && typeof global.utils.formatDuration === "function") {
+			duration = global.utils.formatDuration(item.countDown);
+		}
+	}
+	catch (e) { /* keep the simple seconds fallback */ }
+
+	return `COMMAND DETAILS\n\n`
+		+ `Name: ${item.name}\n`
+		+ `Category: ${item.category}\n`
+		+ `Description: ${item.description || "No description"}\n`
+		+ `Aliases: ${item.aliases.length ? item.aliases.join(", ") : "None"}\n`
+		+ `Permission: ${roleLabel(item.role)}\n`
+		+ `Cooldown: ${duration}\n`
+		+ `Usage: ${usage}`;
+}
+
+function findCommand(list, input) {
+	const query = clean(input).toLowerCase();
+	if (!query) return null;
+	return list.find(item => item.name.toLowerCase() === query)
+		|| list.find(item => item.aliases.some(alias => alias.toLowerCase() === query))
+		|| null;
+}
+
+function registerReply(message, content, page, totalPages, author) {
+	message.reply(content, (err, info) => {
+		if (err || !info || !info.messageID) return;
+		global.GoatBot.onReply.set(info.messageID, {
+			commandName: "help",
+			messageID: info.messageID,
+			author,
+			page,
+			totalPages
+		});
+	});
 }
 
 module.exports = {
-  config: {
-    name: "help",
-    aliases: ["menu-base", "cmds-base"],
-    version: "4.0.0",
-    author: "0xMr_King x ┃ Tanin Islam",
-    role: 0,
-    category: "info",
-    shortDescription: "Show available commands in Aliya Official v4",
-    guide: "{pn} | {pn} <page_number> | {pn} <command>"
-  },
+	config: {
+		name: "help",
+		aliases: ["menu-base", "cmds-base", "menu"],
+		version: "4.1.0",
+		author: "0xMr_King x ┃ Tanin Islam",
+		countDown: 5,
+		role: 0,
+		category: "info",
+		shortDescription: "Show all available commands",
+		guide: "{pn} | {pn} <page> | {pn} <command>"
+	},
 
-  onStart: async function ({ api, message, args, event, role }) {
-    const prefix = getPrefix(event.threadID);
-    const input = args.join(" ").trim();
+	onStart: async function ({ api, message, args, event }) {
+		const prefix = getPrefix(event.threadID);
+		const list = getAllCommands();
+		const totalPages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+		const input = args.join(" ").trim();
 
-    // Dynamically fetch and filter commands based on user role
-    const categories = {};
-    let totalCmds = 0;
+		let content;
+		let page = 1;
 
-    for (const [name, cmd] of commands) {
-      if (!cmd?.config) continue;
-      
-      // Strict role check: User can only see commands they have permission for
-      const cmdRole = cmd.config.role ?? 0;
-      if (cmdRole > role) continue;
+		if (/^\d+$/.test(input)) {
+			page = Math.min(Math.max(parseInt(input, 10), 1), totalPages);
+			content = buildPage(list, page, totalPages, prefix);
+		}
+		else {
+			const found = findCommand(list, input);
+			content = found ? buildDetail(found, prefix) : buildPage(list, page, totalPages, prefix);
+		}
 
-      const cat = (cmd.config.category || "UNCATEGORIZED").toUpperCase();
-      if (!categories[cat]) categories[cat] = [];
-      categories[cat].push(name);
-      totalCmds++;
-    }
+		return registerReply(message, content, page, totalPages, event.senderID);
+	},
 
-    const catNames = Object.keys(categories);
-    const itemsPerPage = 6;
-    const totalPages = Math.ceil(catNames.length / itemsPerPage) || 1;
+	onReply: async function ({ message, event, Reply }) {
+		if (event.senderID !== Reply.author) return;
+		const body = clean(event.body);
+		if (!/^\d+$/.test(body)) return;
 
-    // Command specific info view
-    if (input && isNaN(input)) {
-      const cmd = findCommand(input);
-      if (!cmd) return sendAutoDeleteMessage(api, message, `𓍢ִ໋🌸✧ ── Cᴏᴍᴍᴀɴᴅ "${input}" ɴᴏᴛ ғᴏᴜɴᴅ! ── ✧🌸𓍢ִ໋`);
+		const page = parseInt(body, 10);
+		if (page < 1 || page > Reply.totalPages) return;
 
-      const c = cmd.config;
-      const cmdRole = c.role ?? 0;
-
-      if (cmdRole > role) {
-        return sendAutoDeleteMessage(api, message, `⚠️ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴠɪᴇᴡ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.`);
-      }
-
-      const aliasText = Array.isArray(c.aliases) ? c.aliases.join(", ") : c.aliases || "Nᴏɴᴇ";
-      
-      let usage = c.guide?.en || c.guide || "Nᴏ ᴜsᴀɢᴇ ᴘʀᴏᴠɪᴅᴇᴅ";
-      if (typeof usage === "string") {
-        usage = usage.replace(/{pn}/g, `${prefix}${c.name}`);
-      }
-
-      const infoMsg = 
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Cᴏᴍᴍᴀɴᴅ Dᴇᴛᴀɪʟs ── ✧🌸𓍢ִ໋🌷͙֒ ᥫ᭡—͞  
-
-ᥫ᭡ Nᴀᴍᴇ : ${c.name}
-ᥫ᭡ Cᴀᴛᴇɢᴏʀʏ : ${(c.category || "UNCATEGORIZED").toUpperCase()}
-ᥫ᭡ Dᴇsᴄʀɪᴘᴛɪᴏɴ : ${c.shortDescription || "N/A"}
-ᥫ᭡ Aʟɪᴀsᴇs : ${aliasText}
-ᥫ᭡ Vᴇʀsɪᴏɴ : ${c.version || "4.0.0"}
-ᥫ᭡ Pᴇʀᴍɪssɪᴏɴ : ${roleText(cmdRole)}
-ᥫ᭡ Cᴏᴏʟᴅᴏᴡɴ : ${global.utils.formatDuration(c.countDown || 5)}
-ᥫ᭡ Aᴜᴛʜᴏʀ : ${c.author || "Uɴᴋɴᴏᴡɴ"}
-ᥫ᭡ Usᴀɢᴇ : ${usage}
-
-𓍢ִ໋🌷 Aᴜᴛᴏ ᴅᴇʟᴇᴛɪɴɢ ɪɴ 2 ᴍɪɴᴜᴛᴇs... ✨`;
-
-      return sendAutoDeleteMessage(api, message, infoMsg);
-    }
-
-    let page = parseInt(input) || 1;
-    if (page < 1 || page > totalPages) page = 1;
-
-    const pageCats = catNames.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-    let helpText = `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 Menu ── ✧🌸𓍢ִ໋🌷͙֒ ᥫ᭡—͞  \n\n`;
-    helpText += `🌸 Pᴀɢᴇ : ${page}/${totalPages} ✧ Tᴏᴛᴀʟ : ${totalCmds} Cᴍᴅs\n`;
-    helpText += `🌸 Pʀᴇғɪx : ${prefix}\n\n`;
-
-    pageCats.forEach((cat) => {
-      helpText += `𓍢ִ໋🌷͙֒ ✨ ── ${cat} ── ✨\n`;
-      const cmds = categories[cat];
-      helpText += `ᥫ᭡ ${cmds.join(" • ")}\n\n`;
-    });
-
-    helpText += `𓍢ִ໋🌸✧ Rᴇᴘʟʏ ᴘᴀɢᴇ ɴᴜᴍʙᴇʀ (1-${totalPages}) ᴛᴏ sᴡɪᴛᴄʜ ᴘᴀɢᴇ\n`;
-    helpText += `𓍢ִ໋🌷 Mᴀɪɴᴛᴀɪɴᴇʀ : Mʀ.Kɪɴɢ ☠️✌🏼`;
-
-    api.setMessageReaction("⏳", event.messageID, () => {}, true);
-
-    const videoPath = await getRandomVideoPath();
-    const msgData = { body: helpText };
-
-    if (videoPath && fs.existsSync(videoPath)) {
-      msgData.attachment = fs.createReadStream(videoPath);
-    }
-
-    return message.reply(msgData, (err, info) => {
-      if (videoPath && fs.existsSync(videoPath)) {
-        fs.unlinkSync(videoPath);
-      }
-
-      if (!err && info) {
-        api.setMessageReaction("🔥", event.messageID, () => {}, true);
-
-        global.GoatBot.onReply.set(info.messageID, {
-          commandName: "help",
-          messageID: info.messageID,
-          author: event.senderID,
-          totalPages: totalPages,
-          userRole: role
-        });
-
-        setTimeout(() => {
-          if (api.unsendMessage) api.unsendMessage(info.messageID);
-        }, 120000);
-      } else {
-        api.setMessageReaction("📌", event.messageID, () => {}, true);
-      }
-    });
-  },
-
-  onReply: async function ({ api, message, event, Reply, role }) {
-    if (event.senderID !== Reply.author) return;
-
-    const page = parseInt(event.body.trim());
-    if (isNaN(page) || page < 1 || page > Reply.totalPages) return;
-
-    const prefix = getPrefix(event.threadID);
-    const userRole = Reply.userRole ?? role;
-
-    const categories = {};
-    let totalCmds = 0;
-
-    for (const [name, cmd] of commands) {
-      if (!cmd?.config) continue;
-      const cmdRole = cmd.config.role ?? 0;
-      if (cmdRole > userRole) continue;
-
-      const cat = (cmd.config.category || "UNCATEGORIZED").toUpperCase();
-      if (!categories[cat]) categories[cat] = [];
-      categories[cat].push(name);
-      totalCmds++;
-    }
-
-    const catNames = Object.keys(categories);
-    const itemsPerPage = 6;
-    const pageCats = catNames.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-    let helpText = `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 Menu ── ✧🌸𓍢ִ໋🌷͙֒ ᥫ᭡—͞  \n\n`;
-    helpText += `🌸 Pᴀɢᴇ : ${page}/${Reply.totalPages} ✧ Tᴏᴛᴀʟ : ${totalCmds} Cᴍᴅs\n`;
-    helpText += `🌸 Pʀᴇғɪx : ${prefix}\n\n`;
-
-    pageCats.forEach((cat) => {
-      helpText += `𓍢ִ໋🌷͙֒ ✨ ── ${cat} ── ✨\n`;
-      const cmds = categories[cat];
-      helpText += `ᥫ᭡ ${cmds.join(" • ")}\n\n`;
-    });
-
-    helpText += `𓍢ִ໋🌸✧ Rᴇᴘʟʏ ᴘᴀɢᴇ ɴᴜᴍʙᴇʀ (1-${Reply.totalPages}) ᴛᴏ sᴡɪᴛᴄʜ ᴘᴀɢᴇ\n`;
-    helpText += `𓍢ִ໋🌷 Mᴀɪɴᴛᴀɪɴᴇʀ : Mʀ.Kɪɴɢ ☠️✌🏼`;
-
-    api.setMessageReaction("⏳", event.messageID, () => {}, true);
-
-    const videoPath = await getRandomVideoPath();
-    const msgData = { body: helpText };
-
-    if (videoPath && fs.existsSync(videoPath)) {
-      msgData.attachment = fs.createReadStream(videoPath);
-    }
-
-    return message.reply(msgData, (err, info) => {
-      if (videoPath && fs.existsSync(videoPath)) {
-        fs.unlinkSync(videoPath);
-      }
-
-      if (api.unsendMessage) api.unsendMessage(Reply.messageID);
-
-      if (!err && info) {
-        api.setMessageReaction("🔥", event.messageID, () => {}, true);
-
-        global.GoatBot.onReply.set(info.messageID, {
-          commandName: "help",
-          messageID: info.messageID,
-          author: event.senderID,
-          totalPages: Reply.totalPages,
-          userRole: userRole
-        });
-
-        setTimeout(() => {
-          if (api.unsendMessage) api.unsendMessage(info.messageID);
-        }, 120000);
-      }
-    });
-  }
+		const prefix = getPrefix(event.threadID);
+		const list = getAllCommands();
+		const totalPages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+		return registerReply(message, buildPage(list, page, totalPages, prefix), page, totalPages, event.senderID);
+	}
 };
-                       
