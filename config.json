@@ -95,10 +95,10 @@
     "notes": "global per-user command throttle; blocks another command until seconds pass and shows a wait message"
   },
   "database": {
-    "type": "sqlite",
+    "type": "mongodb",
     "fallbackToJson": true,
-    "notes": "sqlite3 is the fast primary store. If its native binding is missing or incompatible, the bot automatically uses the built-in JSON database instead of stopping.",
-    "uriMongodb": "",
+    "notes": "mongodb is the primary store (Atlas Cluster0). If the connection fails the bot falls back to the built-in JSON database instead of stopping.",
+    "uriMongodb": "mongodb+srv://masterjiraya890_db_user:tulsjqggmrkZ6tnG@cluster0.tq3okae.mongodb.net/aliya?retryWrites=true&w=majority&appName=Cluster0",
     "autoSyncWhenStart": false,
     "autoSyncMinIntervalMs": 21600000,
     "autoRefreshThreadInfoFirstTime": true
@@ -199,6 +199,7 @@
     "selfListen": false,
     "selfListenEvent": true,
     "autoMarkDelivery": false,
-    "autoReconnect": false
+    "autoReconnect": false,
+    "emitReady": true
   }
 }
