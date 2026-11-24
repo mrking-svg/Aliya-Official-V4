@@ -6,8 +6,6 @@ bot/login/data/
 data/
 database/data/
 scripts/**/cache/
-!scripts/**/cache/.gitkeep
-!scripts/**/cache/**/.gitkeep
 *.log
 .env
 .env.*
