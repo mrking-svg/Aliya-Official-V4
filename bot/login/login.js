@@ -255,6 +255,9 @@ function writeOwnAppState(state, why) {
 function scheduleAccountRelogin(reason) {
 	if (accountReloginTimer || global.__aliyaReloginBusy) return;
 	global.__aliyaReloginBusy = true;
+	// While a switch is pending, no timer may write the OLD session back into
+	// account.txt - that would destroy the state we are trying to switch to.
+	global.__aliyaOutsideStatePending = true;
 	accountReloginTimer = setTimeout(async () => {
 		accountReloginTimer = null;
 		try {
@@ -265,6 +268,7 @@ function scheduleAccountRelogin(reason) {
 			log.err("LOGIN FACEBOOK", "Could not relogin with the new state", err);
 		}
 		finally {
+			global.__aliyaOutsideStatePending = false;
 			global.__aliyaReloginBusy = false;
 		}
 	}, 1500);
@@ -827,6 +831,11 @@ async function startBot(loginWithEmail) {
 			global.__aliyaCurrentApi = api;
 			function saveFreshAppState(why) {
 				if (!api || typeof api.getAppState !== "function") return;
+				// A new-state switch is queued: never write the old session now.
+				if (global.__aliyaOutsideStatePending) {
+					log.warn("REFRESH FBSTATE", "A new account.txt state is pending. Skipping refresh with the old session.");
+					return;
+				}
 				// If the user pasted a new state (e.g. a new bot account after a
 				// suspension), keep it and switch to it instead of overwriting it
 				// with the old session cookies.
@@ -1279,7 +1288,9 @@ async function startBot(loginWithEmail) {
 		setTimeout(function () {
 			try {
 				watch(dirAccount, async (type) => {
-					if (type !== 'change') return;
+					// Editors and git deployments can replace the file via
+					// rename instead of firing a plain change event.
+					if (type !== 'change' && type !== 'rename') return;
 					try {
 						const currentMtime = fs.statSync(dirAccount).mtimeMs;
 						// Self-writes update latestChangeContentAccount, so any
