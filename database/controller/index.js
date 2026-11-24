@@ -48,8 +48,10 @@ module.exports = async function (api) {
 			const defaultClearLine = process.stderr.clearLine;
 			process.stderr.clearLine = function () { };
 			spin.start();
+			// Allow Render/Railway to override a bad URI without editing the repository.
+			const mongoUri = process.env.MONGODB_URI || process.env.MONGODB_URL || config.database.uriMongodb;
 			try {
-				var { threadModel, userModel, dashBoardModel, globalModel } = await require("../connectDB/connectMongoDB.js")(config.database.uriMongodb);
+				var { threadModel, userModel, dashBoardModel, globalModel } = await require("../connectDB/connectMongoDB.js")(mongoUri);
 				spin.stop();
 				process.stderr.clearLine = defaultClearLine;
 				log.info("MONGODB", getText("indexController", "connectMongoDBSuccess"));
@@ -58,8 +60,12 @@ module.exports = async function (api) {
 				spin.stop();
 				process.stderr.clearLine = defaultClearLine;
 				const detail = String(err && err.message || err);
+				const authProblem = /bad auth|authentication failed|unauthorized|not authorized/i.test(detail);
+				const hint = authProblem
+					? `Atlas rejected the database user/password (${detail.slice(0, 120)}). Create a valid Atlas DB user (check its authSource) or set MONGODB_URI in the environment with a working connection string.`
+					: `MongoDB connection failed (${detail.slice(0, 160)}). Check database.uriMongodb / network access.`;
 				if (config.database.fallbackToJson !== false) {
-					log.warn("MONGODB", `MongoDB connection failed (${detail.slice(0, 160)}). Switching to the built-in JSON database so the bot can start. Check database.uriMongodb / Atlas credentials.`);
+					log.warn("MONGODB", `${hint} Switching to the built-in JSON database so the bot can start.`);
 					databaseType = "json";
 				}
 				else {

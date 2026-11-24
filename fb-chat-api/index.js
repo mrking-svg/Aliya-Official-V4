@@ -64,7 +64,7 @@ function setOptions(globalOptions, options) {
     });
 }
 
-function buildAPI(globalOptions, html, jar) {
+function buildAPI(globalOptions, html, jar, diagnostics = {}) {
     let fb_dtsg = null;
     let irisSeqID = null;
     function extractFromHTML() {
@@ -126,7 +126,10 @@ function buildAPI(globalOptions, html, jar) {
     var userCookie = cookies.find(cookie => cookie.cookieString().startsWith("c_user="));
     var tiktikCookie = cookies.find(cookie => cookie.cookieString().startsWith("i_user="));
     if (!userCookie && !tiktikCookie) {
-        const err = new Error("Không tìm thấy cookie cho người dùng, vui lòng kiểm tra lại thông tin đăng nhập");
+        const expiredHint = diagnostics.appStateHadUserCookie
+            ? " Facebook deleted c_user/xs in the login response, so the cookies in account.txt are expired or invalid. Replace account.txt with a fresh appState/cookie array."
+            : " Check the cookies in account.txt / appState.";
+        const err = new Error("Không tìm thấy cookie cho người dùng, vui lòng kiểm tra lại thông tin đăng nhập." + expiredHint);
         log.error('login', err.message);
         throw err;
     }
@@ -393,7 +396,9 @@ function loginHelper(appState, email, password, globalOptions, callback, prCallb
         .then(handleRedirect)
         .then(res => {
             const html = res.body;
-            const Obj = buildAPI(globalOptions, html, jar);
+            const appStateHadUserCookie = Array.isArray(appState) &&
+                appState.some(c => (c.key || c.name) === "c_user" || (c.key || c.name) === "i_user");
+            const Obj = buildAPI(globalOptions, html, jar, { appStateHadUserCookie });
             ctx = Obj.ctx;
             api = Obj.api;
             return res;
