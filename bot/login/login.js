@@ -948,6 +948,13 @@ async function startBot(loginWithEmail) {
 			}
 			// —————————————————— CALLBACK LISTEN —————————————————— //
 			async function callBackListen(error, event) {
+				// Some fb-chat-api builds emit the ready event in the first (error) slot.
+				// Normalize it so a successful connection is never logged as an error.
+				if (error && typeof error === "object" && !event &&
+					(error.type === "ready" || error.type === "message" || error.type === "event" || error.type === "typ" || error.type === "presence")) {
+					event = error;
+					error = null;
+				}
 				if (error) {
 					global.responseUptimeCurrent = responseUptimeError;
 					if (error != "Connection closed by user.") markMqttDown();

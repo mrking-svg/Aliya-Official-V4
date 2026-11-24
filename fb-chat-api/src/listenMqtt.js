@@ -153,7 +153,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     }, 3000);
     ctx.tmsWait = () => {
       clearTimeout(rTimeout);
-      ctx.globalOptions.emitReady ? globalCallback({
+      ctx.globalOptions.emitReady ? globalCallback(null, {
         type: "ready",
         error: null
       }) : "";
