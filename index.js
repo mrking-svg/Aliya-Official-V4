@@ -452,11 +452,16 @@ function checkMainFiles() {
 }
 
 function enterWolf(reason) {
+	if (!wolfAvailable()) {
+		log("WOLF", `${WOLF_FILE} is not available (${reason}). Staying on ${MAIN_FILE} with backoff.`);
+		return false;
+	}
 	mode = "wolf";
 	wolfSince = Date.now();
 	log("WOLF", `Switching to ${WOLF_FILE} (${reason}). ${MAIN_FILE} is retried in ${WOLF_RETRY_MS >= 120000 ? Math.round(WOLF_RETRY_MS / 60000) + " min" : Math.round(WOLF_RETRY_MS / 1000) + " s"}.`);
 	if (wolfTimer) clearTimeout(wolfTimer);
 	wolfTimer = setTimeout(tryMainAgain, WOLF_RETRY_MS);
+	return true;
 }
 
 function leaveWolfTimer() {
@@ -494,8 +499,7 @@ function resolveRunTarget() {
 	if (mode === "main") {
 		const check = checkMainFiles();
 		if (check.ok) return MAIN_FILE;
-		if (wolfAvailable()) {
-			enterWolf(check.reason);
+		if (wolfAvailable() && enterWolf(check.reason)) {
 			return WOLF_FILE;
 		}
 		log("ERROR", `Main engine problem and ${WOLF_FILE} is missing: ${check.reason}`);
@@ -670,9 +674,10 @@ function handleCrash(ranMs) {
 		: Math.min(MAX_BACKOFF_MS, BASE_BACKOFF_MS * 2 ** (failStreak - 1));
 
 	if (mode === "main" && wolfAvailable() && failStreak >= WOLF_AFTER && ranMs < STABLE_AFTER_MS) {
-		enterWolf(`${failStreak} quick crashes in a row`);
-		failStreak = 0;
-		delay = QUICK_RESTART_MS;
+		if (enterWolf(`${failStreak} quick crashes in a row`)) {
+			failStreak = 0;
+			delay = QUICK_RESTART_MS;
+		}
 	}
 	log("AUTO_HEAL", `Bot ended unexpectedly (quick-crash streak ${failStreak}). Server stays ON.`);
 	scheduleRestart(delay);

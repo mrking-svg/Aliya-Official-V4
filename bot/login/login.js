@@ -911,8 +911,20 @@ async function startBot(loginWithEmail) {
 			// —————— REAL READY CHECK (READY is sent only after Facebook MQTT really answers) —————— //
 			let mqttReady = false;
 			let mqttDeadline = null;
+			let mqttStaleTimer = null;
 			const MQTT_FIRST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_FIRST_TIMEOUT_MS) || 180000;
 			const MQTT_LOST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_LOST_TIMEOUT_MS) || 300000;
+			const MQTT_STALE_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_STALE_TIMEOUT_MS) || 10 * 60 * 1000;
+			function clearMqttStale() {
+				if (mqttStaleTimer) { clearTimeout(mqttStaleTimer); mqttStaleTimer = null; }
+			}
+			function armMqttStale() {
+				clearMqttStale();
+				mqttStaleTimer = setTimeout(() => {
+					log.err("MQTT_WATCHDOG", "No MQTT event for " + Math.round(MQTT_STALE_TIMEOUT_MS / 1000) + "s. Asking the supervisor to restart / switch account (exit 5).");
+					process.exit(5);
+				}, MQTT_STALE_TIMEOUT_MS);
+			}
 			function armMqttDeadline(ms, why) {
 				if (mqttDeadline) return;
 				mqttDeadline = setTimeout(() => {
@@ -927,16 +939,18 @@ async function startBot(loginWithEmail) {
 					log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
 					if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
 				}
+				armMqttStale();
 			}
 			function markMqttDown() {
 				mqttReady = false;
+				clearMqttStale();
 				armMqttDeadline(MQTT_LOST_TIMEOUT_MS, "Listener has been down for " + Math.round(MQTT_LOST_TIMEOUT_MS / 1000) + "s.");
 			}
 			// —————————————————— CALLBACK LISTEN —————————————————— //
 			async function callBackListen(error, event) {
 				if (error) {
 					global.responseUptimeCurrent = responseUptimeError;
-					if (error != "Connection closed." && error != "Connection closed by user.") markMqttDown();
+					if (error != "Connection closed by user.") markMqttDown();
 					if (
 						error.error == "Not logged in" ||
 						error.error == "Not logged in." ||

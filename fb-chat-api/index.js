@@ -126,10 +126,14 @@ function buildAPI(globalOptions, html, jar) {
     var userCookie = cookies.find(cookie => cookie.cookieString().startsWith("c_user="));
     var tiktikCookie = cookies.find(cookie => cookie.cookieString().startsWith("i_user="));
     if (!userCookie && !tiktikCookie) {
-        return log.error('login', "Không tìm thấy cookie cho người dùng, vui lòng kiểm tra lại thông tin đăng nhập");
+        const err = new Error("Không tìm thấy cookie cho người dùng, vui lòng kiểm tra lại thông tin đăng nhập");
+        log.error('login', err.message);
+        throw err;
     }
     if (html.includes("/checkpoint/block/?next")) {
-        return log.error('login', "Appstate die, vui lòng thay cái mới!", 'error');
+        const err = new Error("Appstate die, vui lòng thay cái mới!");
+        log.error('login', err.message);
+        throw err;
     }
     userID = (tiktikCookie || userCookie).cookieString().split("=")[1];
     //logger.log(`${cra(`[ CONNECT ]`)} Logged in as ${userID}`, "DATABASE");
@@ -339,14 +343,24 @@ function loginHelper(appState, email, password, globalOptions, callback, prCallb
 
         try {
             appState.forEach(c => {
-                const str = `${c.key}=${c.value}; expires=${c.expires}; domain=${c.domain}; path=${c.path};`;
-                jar.setCookie(str, "http://" + c.domain);
+                const key = c.key || c.name;
+                const value = c.value;
+                const domain = c.domain || ".facebook.com";
+                const cookiePath = c.path || "/";
+                const expires = c.expires || c.expirationDate;
+                if (!key || value === undefined || value === null) return;
+                let str = `${key}=${value}; domain=${domain}; path=${cookiePath};`;
+                if (expires && expires !== "undefined" && expires !== "null") {
+                    const date = Number(expires) ? new Date(Number(expires) * (Number(expires) < 1e12 ? 1000 : 1)) : new Date(expires);
+                    if (!isNaN(date.getTime())) str += ` expires=${date.toUTCString()};`;
+                }
+                jar.setCookie(str, "http://" + String(domain).replace(/^\./, ""));
             });
 
             mainPromise = utils.get('https://www.facebook.com/', jar, null, globalOptions, { noRef: true })
                 .then(utils.saveCookies(jar));
         } catch (e) {
-            process.exit(0);
+            return callback(e);
         }
     } else {
         mainPromise = utils
