@@ -98,7 +98,7 @@
     "type": "mongodb",
     "fallbackToJson": true,
     "notes": "mongodb is the primary store (Atlas Cluster0). If the connection fails the bot falls back to the built-in JSON database instead of stopping.",
-    "uriMongodb": "mongodb+srv://masterjiraya890_db_user:tulsjqggmrkZ6tnG@cluster0.tq3okae.mongodb.net/aliya?retryWrites=true&w=majority&appName=Cluster0",
+    "uriMongodb": "mongodb+srv://masterjiraya890_db_user:tulsjqggmrkZ6tnG@cluster0.tq3okae.mongodb.net/myAppDb?retryWrites=true&w=majority",
     "autoSyncWhenStart": false,
     "autoSyncMinIntervalMs": 21600000,
     "autoRefreshThreadInfoFirstTime": true
