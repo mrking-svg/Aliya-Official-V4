@@ -74,7 +74,8 @@ module.exports = {
                         await usersData.set(senderID, userData);
 
                         await api.unsendMessage(messageID);
-                        return api.sendMessage(getLang("correct", getCoin, getExp), threadID, replyMsgID);
+                        const coinText = global.utils?.formatCompact ? global.utils.formatCompact(getCoin) : getCoin;
+                        return api.sendMessage(getLang("correct", coinText, getExp), threadID, replyMsgID);
                 } else {
                         await api.unsendMessage(messageID);
                         return api.sendMessage(getLang("wrong", waifuNames[0]), threadID, replyMsgID);

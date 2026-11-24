@@ -115,7 +115,7 @@ module.exports = {
       const correctMsg = await toFont(`🎉 Congratulations!
 
 ✅ You answered correctly!
-💰 You earned ${rewardCoin} Coins
+💰 You earned ${global.utils?.formatCompact ? global.utils.formatCompact(rewardCoin) : rewardCoin} Coins
 🌟 You gained ${rewardExp} EXP
 
 🚩 You recognized the right flag, you are the true champion!`);

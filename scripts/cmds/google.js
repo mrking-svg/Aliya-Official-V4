@@ -8,6 +8,7 @@ module.exports.config = {
     author: "0xMr_King x ┃ Tanin Islam",
   
     name: "google",
+    aliases: ["search"],
     version: "1.0.0",
     hasPermssion: 0,
     credits: "0xMr_King x ┃ Tanin Islam",

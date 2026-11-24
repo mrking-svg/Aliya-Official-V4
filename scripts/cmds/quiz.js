@@ -110,7 +110,8 @@ module.exports = {
                                 exp: userData.exp + rewardExp,
                                 data: userData.data
                         });
-                        return api.sendMessage(getLang("correct", rewardCoins, rewardExp), event.threadID, event.messageID);
+                        const coinText = global.utils?.formatCompact ? global.utils.formatCompact(rewardCoins) : rewardCoins;
+                        return api.sendMessage(getLang("correct", coinText, rewardExp), event.threadID, event.messageID);
                 } else {
                         return api.sendMessage(getLang("wrong", correctAnswer), event.threadID, event.messageID);
                 }

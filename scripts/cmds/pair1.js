@@ -20,7 +20,7 @@ const STYLE = {
 		];
 	},
 	message(a, b, p) {
-		return `💘 𝗣𝗮𝗶𝗿𝗶𝗻𝗴 𝗖𝗼𝗺𝗽𝗹𝗲𝘁𝗲 💘\n\n🎀  ${a}\n🎀  ${b}\n\n💞 Pair odds are: ${p}`;
+		return `PAIRING COMPLETE\n\n${a}\n${b}\n\nPAIR ODDS: ${p}`;
 	}
 };
 
@@ -41,5 +41,5 @@ module.exports = {
 		commandCategory: "love",
 		cooldowns: 5
 	},
-	onStart: ({ api, event }) => core.run({ api, event, style: STYLE })
+	onStart: ({ api, event, usersData }) => core.run({ api, event, usersData, style: STYLE })
 };

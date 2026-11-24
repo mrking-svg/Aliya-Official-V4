@@ -1,3 +1,10 @@
+const compact = n => (global.utils && typeof global.utils.formatCompact === "function")
+    ? global.utils.formatCompact(n)
+    : String(Math.round(Number(n) || 0));
+const parseBetValue = v => (global.utils && typeof global.utils.parseMoney === "function")
+    ? global.utils.parseMoney(v)
+    : Number(v);
+
 module.exports.config = {
     role: 0,
     countDown: 0,
@@ -25,6 +32,8 @@ module.exports.onStart = async function({ api, event, args, Currencies, Users })
     const choose = args[0];
     const kqua = args[1];
     const betAmount = args[2];
+    const wager = parseBetValue(kqua);
+    const diffBet = parseBetValue(betAmount);
 
     if (!existsSync(__dirname + '/cache/casino.jpg')) {
         request('https://i.imgur.com/1Y9eup1.jpg').pipe(createWriteStream(__dirname + '/cache/casino.jpg'));
@@ -67,56 +76,56 @@ module.exports.onStart = async function({ api, event, args, Currencies, Users })
 
     // Big/Small game
     if (choose === 'big' || choose === 'small') {
-        if (kqua < 50 || isNaN(kqua)) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
-        if (moneyUser < kqua) return api.sendMessage(`You don't have enough balance (${kqua}$) to play`, threadID, messageID);
+        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
+        if (moneyUser < wager) return api.sendMessage(`You don't have enough balance (${compact(wager)}$) to play`, threadID, messageID);
         if (choose === randomBS) {
-            await Currencies.increaseMoney(senderID, parseInt(kqua * 2));
-            return api.sendMessage(`You won! Bot rolled ${randomBS} (${defNumberBS}) and you received ${kqua * 2}`, threadID, messageID);
+            await Currencies.increaseMoney(senderID, Math.floor(wager * 2));
+            return api.sendMessage(`You won! Bot rolled ${randomBS} (${defNumberBS}) and you received ${compact(wager * 2)}`, threadID, messageID);
         } else {
-            await Currencies.decreaseMoney(senderID, parseInt(kqua));
-            return api.sendMessage(`You lost. Bot rolled ${randomBS} (${defNumberBS}) and you lost ${kqua}`, threadID, messageID);
+            await Currencies.decreaseMoney(senderID, Math.floor(wager));
+            return api.sendMessage(`You lost. Bot rolled ${randomBS} (${defNumberBS}) and you lost ${compact(wager)}`, threadID, messageID);
         }
     }
 
     // Even/Odd game
     if (choose === 'even' || choose === 'odd') {
-        if (kqua < 50 || isNaN(kqua)) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
-        if (moneyUser < kqua) return api.sendMessage(`You don't have enough balance (${kqua}$) to play`, threadID, messageID);
+        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
+        if (moneyUser < wager) return api.sendMessage(`You don't have enough balance (${compact(wager)}$) to play`, threadID, messageID);
         if (choose === randomEO) {
-            await Currencies.increaseMoney(senderID, parseInt(kqua * 2));
-            return api.sendMessage(`You won! Bot rolled ${randomEO} (${defNumberEO}) and you received ${kqua * 2}`, threadID, messageID);
+            await Currencies.increaseMoney(senderID, Math.floor(wager * 2));
+            return api.sendMessage(`You won! Bot rolled ${randomEO} (${defNumberEO}) and you received ${compact(wager * 2)}`, threadID, messageID);
         } else {
-            await Currencies.decreaseMoney(senderID, parseInt(kqua));
-            return api.sendMessage(`You lost. Bot rolled ${randomEO} (${defNumberEO}) and you lost ${kqua}`, threadID, messageID);
+            await Currencies.decreaseMoney(senderID, Math.floor(wager));
+            return api.sendMessage(`You lost. Bot rolled ${randomEO} (${defNumberEO}) and you lost ${compact(wager)}`, threadID, messageID);
         }
     }
 
     // Lottery game
     if (choose === 'lottery') {
-        if (kqua < 50 || isNaN(kqua)) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
-        if (moneyUser < kqua) return api.sendMessage(`You don't have enough balance (${kqua}$) to play`, threadID, messageID);
+        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
+        if (moneyUser < wager) return api.sendMessage(`You don't have enough balance (${compact(wager)}$) to play`, threadID, messageID);
         api.sendMessage(`Please wait a few minutes for the lottery result...`, threadID, async (err, info) => {
             await new Promise(resolve => setTimeout(resolve, 120 * 1000));
             api.unsendMessage(info.messageID);
             if (kqua == x) {
-                await Currencies.increaseMoney(senderID, parseInt(kqua * 2));
-                return api.sendMessage(`You won! Your chosen number ${args[1]} matched. Lottery result is ${x}. You received ${kqua * 2}`, threadID, messageID);
+                await Currencies.increaseMoney(senderID, Math.floor(wager * 2));
+                return api.sendMessage(`You won! Your chosen number ${args[1]} matched. Lottery result is ${x}. You received ${compact(wager * 2)}`, threadID, messageID);
             } else {
-                await Currencies.decreaseMoney(senderID, parseInt(kqua));
-                return api.sendMessage(`You lost. Your chosen number ${args[1]} did not match. Lottery result is ${x}. You lost ${kqua}`, threadID, messageID);
+                await Currencies.decreaseMoney(senderID, Math.floor(wager));
+                return api.sendMessage(`You lost. Your chosen number ${args[1]} did not match. Lottery result is ${x}. You lost ${compact(wager)}`, threadID, messageID);
             }
         });
     }
 
     // Difference game
     if (choose === 'difference') {
-        if (isNaN(kqua)) return api.sendMessage("Invalid number", threadID, messageID);
-        if (kqua == difference) {
-            await Currencies.increaseMoney(senderID, parseInt(betAmount * 2));
-            return api.sendMessage(`You won. Your choice: ${kqua}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou received ${betAmount * 2}`, threadID, messageID);
+        if (!Number.isFinite(Number(kqua))) return api.sendMessage("Invalid number", threadID, messageID);
+        if (Number(kqua) == difference) {
+            await Currencies.increaseMoney(senderID, Math.floor(diffBet * 2));
+            return api.sendMessage(`You won. Your choice: ${compact(kqua)}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou received ${compact(diffBet * 2)}`, threadID, messageID);
         } else {
-            await Currencies.decreaseMoney(senderID, parseInt(betAmount));
-            return api.sendMessage(`You lost. Your choice: ${kqua}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou lost ${betAmount}`, threadID, messageID);
+            await Currencies.decreaseMoney(senderID, Math.floor(diffBet));
+            return api.sendMessage(`You lost. Your choice: ${compact(kqua)}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou lost ${compact(diffBet)}`, threadID, messageID);
         }
     }
 

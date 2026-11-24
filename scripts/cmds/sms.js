@@ -1,4 +1,7 @@
 const axios = require("axios");
+const compact = n => (global.utils && typeof global.utils.formatCompact === "function")
+  ? global.utils.formatCompact(n)
+  : String(Math.round(Number(n) || 0));
 const deltaNext = 5;
 
 function expToLevel(exp) {
@@ -41,7 +44,7 @@ module.exports = {
     }
 
     if (balance < 100) {
-      return message.reply(`❌ Not enough coins\n💵 you have: ${balance}\n📝 দরকার: 100`);
+      return message.reply(`❌ Not enough coins\n💵 you have: ${compact(balance)}\n📝 দরকার: ${compact(100)}`);
     }
 
     await usersData.set(senderID, { money: balance - 100 });

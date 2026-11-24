@@ -1,7 +1,7 @@
 module.exports = {
   config: {
     name: "sex",
-    aliases: ["sex-base", "sexy"],
+    aliases: ["sex-base", "sexy", "sexvid", "sex-base2", "sexvid-base"],
     version: "2.0",
     author: "0xMr_King x ┃ Tanin Islam",
     countDown: 30,

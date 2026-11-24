@@ -40,6 +40,6 @@ module.exports.onStart = async function ({ api, event, Threads, getText }) {
   resend == null ? resend = `false` : resend = `${resend}`;
   tagadmin == null ? tagadmin = `true` : tagadmin = `${tagadmin}`;
   guard == null ? guard = `true` : guard = `${guard}`;
-  antiout == null ? antiout = `true` : antiout = `${antiout}`;
+  antiout == null || antiout === false ? antiout = `false` : antiout = `${antiout}`;
 return api.sendMessage(`ᅠᅠ☣️Table ☣️ \n\n\n🍄────•🦋• ────🍄\n❯ 🍉 Log: ${log}\n❯ 🍇 Rankup: ${rankup}\n❯ 🍓 Resend: ${resend}\n❯ 🥕 Tag admin: ${tagadmin}\n❯ 🍑 Antirobbery ${guard}\n❯ 🍒 Antiout: ${antiout}\n🍄────•🦋• ────🍄`, threadID, messageID);
 }

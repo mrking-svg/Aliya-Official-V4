@@ -12,6 +12,7 @@ module.exports.config = {
     author: "0xMr_King x ┃ Tanin Islam",
   
  name: "shoti",
+ aliases: ["rasian"],
  version: "1.0.2",
  hasPermission: 0,
  credits: "0xMr_King x ┃ Tanin Islam", // credit: 0xMr_King x ┃ Tanin Islam

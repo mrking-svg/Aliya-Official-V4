@@ -27,18 +27,27 @@ function scramble(word) {
 	return a.join("");
 }
 
+const CORRECT_REWARD = 2000;
+
 function parseSmartAmount(str) {
+	if (global.utils && typeof global.utils.parseMoney === "function")
+		return global.utils.parseMoney(str);
 	if (typeof str !== "string") return parseFloat(str);
-	const units = { k: 1e3, m: 1e6 };
-	const match = str.toLowerCase().match(/^(\d+(?:\.\d+)?)([km]?)$/);
+	const units = { k: 1e3, m: 1e6, b: 1e9, t: 1e12 };
+	const match = String(str).trim().replace(/[$,]/g, "").toLowerCase().match(/^(\d+(?:\.\d+)?)\s*([kmbt]?)$/);
 	if (!match) return parseFloat(str);
 	return parseFloat(match[1]) * (units[match[2]] || 1);
 }
 
 function formatNumber(num) {
-	if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
-	if (num >= 1e3) return (num / 1e3).toFixed(2) + "K";
-	return num.toLocaleString();
+	if (global.utils && typeof global.utils.formatCompact === "function")
+		return global.utils.formatCompact(num);
+	const v = Number(num) || 0;
+	if (v >= 1e12) return (v / 1e12).toFixed(2) + "T";
+	if (v >= 1e9) return (v / 1e9).toFixed(2) + "B";
+	if (v >= 1e6) return (v / 1e6).toFixed(2) + "M";
+	if (v >= 1e3) return (v / 1e3).toFixed(2) + "K";
+	return v.toLocaleString();
 }
 
 module.exports = {
@@ -51,7 +60,7 @@ module.exports = {
 		role: 0,
 		shortDescription: { en: "Unscramble the word and win" },
 		category: "Game",
-		guide: { en: "{pn} [bet] - reply with the correct word (bet 1K - 1M, optional)" }
+		guide: { en: "{pn} [bet] - reply with the correct word (+2K per correct answer, bet 1K - 1M optional)" }
 	},
 
 	onStart: async function ({ args, message, event, usersData }) {
@@ -79,7 +88,7 @@ module.exports = {
 			`🔀 | ${scrambled}\n` +
 			"💡 | 𝐑𝐞𝐩𝐥𝐲 𝐰𝐢𝐭𝐡 𝐭𝐡𝐞 𝐜𝐨𝐫𝐫𝐞𝐜𝐭 𝐰𝐨𝐫𝐝.\n" +
 			"⏰ | 𝟔𝟎 𝐬𝐞𝐜𝐨𝐧𝐝𝐬.\n" +
-			(bet ? `💰 | 𝐁𝐞𝐭: $${formatNumber(bet)}\n` : "") +
+			(bet ? `💰 | 𝐁𝐞𝐭: $${formatNumber(bet)}\n` : `🎁 | 𝐂𝐨𝐫𝐫𝐞𝐜𝐭 𝐫𝐞𝐰𝐚𝐫𝐝: $${formatNumber(CORRECT_REWARD)}\n`) +
 			"━━━━━━━━━━━━━━━━━━";
 
 		return message.reply(body, (err, info) => {
@@ -108,18 +117,17 @@ module.exports = {
 		if (guess !== answer)
 			return message.reply(`❌ | 𝐖𝐫𝐨𝐧𝐠 𝐚𝐧𝐬𝐰𝐞𝐫. 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬: ${Reply.word}`);
 
-		if (Reply.bet > 0) {
-			const user = await usersData.get(event.senderID);
-			const win = Reply.bet * 2;
-			const balance = (user.money || 0) + win;
-			await usersData.set(event.senderID, { money: balance });
-			return message.reply(
-				"🏆 | 𝐂𝐎𝐑𝐑𝐄𝐂𝐓! 🎉\n" +
-				`💰 | +$${formatNumber(win)}\n` +
-				`🪙 | 𝐁𝐚𝐥𝐚𝐧𝐜𝐞: $${formatNumber(balance)}`
-			);
-		}
-
-		return message.reply(`🏆 | 𝐂𝐎𝐑𝐑𝐄𝐂𝐓! 🎉\n🔤 | 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬 ${Reply.word}.`);
+		const user = await usersData.get(event.senderID) || {};
+		const betWin = Reply.bet > 0 ? Reply.bet * 2 : 0;
+		const win = CORRECT_REWARD + betWin;
+		const balance = (user.money || 0) + win;
+		await usersData.set(event.senderID, { money: balance });
+		return message.reply(
+			"🏆 | 𝐂𝐎𝐑𝐑𝐄𝐂𝐓! 🎉\n" +
+			`🔤 | 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬 ${Reply.word}.\n` +
+			`💰 | 𝐑𝐞𝐰𝐚𝐫𝐝: +$${formatNumber(CORRECT_REWARD)}` + (betWin ? ` + $${formatNumber(betWin)} bet win` : "") + "\n" +
+			`💵 | 𝐓𝐨𝐭𝐚𝐥: +$${formatNumber(win)}\n` +
+			`🪙 | 𝐁𝐚𝐥𝐚𝐧𝐜𝐞: $${formatNumber(balance)}`
+		);
 	}
 };

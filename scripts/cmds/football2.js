@@ -79,7 +79,8 @@ module.exports = {
         exp: userData.exp + rewardExp,
         data: userData.data
       });
-      return api.sendMessage(`✅ | Correct answer baby\nYou earned +${rewardCoins} coins & +${rewardExp} exp!`, event.threadID, event.messageID);
+      const rewardCoinsText = global.utils?.formatCompact ? global.utils.formatCompact(rewardCoins) : rewardCoins;
+      return api.sendMessage(`✅ | Correct answer baby\nYou earned +${rewardCoinsText} coins & +${rewardExp} exp!`, event.threadID, event.messageID);
     } else {
       return api.sendMessage(`❌ | Wrong answer baby\nThe Correct answer was: ${correctAnswer}`, event.threadID, event.messageID);
     }

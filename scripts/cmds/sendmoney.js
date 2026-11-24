@@ -1,6 +1,8 @@
 const activeTransfers = new Set();
 
 function formatCoins(value) {
+	if (global.utils && typeof global.utils.formatCompact === "function")
+		return global.utils.formatCompact(value);
 	const number = Number(value) || 0;
 	if (number >= 1e12) return (number / 1e12).toFixed(1).replace(/\.0$/, "") + "T";
 	if (number >= 1e9) return (number / 1e9).toFixed(1).replace(/\.0$/, "") + "B";
@@ -72,7 +74,9 @@ module.exports = {
 			return message.reply("You cannot send coins to yourself.");
 		}
 
-		const amount = Number(String(amountText || "").replace(/,/g, "").trim());
+		const amount = (global.utils && typeof global.utils.parseMoney === "function")
+			? global.utils.parseMoney(amountText)
+			: Number(String(amountText || "").replace(/,/g, "").trim());
 		if (!Number.isFinite(amount) || amount <= 0 || !Number.isInteger(amount)) {
 			return message.reply("Enter a valid positive whole number of coins to send.");
 		}

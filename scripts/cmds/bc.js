@@ -1,3 +1,10 @@
+const compact = n => (global.utils && typeof global.utils.formatCompact === "function")
+    ? global.utils.formatCompact(n)
+    : String(Math.round(Number(n) || 0));
+const parseBet = v => (global.utils && typeof global.utils.parseMoney === "function")
+    ? global.utils.parseMoney(v)
+    : parseInt(v, 10);
+
 const tlt = 30; // Winning rate (%)
 const min = 100; // Minimum bet ($)
 
@@ -36,14 +43,14 @@ module.exports.onStart = async function ({ api, event, args, Currencies }) {
 
   var dataMoney = await Currencies.getData(senderID);
   var money = dataMoney.money;
-  var betAmount = parseInt(args[1]);
+  var betAmount = parseBet(args[1]);
 
   if (isNaN(betAmount) || betAmount < 1)
     return api.sendMessage("Invalid bet amount!", threadID, messageID);
   if (betAmount < min)
-    return api.sendMessage(`Minimum bet is ${min}$!`, threadID, messageID);
+    return api.sendMessage(`Minimum bet is ${compact(min)}$!`, threadID, messageID);
   if (betAmount > money)
-    return api.sendMessage(`You don't have enough money to bet ${betAmount}$!`, threadID, messageID);
+    return api.sendMessage(`You don't have enough money to bet ${compact(betAmount)}$!`, threadID, messageID);
 
   var luckynumber = Math.floor(Math.random() * 100) + 1;
   if (luckynumber > tlt) allface.splice(allface.indexOf(betChoice), 1);
@@ -82,7 +89,7 @@ module.exports.onStart = async function ({ api, event, args, Currencies }) {
   const path = __dirname + "/cache/baucua.png";
   fs.writeFileSync(path, canvas.toBuffer("image/png"));
 
-  var item = count == 0 ? `-${betAmount}$` : `+${betAmount * count}$`;
+  var item = count == 0 ? `-${compact(betAmount)}$` : `+${compact(betAmount * count)}$`;
   if (count == 0) {
     Currencies.decreaseMoney(senderID, betAmount);
   } else {

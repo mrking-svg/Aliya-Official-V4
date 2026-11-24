@@ -11,7 +11,7 @@ const STYLE = {
 		core.drawAvatar(ctx, two, 35, 175, 95, "#ffffff", "circle", "B");
 	},
 	message(a, b, p) {
-		return `✨ 𝗘𝗟𝗘𝗚𝗔𝗡𝗧 𝗟𝗢𝗩𝗘 𝗠𝗔𝗧𝗖𝗛 ✨\n\n🌸 ${a} 🤍\n🌸 ${b} 🤍\n\n⚔️ 𝗧𝘄𝗼 𝗵𝗲𝗮𝗿𝘁𝘀 𝗯𝗹𝗼𝘀𝘀𝗼𝗺𝗶𝗻𝗴 𝘁𝗼𝗴𝗲𝘁𝗵𝗲𝗿 𝗶𝗻 𝘁𝗵𝗲 𝗽𝘂𝗿𝗲𝘀𝘁 𝗴𝗮𝗿𝗱𝗲𝗻 𝗼𝗳 𝗱𝗲𝘀𝘁𝗶𝗻𝘆 🌸\n\n💘 𝗖𝗼𝗺𝗽𝗮𝘁𝗶𝗯𝗶𝗹𝗶𝘁𝘆: ${p}% 💘`;
+		return `ELEGANT LOVE MATCH\n\n${a}\n${b}\n\nTWO HEARTS BLOSSOM TOGETHER IN THE PUREST GARDEN OF DESTINY.\n\nCOMPATIBILITY: ${p}%`;
 	}
 };
 
@@ -27,5 +27,5 @@ module.exports = {
 		longDescription: { en: "Calculates an elegant love match between group members with custom background and left-side vertical circular avatars." },
 		guide: { en: "{p}{n} — Find a love match" }
 	},
-	onStart: ({ api, event }) => core.run({ api, event, style: STYLE })
+	onStart: ({ api, event, usersData }) => core.run({ api, event, usersData, style: STYLE })
 };

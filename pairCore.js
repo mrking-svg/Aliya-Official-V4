@@ -12,6 +12,11 @@ const { convert: convertStyle } = require('./textEngine.js');
 const AVATAR_TOKEN = '6628568379%7Cc1e620fa708a1d5696fb991c1bde5662';
 const IMAGE_TIMEOUT = 8000;
 const CACHE_DIR = path.join(__dirname, 'scripts', 'cmds', 'cache');
+const PAIR_MENTION_COST = 2000;
+
+function bold(text) {
+	return convertStyle(text, 'bold');
+}
 
 function avatarUrl(id) {
 	return `https://graph.facebook.com/${id}/picture?width=720&height=720&access_token=${AVATAR_TOKEN}`;
@@ -115,15 +120,41 @@ function drawAvatar(ctx, img, x, y, size, border, shape, letter) {
 	}
 }
 
-async function run({ api, event, style }) {
+async function run({ api, event, style, usersData }) {
 	let outputPath = null;
+	const reply = text => api.sendMessage(bold(text), event.threadID, event.messageID);
+
 	try {
 		const threadData = await api.getThreadInfo(event.threadID);
 		const users = (threadData && threadData.userInfo) || [];
-		const match = pickMatch(users, event.senderID);
-		if (!match) {
-			return api.sendMessage('❌ Group-e kono member paoa jayni.', event.threadID, event.messageID);
+
+		// A normal pair is free for everyone. Mentioning a specific user costs 2K.
+		const mentionID = Object.keys(event.mentions || {})
+			.find(id => String(id) !== String(event.senderID));
+		let match = null;
+		let charged = false;
+
+		if (mentionID) {
+			match = users.find(u => String(u.id) === String(mentionID)) ||
+				{ id: mentionID, name: event.mentions[mentionID] };
+
+			if (!usersData || typeof usersData.get !== 'function' || typeof usersData.set !== 'function')
+				return reply('WALLET UNAVAILABLE\nPairing with a mentioned user needs the wallet database.');
+
+			const sender = await usersData.get(event.senderID) || {};
+			const balance = Math.max(0, Math.floor(Number(sender.money) || 0));
+			if (balance < PAIR_MENTION_COST)
+				return reply('INSUFFICIENT BALANCE\nYou do not have 2K coins to pair with a mentioned user.');
+
+			await usersData.set(event.senderID, { money: balance - PAIR_MENTION_COST });
+			charged = true;
 		}
+		else {
+			match = pickMatch(users, event.senderID);
+		}
+
+		if (!match)
+			return reply('NO MEMBER FOUND\nNo group member was found.');
 
 		const me = users.find(u => String(u.id) === String(event.senderID)) || {};
 		const senderName = convertName(me.name || event.senderID, event.senderID);
@@ -149,7 +180,9 @@ async function run({ api, event, style }) {
 		const percent = style.percent
 			? style.percent()
 			: Math.floor(Math.random() * 31) + 70;
-		const body = style.message(senderName, matchName, percent);
+		let body = style.message(senderName, matchName, percent);
+		if (charged) body = 'MENTION PAIR - 2K COINS DEDUCTED\n\n' + body;
+		body = bold(body);
 
 		if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 		outputPath = path.join(CACHE_DIR, `pair_${event.senderID}_${Date.now()}.png`);
@@ -169,7 +202,7 @@ async function run({ api, event, style }) {
 	catch (error) {
 		try { if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch (_e) {}
 		try {
-			return api.sendMessage('❌ Pair: ' + (error && error.message ? error.message : 'unknown error'), event.threadID, event.messageID);
+			return reply('PAIR ERROR\nPlease try again.');
 		}
 		catch (_e) {}
 	}

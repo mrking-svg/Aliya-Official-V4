@@ -33,7 +33,8 @@ module.exports = {
         msg += `[ ${labels[idx]} ] ${opt}\n`;
       });
 
-      msg += "\n🎁 Reward: $10,000\n";
+      const rewardText = global.utils?.formatCompact ? global.utils.formatCompact(10000) : "10,000";
+      msg += `\n🎁 Reward: $${rewardText}\n`;
       msg += "⏱️ Reply with option (A/B/C/D or 1/2/3/4)";
 
       const replyData = {
@@ -103,7 +104,8 @@ module.exports = {
     if (userAns === Reply.correctIndex) {
       const reward = 10000;
       await Users.increaseMoney(event.senderID, reward);
-      return reply(`🎉 𝗖𝗢𝗡𝗚𝗥𝗔𝗧𝗨𝗟𝗔𝗧𝗜𝗢𝗡𝗦!\n\nTor uttor shothik hoyeche!\n💰 Prize Received: $10,000`);
+      const prizeText = global.utils?.formatCompact ? global.utils.formatCompact(reward) : reward.toLocaleString();
+      return reply(`🎉 𝗖𝗢𝗡𝗚𝗥𝗔𝗧𝗨𝗟𝗔𝗧𝗜𝗢𝗡𝗦!\n\nTor uttor shothik hoyeche!\n💰 Prize Received: $${prizeText}`);
     } else {
       const stylishAns = `❮ ${correctLabel} ❯  ❯❯ ${correctAnsText.toUpperCase()} ❮❮`;
       return reply(`❌ 𝗪𝗥𝗢𝗡𝗚 𝗔𝗡𝗦𝗪𝗘𝗥!\n\n💰 Added Balance: $0\n\n📌 𝗖𝗼𝗿𝗿𝗲𝗰𝘁 𝗔𝗻𝘀𝘄𝗲𝗿: ${stylishAns}`);

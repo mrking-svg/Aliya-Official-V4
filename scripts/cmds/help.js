@@ -182,7 +182,7 @@ function buildMenuMessage(list, page, prefix) {
 module.exports = {
 	config: {
 		name: "help",
-		aliases: ["menu-base", "cmds-base", "menu"],
+		aliases: ["menu-base", "cmds-base"],
 		version: "4.1.0",
 		author: "0xMr_King x ┃ Tanin Islam",
 		countDown: 5,

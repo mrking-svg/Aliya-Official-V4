@@ -66,7 +66,8 @@ module.exports = {
 		if (formatText(event.body) == formatText(wordcomplete)) {
 			global.GoatBot.onReply.delete(messageID);
 			await usersData.addMoney(event.senderID, envCommands[commandName].reward);
-			message.reply(getLang("correct", envCommands[commandName].reward));
+			const rewardText = global.utils?.formatCompact ? global.utils.formatCompact(envCommands[commandName].reward) : envCommands[commandName].reward;
+			message.reply(getLang("correct", rewardText));
 		}
 		else
 			message.reply(getLang("wrong"));

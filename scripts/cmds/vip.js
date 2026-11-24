@@ -26,6 +26,9 @@ const formatDate = ts => {
 };
 
 const formatMoney = n => {
+  if (global.utils && typeof global.utils.formatCompact === "function")
+    return global.utils.formatCompact(n);
+  if (n >= 1e12) return `${(n / 1e12).toFixed(n % 1e12 ? 1 : 0)}T`;
   if (n >= 1e9) return `${(n / 1e9).toFixed(n % 1e9 ? 1 : 0)}B`;
   if (n >= 1e6) return `${(n / 1e6).toFixed(n % 1e6 ? 1 : 0)}M`;
   if (n >= 1e3) return `${(n / 1e3).toFixed(n % 1e3 ? 1 : 0)}K`;

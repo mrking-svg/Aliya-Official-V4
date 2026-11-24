@@ -114,7 +114,7 @@ module.exports = {
       const correctMsg = await toFont(`🌸 You answered correctly! 🎉
 
 ✅ Correct answer!
-💰 +${rewardCoin} Coins
+💰 +${global.utils?.formatCompact ? global.utils.formatCompact(rewardCoin) : rewardCoin} Coins
 🌟 +${rewardExp} EXP
 
 🔥 Sakura Haruka approves your skills!`);

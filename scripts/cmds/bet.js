@@ -1,5 +1,12 @@
 const axios = require("axios");
 
+const compact = n => (global.utils && typeof global.utils.formatCompact === "function")
+	? global.utils.formatCompact(n)
+	: String(Math.round(Number(n) || 0)); // economy fallback
+const parseBet = v => (global.utils && typeof global.utils.parseMoney === "function")
+	? global.utils.parseMoney(v)
+	: parseInt(v, 10); // economy fallback
+
 // API URL
 const API_URL = "https://balance-bot-api.onrender.com";
 
@@ -57,14 +64,14 @@ module.exports = {
     }
 
     // ✅ /spin <amount>
-    const betAmount = parseInt(subCommand);
+    const betAmount = parseBet(subCommand);
     if (isNaN(betAmount) || betAmount <= 0) {
       return message.reply("❌ Usage:\n/spin <amount>\n/spin top");
     }
 
     let balance = await getBalance(senderID);
     if (balance < betAmount) {
-      return message.reply(`❌ Not enough money.\n💰 Your balance: ${balance} $`);
+      return message.reply(`❌ Not enough money.\n💰 Your balance: ${compact(balance)} $`);
     }
 
     // Deduct bet first
@@ -94,9 +101,9 @@ module.exports = {
 
     return message.reply(
 `${outcome.text}
-🎰 You bet: ${betAmount} $
-💸 You won: ${reward} $
-💰 New balance: ${newBalance} $`
+🎰 You bet: ${compact(betAmount)} $
+💸 You won: ${compact(reward)} $
+💰 New balance: ${compact(newBalance)} $`
     );
   }
 };

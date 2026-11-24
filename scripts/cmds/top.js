@@ -11,6 +11,8 @@ function shortName(name, maxLength = 18) {
 }
 
 function formatMoney(amount) {
+  if (global.utils && typeof global.utils.formatCompact === "function")
+    return "$" + global.utils.formatCompact(amount);
   if (amount < 1000) return "$" + amount;
   if (amount < 1000000) return "$" + (amount / 1000).toFixed(2) + "K";
   if (amount < 1000000000) return "$" + (amount / 1000000).toFixed(2) + "M";

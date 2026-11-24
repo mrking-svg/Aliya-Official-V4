@@ -73,7 +73,8 @@ module.exports = {
                         userData.exp += getExp;
                         await usersData.set(event.senderID, userData);
 
-                        return api.sendMessage(getLang("correct", getCoin, getExp), event.threadID, event.messageID);
+                        const coinText = global.utils?.formatCompact ? global.utils.formatCompact(getCoin) : getCoin;
+                        return api.sendMessage(getLang("correct", coinText, getExp), event.threadID, event.messageID);
                 } else {
                         return api.sendMessage(getLang("wrong", actorNames.join(", ")), event.threadID, event.messageID);
                 }

@@ -55,7 +55,8 @@ module.exports = {
 
       message.unsend(messageID);
 
-      message.reply(`✅ | Correct baby.\nYou won ${reward}$`);
+      const rewardText = global.utils?.formatCompact ? global.utils.formatCompact(reward) : reward;
+      message.reply(`✅ | Correct baby.\nYou won $${rewardText}`);
     } else {
       message.unsend(messageID);
       message.reply(`❌ | Wrong Answer baby\nThe Correct answer was: ${answer}`);

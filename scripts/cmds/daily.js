@@ -7,10 +7,13 @@ const moment = require("moment-timezone");
 
 const DAILY_REWARD = { coin: 5000, exp: 300 };
 const DAY_KEY_FORMAT = "DD/MM/YYYY";
+// Imgur returned 429 for these links. Use the same reliable Google Drive image
+// source as top.js, with a second host as fallback and a local runtime cache.
 const BACKGROUND_URLS = [
-	"https://i.imgur.com/lqiS5Jj.jpeg", //[span_0](start_span)[span_0](end_span)
-	"https://i.imgur.com/vZr0Ywo.jpeg" //[span_1](start_span)[span_1](end_span)
+	"https://lh3.googleusercontent.com/d/1xJse_WHLrgUDfKUVUZfAvE3EctB40QZx",
+	"https://drive.google.com/uc?export=download&id=1xJse_WHLrgUDfKUVUZfAvE3EctB40QZx"
 ];
+const BACKGROUND_CACHE = path.join(__dirname, "cache", "daily_background.img");
 
 const BOLD_MAP = (() => {
 	const map = {};
@@ -24,15 +27,32 @@ function bold(text) {
 	return Array.from(String(text == null ? "" : text)).map(c => BOLD_MAP[c] || c).join("");
 }
 
+// Full clear = exactly 20M. Rewards are split by effort: 200 messages is the
+// biggest grind, then the 40x slot / 30x dice marathons, then quiz games.
 const TASKS = [
-	{ key: "slot", title: "Play Slot", detail: "Play slot 40 times", target: 40, reward: 1000000, match: n => n === "slot" }, //[span_2](start_span)[span_2](end_span)
-	{ key: "dice", title: "Play Dice", detail: "Play dice 30 times", target: 30, reward: 1000000, match: n => n === "dice" || n === "roll" }, //[span_3](start_span)[span_3](end_span)
-	{ key: "msg1", title: "Give 1 Msg", detail: "Give 1 msg", target: 1, reward: 10000, message: true }, //[span_4](start_span)[span_4](end_span)
-	{ key: "msg200", title: "Msg 200 Times", detail: "Msg 200 times", target: 200, reward: 2000000, message: true }, //[span_5](start_span)[span_5](end_span)
-	{ key: "wifuvid", title: "Use Wifuvid", detail: "Use wifuvid 10 times", target: 10, reward: 1000000, match: n => n === "wifuvid" }, //[span_6](start_span)[span_6](end_span)
-	{ key: "pair", title: "Use Pair Cmds", detail: "Use any pair command", target: 1, reward: 1000000, match: n => /^pair/.test(n) }, //[span_7](start_span)[span_7](end_span)
-	{ key: "word", title: "Play Word Game", detail: "Play word game 20 times", target: 20, reward: 50000, match: n => ["word", "wordgame", "wordle", "unscramble"].includes(n) } //[span_8](start_span)[span_8](end_span)
+	{ key: "slot", title: "Play Slot", detail: "Play slot 40 times", target: 40, reward: 2500000, match: n => n === "slot" },
+	{ key: "dice", title: "Play Dice", detail: "Play dice 30 times", target: 30, reward: 2000000, match: n => n === "dice" || n === "roll" },
+	{ key: "msg1", title: "Give 1 Msg", detail: "Give 1 msg", target: 1, reward: 100000, message: true },
+	{ key: "msg200", title: "Msg 200 Times", detail: "Msg 200 times", target: 200, reward: 4000000, message: true },
+	{ key: "wifuvid", title: "Use Wifuvid", detail: "Use wifuvid 10 times", target: 10, reward: 1000000, match: n => n === "wifuvid" },
+	{ key: "pair", title: "Use Pair Cmds", detail: "Use any pair command", target: 1, reward: 1000000, match: n => /^pair/.test(n) },
+	{ key: "word", title: "Word Puzzle", detail: "Play word 20 times", target: 20, reward: 1000000, match: n => ["word", "wordle", "unscramble"].includes(n) },
+	{ key: "quiz", title: "General Quiz", detail: "Play quiz 10 times", target: 10, reward: 1000000, match: n => n === "quiz" || n === "quizgame" },
+	{ key: "mathgame", title: "Math Quiz", detail: "Play mathgame 10 times", target: 10, reward: 800000, match: n => n === "mathgame" },
+	{ key: "math", title: "Math Duel", detail: "Play math 10 times", target: 10, reward: 800000, match: n => n === "math" },
+	{ key: "wbquiz", title: "Weeb Quiz", detail: "Play wbquiz 10 times", target: 10, reward: 800000, match: n => n === "wbquiz" },
+	{ key: "flagquiz", title: "Flag Quiz", detail: "Play flagquiz 10 times", target: 10, reward: 800000, match: n => n === "flagquiz" },
+	{ key: "animequiz", title: "Anime Quiz", detail: "Play animequiz 5 times", target: 5, reward: 600000, match: n => n === "animequiz" },
+	{ key: "ffqz2", title: "Free Fire Quiz", detail: "Play ffqz2 5 times", target: 5, reward: 600000, match: n => n === "ffqz2" },
+	{ key: "narutoquiz", title: "Naruto Quiz", detail: "Play narutoquiz 5 times", target: 5, reward: 600000, match: n => n === "narutoquiz" },
+	{ key: "flaggame", title: "Flag Game", detail: "Play flaggame 10 times", target: 10, reward: 600000, match: n => n === "flaggame" },
+	{ key: "guessnumber", title: "Guess Number", detail: "Play guessnumber 10 times", target: 10, reward: 500000, match: n => n === "guessnumber" },
+	{ key: "cartoongame", title: "Cartoon Quiz", detail: "Play cartoongame 10 times", target: 10, reward: 500000, match: n => n === "cartoongame" },
+	{ key: "animalgame", title: "Animal Quiz", detail: "Play animalgame 10 times", target: 10, reward: 400000, match: n => n === "animalgame" },
+	{ key: "wordgame", title: "Word Game", detail: "Play wordgame 10 times", target: 10, reward: 400000, match: n => n === "wordgame" }
 ];
+
+const FULL_CLEAR_REWARD = TASKS.reduce((sum, task) => sum + task.reward, 0);
 
 const TASK_CAPTION = bold("Here is your daily task bby"); //[span_9](start_span)[span_9](end_span)
 
@@ -45,9 +65,14 @@ function safePrefix(prefix) {
 }
 
 function moneyText(n) {
-	if (n >= 1e6) return (n / 1e6).toFixed(n % 1e6 ? 1 : 0) + "m"; //[span_12](start_span)[span_12](end_span)
-	if (n >= 1e3) return (n / 1e3).toFixed(n % 1e3 ? 1 : 0) + "k"; //[span_13](start_span)[span_13](end_span)
-	return String(n); //[span_14](start_span)[span_14](end_span)
+	if (global.utils && typeof global.utils.formatCompact === "function")
+		return global.utils.formatCompact(n); //[span_12](start_span)[span_12](end_span)
+	const v = Number(n) || 0; //[span_13](start_span)[span_13](end_span)
+	if (v >= 1e12) return (v / 1e12).toFixed(2) + "T"; // extra guard
+	if (v >= 1e9) return (v / 1e9).toFixed(2) + "B"; // extra guard
+	if (v >= 1e6) return (v / 1e6).toFixed(2) + "M"; // extra guard
+	if (v >= 1e3) return (v / 1e3).toFixed(2) + "K"; // extra guard
+	return String(Math.round(v)); //[span_14](start_span)[span_14](end_span)
 }
 
 function ensureState(user) {
@@ -114,17 +139,39 @@ if (!global.__aliyaDailyTaskTracker) {
 
 async function fetchBuffer(url, timeout) {
 	const r = await axios.get(url, { responseType: "arraybuffer", timeout: timeout || 12000 }); //[span_56](start_span)[span_56](end_span)
-	return Buffer.from(r.data); //[span_57](start_span)[span_57](end_span)
+	const buf = Buffer.from(r.data); //[span_57](start_span)[span_57](end_span)
+	const contentType = String(r.headers?.["content-type"] || "").toLowerCase(); // extra guard
+	const isImageType = contentType.startsWith("image/"); // extra guard
+	const isJPEG = buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff; // extra guard
+	const isPNG = buf.length > 8 && buf.subarray(1, 4).toString() === "PNG"; // extra guard
+	if (!isImageType && !isJPEG && !isPNG) throw new Error("Not an image response: " + contentType); // extra guard
+	return buf;
 }
 
 async function loadRandomBackgroundBuffer() {
-	const shuffled = [...BACKGROUND_URLS].sort(() => Math.random() - 0.5); //[span_58](start_span)[span_58](end_span)
-	for (const url of shuffled) { //[span_59](start_span)[span_59](end_span)
-		try {
-			return await fetchBuffer(url, 12000); //[span_60](start_span)[span_60](end_span)
-		} catch (e) { } //[span_61](start_span)[span_61](end_span)
+	// 1. Runtime cache first — a successful download is reused on later calls.
+	try {
+		if (fs.existsSync(BACKGROUND_CACHE)) {
+			const cached = fs.readFileSync(BACKGROUND_CACHE);
+			if (cached.length > 4096) return cached;
+		}
 	}
-	return null; //[span_62](start_span)[span_62](end_span)
+	catch (e) { /* cache is optional */ }
+
+	// 2. Try every working source (not Imgur — it rate-limits this bot).
+	for (const url of BACKGROUND_URLS) {
+		try {
+			const buf = await fetchBuffer(url, 15000);
+			try {
+				fs.ensureDirSync(path.dirname(BACKGROUND_CACHE));
+				fs.writeFileSync(BACKGROUND_CACHE, buf);
+			}
+			catch (e) { /* cache write failure must not break the card */ }
+			return buf;
+		}
+		catch (e) { /* try the next source */ }
+	}
+	return null;
 }
 
 async function getAvatarBuffer(usersData, uid) {
@@ -168,23 +215,32 @@ function statusOf(task, state) {
 
 async function imageCard(name, uid, tasks, state, prefix, avatarBuf) {
 	let canvasLib;
-	try { canvasLib = require("canvas"); } //[span_87](start_span)[span_87](end_span)
-	catch (e) { return null; } //[span_88](start_span)[span_88](end_span)
+	try { canvasLib = require("canvas"); }
+	catch (e) { return null; }
 	const { createCanvas, loadImage } = canvasLib;
-	const W = 920;
+
+	const W = 1100;
 	const headerBoxH = 148;
 	const padX = 36;
-	const rowH = 104;
+	const colGap = 20;
+	const boxW = (W - padX * 2 - colGap) / 2;
+	const rowH = 92;
 	const rowGap = 10;
-	const H = 28 + headerBoxH + 18 + tasks.length * (rowH + rowGap) + 56;
+	const leftCount = Math.ceil(tasks.length / 2);
+	const rows = leftCount;
+	const startY = 28 + headerBoxH + 34;
+	const H = startY + rows * (rowH + rowGap) + 56;
 	const canvas = createCanvas(W, H);
 	const ctx = canvas.getContext("2d");
 
 	let bg = null;
 	try {
-		const bgBuf = await loadRandomBackgroundBuffer(); //[span_89](start_span)[span_89](end_span)
-		if (bgBuf) bg = await loadImage(bgBuf); //[span_90](start_span)[span_90](end_span)
-	} catch (e) { bg = null; } //[span_91](start_span)[span_91](end_span)
+		const bgBuf = await loadRandomBackgroundBuffer();
+		if (bgBuf) {
+			bg = await loadImage(bgBuf);
+			if (!bg.width || !bg.height || bg.width < 100 || bg.height < 100) bg = null;
+		}
+	} catch (e) { bg = null; }
 
 	if (bg) {
 		const s = Math.max(W / bg.width, H / bg.height);
@@ -199,7 +255,7 @@ async function imageCard(name, uid, tasks, state, prefix, avatarBuf) {
 		ctx.fillRect(0, 0, W, H);
 	}
 
-	ctx.fillStyle = "rgba(6, 11, 24, 0.56)";
+	ctx.fillStyle = "rgba(6, 11, 24, 0.42)";
 	ctx.fillRect(0, 0, W, H);
 
 	ctx.save();
@@ -213,8 +269,8 @@ async function imageCard(name, uid, tasks, state, prefix, avatarBuf) {
 
 	let avatar = null;
 	if (avatarBuf) {
-		try { avatar = await loadImage(avatarBuf); } //[span_92](start_span)[span_92](end_span)
-		catch (e) { avatar = null; } //[span_93](start_span)[span_93](end_span)
+		try { avatar = await loadImage(avatarBuf); }
+		catch (e) { avatar = null; }
 	}
 
 	const avCX = padX + 74;
@@ -247,84 +303,89 @@ async function imageCard(name, uid, tasks, state, prefix, avatarBuf) {
 
 	ctx.textAlign = "left";
 	ctx.fillStyle = "#ffffff";
-	ctx.font = "bold 32px Arial";
-	ctx.fillText(shortName(name, 24), padX + 140, 74);
+	ctx.font = "bold 34px Arial";
+	ctx.fillText(shortName(name, 28), padX + 140, 74);
 
 	ctx.fillStyle = "#ffd86b";
 	ctx.font = "bold 20px Arial";
-	ctx.fillText("ALIYA V4 DAILY TASK BOXES", padX + 140, 108);
+	ctx.fillText(`ALIYA V4 • 20 TASKS • FULL CLEAR $${moneyText(FULL_CLEAR_REWARD)}`, padX + 140, 109);
 
 	ctx.fillStyle = "rgba(215, 234, 255, 0.80)";
 	ctx.font = "bold 17px Arial";
-	ctx.fillText(`UID: ${uid}  •  ${dayKey()}`, padX + 140, 138); //[span_94](start_span)[span_94](end_span)
+	ctx.fillText(`UID: ${uid}  •  ${dayKey()}`, padX + 140, 139);
 
-	let y = 28 + headerBoxH + 18;
+	ctx.textAlign = "left";
+	ctx.font = "bold 18px Arial";
+	ctx.fillStyle = "#8fd0ff";
+	ctx.fillText("╔══ TASKS 01-10 ══╗", padX, 28 + headerBoxH + 24);
+	ctx.fillStyle = "#ffd86b";
+	ctx.fillText("╔══ TASKS 11-20 ══╗", padX + boxW + colGap, 28 + headerBoxH + 24);
+
 	tasks.forEach((t, i) => {
-		const done = Math.min(Number(state.progress[t.key] || 0), t.target); //[span_95](start_span)[span_95](end_span)
-		const st = statusOf(t, state); //[span_96](start_span)[span_96](end_span)
-		const boxX = padX;
-		const boxW = W - padX * 2;
+		const done = Math.min(Number(state.progress[t.key] || 0), t.target);
+		const st = statusOf(t, state);
+		const col = i < leftCount ? 0 : 1;
+		const row = col === 0 ? i : i - leftCount;
+		const boxX = padX + col * (boxW + colGap);
+		const y = startY + row * (rowH + rowGap);
 
 		ctx.save();
-		ctx.fillStyle = "rgba(13, 21, 40, 0.78)";
-		rr(ctx, boxX, y, boxW, rowH, 16);
+		ctx.fillStyle = "rgba(13, 21, 40, 0.80)";
+		rr(ctx, boxX, y, boxW, rowH, 14);
 		ctx.fill();
 		ctx.strokeStyle = "rgba(255, 255, 255, 0.20)";
-		ctx.lineWidth = 1.5;
+		ctx.lineWidth = 1.4;
 		ctx.stroke();
 
 		ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
-		rr(ctx, boxX + 16, y + 18, 48, 48, 12);
+		rr(ctx, boxX + 12, y + 18, 42, 42, 10);
 		ctx.fill();
 		ctx.fillStyle = "#ffd86b";
-		ctx.font = "bold 22px Arial";
+		ctx.font = "bold 20px Arial";
 		ctx.textAlign = "center";
-		ctx.fillText(`#${i + 1}`, boxX + 40, y + 50);
+		ctx.fillText(String(i + 1).padStart(2, "0"), boxX + 33, y + 45);
 
-		const badgeW = 136;
-		const badgeH = 30;
-		const badgeX = boxX + boxW - badgeW - 18;
-		const badgeY = y + 16;
+		const badgeW = 110;
+		const badgeH = 26;
+		const badgeX = boxX + boxW - badgeW - 14;
+		const badgeY = y + 12;
 		ctx.fillStyle = st.bg;
-		rr(ctx, badgeX, badgeY, badgeW, badgeH, 10);
+		rr(ctx, badgeX, badgeY, badgeW, badgeH, 8);
 		ctx.fill();
 		ctx.strokeStyle = st.color;
-		ctx.lineWidth = 1.2;
+		ctx.lineWidth = 1.1;
 		ctx.stroke();
 		ctx.fillStyle = st.color;
-		ctx.font = "bold 14px Arial";
-		ctx.textAlign = "center";
-		ctx.fillText(st.label, badgeX + badgeW / 2, badgeY + 20);
+		ctx.font = "bold 12px Arial";
+		ctx.fillText(st.label, badgeX + badgeW / 2, badgeY + 18);
 
 		ctx.textAlign = "left";
 		ctx.fillStyle = "#ffffff";
-		ctx.font = "bold 23px Arial";
-		ctx.fillText(t.title, boxX + 78, y + 39);
+		ctx.font = "bold 19px Arial";
+		ctx.fillText(t.title, boxX + 64, y + 32, boxW - 190);
 
 		ctx.fillStyle = "rgba(220, 235, 252, 0.88)";
-		ctx.font = "bold 17px Arial";
-		ctx.fillText(`${t.detail}  (${done}/${t.target})`, boxX + 78, y + 65);
+		ctx.font = "bold 14px Arial";
+		ctx.fillText(`${t.detail}  (${done}/${t.target})`, boxX + 64, y + 56, boxW - 190);
 
 		ctx.textAlign = "right";
 		ctx.fillStyle = "#ffd86b";
-		ctx.font = "bold 20px Arial";
-		ctx.fillText(`+${moneyText(t.reward)}`, boxX + boxW - 18, y + 66); //[span_97](start_span)[span_97](end_span)
+		ctx.font = "bold 16px Arial";
+		ctx.fillText(`+${moneyText(t.reward)}`, boxX + boxW - 14, y + 57);
 
-		const bx = boxX + 18;
-		const by = y + rowH - 20;
-		const bw = boxW - 36;
-		const bh = 8;
+		const bx = boxX + 16;
+		const by = y + rowH - 15;
+		const bw = boxW - 32;
+		const bh = 7;
 		ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
 		rr(ctx, bx, by, bw, bh, 4);
 		ctx.fill();
 		if (done > 0) {
 			ctx.fillStyle = st.color;
-			rr(ctx, bx, by, Math.max(10, bw * (done / t.target)), bh, 4);
+			rr(ctx, bx, by, Math.max(8, bw * (done / t.target)), bh, 4);
 			ctx.fill();
 		}
 		ctx.restore();
-
-		y += rowH + rowGap;
 	});
 
 	ctx.save();
@@ -350,7 +411,7 @@ module.exports = {
 		role: 0,
 		description: { en: "Daily reward and daily task card" }, //[span_99](start_span)[span_99](end_span)
 		category: "game", //[span_100](start_span)[span_100](end_span)
-		guide: { en: "{pn} | {pn} task | {pn} claim all | {pn} claim <1-7>" } //[span_101](start_span)[span_101](end_span)
+		guide: { en: "{pn} | {pn} task | {pn} claim all | {pn} claim <1-20>" }
 	},
 
 	onStart: async function ({ api, event, args, message, usersData, prefix }) {
@@ -373,14 +434,15 @@ module.exports = {
 				if (sub === "info")
 					return reply(
 						bold("DAILY INFO") + "\n" +
-						bold("Reward") + `: ${DAILY_REWARD.coin} coin, ${DAILY_REWARD.exp} exp once per day\n` + //[span_111](start_span)[span_111](end_span)
-						bold("Tasks") + ": 7 fixed tasks, reset every day\n" + //[span_112](start_span)[span_112](end_span)
-						bold("View") + `: ${p}daily task\n` + //[span_113](start_span)[span_113](end_span)
-						bold("Claim") + `: ${p}daily claim all | ${p}daily claim 1` //[span_114](start_span)[span_114](end_span)
+						bold("Reward") + `: ${moneyText(DAILY_REWARD.coin)} coin, ${DAILY_REWARD.exp} exp once per day\n` + //[span_111](start_span)[span_111](end_span)
+						bold("Tasks") + `: ${TASKS.length} fixed tasks (10 left, 10 right) with quiz games, reset every day\n` +
+						bold("Full clear") + `: $${moneyText(FULL_CLEAR_REWARD)} total task rewards\n` +
+						bold("View") + `: ${p}daily task\n` +
+						bold("Claim") + `: ${p}daily claim all | ${p}daily claim <1-${TASKS.length}>`
 					);
 
 				if (state.lastDaily === date)
-					return reply(bold("ALREADY RECEIVED") + "\nYou already claimed today's " + DAILY_REWARD.coin + " coin and " + DAILY_REWARD.exp + " exp.\nCome back tomorrow."); //[span_115](start_span)[span_115](end_span)
+					return reply(bold("ALREADY RECEIVED") + "\nYou already claimed today's " + moneyText(DAILY_REWARD.coin) + " coin and " + DAILY_REWARD.exp + " exp.\nCome back tomorrow."); //[span_115](start_span)[span_115](end_span)
 
 				state.lastDaily = date; //[span_116](start_span)[span_116](end_span)
 				await usersData.set(senderID, {
@@ -392,7 +454,7 @@ module.exports = {
 				return reply(
 					bold("DAILY REWARD CLAIMED") + "\n" +
 					bold("User") + ": " + (user.name || "Facebook User") + "\n" + //[span_120](start_span)[span_120](end_span)
-					bold("Coin") + ": +" + DAILY_REWARD.coin + "\n" + //[span_121](start_span)[span_121](end_span)
+					bold("Coin") + ": +" + moneyText(DAILY_REWARD.coin) + "\n" + //[span_121](start_span)[span_121](end_span)
 					bold("Exp") + ": +" + DAILY_REWARD.exp + "\n" + //[span_122](start_span)[span_122](end_span)
 					bold("Made with") + " 🤍 " + bold("by") + " 0xMr_King x ┃ Tanin Islam" //[span_123](start_span)[span_123](end_span)
 				);
@@ -473,10 +535,10 @@ module.exports = {
 			}
 
 			return reply(bold("DAILY COMMANDS") + "\n" +
-				`${p}daily - claim ${DAILY_REWARD.coin} coin and ${DAILY_REWARD.exp} exp\n` + //[span_165](start_span)[span_165](end_span)
-				`${p}daily task - view your 7 daily tasks\n` + //[span_166](start_span)[span_166](end_span)
-				`${p}daily claim all - claim all finished tasks\n` + //[span_167](start_span)[span_167](end_span)
-				`${p}daily claim 1 - claim task 1`); //[span_168](start_span)[span_168](end_span)
+				`${p}daily - claim ${moneyText(DAILY_REWARD.coin)} coin and ${DAILY_REWARD.exp} exp\n` +
+				`${p}daily task - view your ${TASKS.length} daily tasks (full clear $${moneyText(FULL_CLEAR_REWARD)})\n` +
+				`${p}daily claim all - claim all finished tasks\n` +
+				`${p}daily claim 1 - claim task 1 to ${TASKS.length}`);
 		} catch (err) {
 			console.error("[daily]", err); //[span_169](start_span)[span_169](end_span)
 			try { api.setMessageReaction("❌", messageID, () => {}, true); } //[span_170](start_span)[span_170](end_span)

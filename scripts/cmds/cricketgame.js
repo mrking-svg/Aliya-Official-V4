@@ -44,7 +44,7 @@ module.exports = {
         });
 
         return api.sendMessage(
-          `✅ | Correct answer baby.\nYou have earned ${getCoin} coins and ${getExp} exp.`,
+          `✅ | Correct answer baby.\nYou have earned ${global.utils?.formatCompact ? global.utils.formatCompact(getCoin) : getCoin} coins and ${getExp} exp.`,
           event.threadID,
           event.messageID
         );

@@ -36,6 +36,8 @@ async function loseGame(userID, amount) {
 // ✅ Format balance (SAFE)
 function formatBalance(num) {
   const n = typeof num === "number" && !isNaN(num) ? num : 0;
+  if (global.utils && typeof global.utils.formatCompact === "function")
+    return global.utils.formatCompact(n) + " $";
   return n.toLocaleString("en-US") + " $";
 }
 

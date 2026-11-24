@@ -211,6 +211,41 @@ function formatNumber(number) {
 	return number.toLocaleString(regionCode || "en-US");
 }
 
+// Economy helpers: 1.5K / 2.3M / 4.7B / 9.1T
+function formatCompact(number) {
+	const n = Number(number) || 0;
+	const abs = Math.abs(n);
+	const units = [
+		{ value: 1e12, suffix: "T" },
+		{ value: 1e9, suffix: "B" },
+		{ value: 1e6, suffix: "M" },
+		{ value: 1e3, suffix: "K" }
+	];
+	for (const unit of units) {
+		if (abs >= unit.value) {
+			const scaled = n / unit.value;
+			const digits = Math.abs(scaled) >= 100 ? 0 : Math.abs(scaled) >= 10 ? 1 : 2;
+			return `${Number(scaled.toFixed(digits))}${unit.suffix}`;
+		}
+	}
+	return String(Math.round(n));
+}
+
+function formatMoney(number, currency = "$") {
+	return `${currency}${formatCompact(number)}`;
+}
+
+// Accepts: 1500, "1.5k", "2m", "3.4B", "1t", "$10K", "1,000"
+function parseMoney(value) {
+	if (typeof value === "number") return Number.isFinite(value) ? Math.floor(value) : NaN;
+	if (value === null || value === undefined) return NaN;
+	const raw = String(value).trim().replace(/[$,]/g, "").toLowerCase();
+	const match = raw.match(/^(\d+(?:\.\d+)?)\s*([kmbt]?)$/);
+	if (!match) return NaN;
+	const multipliers = { k: 1e3, m: 1e6, b: 1e9, t: 1e12 };
+	return Math.floor(Number(match[1]) * (multipliers[match[2]] || 1));
+}
+
 function getExtFromAttachmentType(type) {
 	switch (type) {
 		case "photo":
@@ -1153,6 +1188,9 @@ const utils = {
 	defaultStderrClearLine,
 	enableStderrClearLine,
 	formatNumber,
+	formatCompact,
+	formatMoney,
+	parseMoney,
 	getExtFromAttachmentType,
 	getExtFromMimeType,
 	getExtFromUrl,

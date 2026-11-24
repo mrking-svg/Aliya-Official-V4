@@ -115,10 +115,11 @@ module.exports = {
       userData.exp += rewardExp;
       await usersData.set(event.senderID, userData);
 
+      const rewardCoinText = global.utils?.formatCompact ? global.utils.formatCompact(rewardCoin) : rewardCoin;
       const correctMsg = await toFont(`🍥 Dattebayo! 🎉
 
 ✅ You answered correctly!
-💰 +${rewardCoin} Coins
+💰 +${rewardCoinText} Coins
 🌟 +${rewardExp} EXP
 
 🔥 You truly know your Naruto world!`);

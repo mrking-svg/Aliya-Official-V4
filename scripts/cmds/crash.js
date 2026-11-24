@@ -1,3 +1,10 @@
+const compact = n => (global.utils && typeof global.utils.formatCompact === "function")
+  ? global.utils.formatCompact(n)
+  : String(Math.round(Number(n) || 0));
+const parseBet = v => (global.utils && typeof global.utils.parseMoney === "function")
+  ? global.utils.parseMoney(v)
+  : parseInt(v, 10);
+
 const multipliers = [
   1.10, 1.25, 1.50, 1.75, 2.00,
   2.50, 3.00, 4.00, 5.00, 7.00,
@@ -20,7 +27,7 @@ module.exports = {
   },
 
   onStart: async function ({ message, event, args, usersData }) {
-    const bet = parseInt(args[0]);
+    const bet = parseBet(args[0]);
 
     if (isNaN(bet) || bet < 100)
       return message.reply("❌ Minimum bet is 100 coins.");
@@ -48,12 +55,12 @@ module.exports = {
       return message.reply(
 `🚀 CRASH GAME
 
-💸 Bet: ${bet} coins
+💸 Bet: ${compact(bet)} coins
 📈 Cash Out: ${cashOut}x
 💥 Crash: ${crashPoint}x
 
-🎉 You won ${reward} coins!
-💰 Profit: ${profit} coins`
+🎉 You won ${compact(reward)} coins!
+💰 Profit: ${compact(profit)} coins`
       );
     } else {
       money -= bet;
@@ -66,11 +73,11 @@ module.exports = {
       return message.reply(
 `🚀 CRASH GAME
 
-💸 Bet: ${bet} coins
+💸 Bet: ${compact(bet)} coins
 📈 Cash Out: ${cashOut}x
 💥 Crash: ${crashPoint}x
 
-💀 You lost ${bet} coins!`
+💀 You lost ${compact(bet)} coins!`
       );
     }
   }
