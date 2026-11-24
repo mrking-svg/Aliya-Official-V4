@@ -233,6 +233,42 @@ global.statusAccountBot = 'good';
 let changeFbStateByCode = false;
 let latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
 let dashBoardIsRunning = false;
+let accountReloginTimer = null;
+
+// Every write the bot itself makes to account.txt goes through here, so an
+// outside edit (a freshly pasted FB state for a different account) is always
+// detectable by comparing mtime. Never overwrite that outside state.
+function writeOwnAppState(state, why) {
+	const clean = filterKeysAppState(state);
+	if (!clean.length) return false;
+	changeFbStateByCode = true;
+	try {
+		writeFileSync(dirAccount, JSON.stringify(clean, null, 2));
+		latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
+		return true;
+	}
+	finally {
+		setTimeout(() => { changeFbStateByCode = false; }, 1000);
+	}
+}
+
+function scheduleAccountRelogin(reason) {
+	if (accountReloginTimer || global.__aliyaReloginBusy) return;
+	global.__aliyaReloginBusy = true;
+	accountReloginTimer = setTimeout(async () => {
+		accountReloginTimer = null;
+		try {
+			log.info("LOGIN FACEBOOK", `${reason}. Logging in again with the new account.txt state.`);
+			await startBot();
+		}
+		catch (err) {
+			log.err("LOGIN FACEBOOK", "Could not relogin with the new state", err);
+		}
+		finally {
+			global.__aliyaReloginBusy = false;
+		}
+	}, 1500);
+}
 
 
 async function getAppStateFromEmail(spin = { _start: () => { }, _stop: () => { } }, facebookAccount) {
@@ -639,10 +675,8 @@ async function startBot(loginWithEmail) {
 	log.info("LOGIN FACEBOOK", getText('login', 'currentlyLogged'));
 
 	let appState = await getAppStateToLogin(loginWithEmail);
-	changeFbStateByCode = true;
 	appState = filterKeysAppState(appState);
-	writeFileSync(dirAccount, JSON.stringify(appState, null, 2));
-	setTimeout(() => changeFbStateByCode = false, 1000);
+	writeOwnAppState(appState, "login");
 	// ——————————————————— LOGIN ———————————————————— //
 	(function loginBot(appState) {
 		global.GoatBot.commands = new Map();
@@ -671,9 +705,7 @@ async function startBot(loginWithEmail) {
 							const appState = await getAppStateFromEmail(undefined, facebookAccount);
 							if (facebookAccount.i_user)
 								pushI_user(appState, facebookAccount.i_user);
-							changeFbStateByCode = true;
-							writeFileSync(dirAccount, JSON.stringify(filterKeysAppState(appState), null, 2));
-							setTimeout(() => changeFbStateByCode = false, 1000);
+							writeOwnAppState(appState, "cookie refresh");
 							log.info("REFRESH COOKIE", getText('login', 'refreshCookieSuccess'));
 							return startBot(appState);
 						}
@@ -795,18 +827,29 @@ async function startBot(loginWithEmail) {
 			global.__aliyaCurrentApi = api;
 			function saveFreshAppState(why) {
 				if (!api || typeof api.getAppState !== "function") return;
+				// If the user pasted a new state (e.g. a new bot account after a
+				// suspension), keep it and switch to it instead of overwriting it
+				// with the old session cookies.
+				try {
+					const currentMtime = fs.statSync(dirAccount).mtimeMs;
+					if (currentMtime !== latestChangeContentAccount) {
+						log.warn("REFRESH FBSTATE", "account.txt was changed outside the bot. Keeping the new state and switching to it.");
+						latestChangeContentAccount = currentMtime;
+						scheduleAccountRelogin("New FB state detected");
+						return;
+					}
+				}
+				catch (_e) { /* account.txt check is best effort */ }
+
 				const fresh = filterKeysAppState(api.getAppState());
 				if (!fresh.length) return;
-				changeFbStateByCode = true;
 				try {
-					writeFileSync(dirAccount, JSON.stringify(fresh, null, 2));
-					latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
+					writeOwnAppState(fresh, why);
 					log.info("REFRESH FBSTATE", `${getText('login', 'refreshFbstateSuccess', path.basename(dirAccount))}${why === 'auto' ? ' (auto)' : ''}`);
 				}
 				catch (err) {
 					log.warn("REFRESH FBSTATE", getText('login', 'refreshFbstateError', path.basename(dirAccount)), err);
 				}
-				setTimeout(() => { changeFbStateByCode = false; }, 1000);
 			}
 
 			// Preserve the newest cookies on planned restarts too, but never
@@ -1227,19 +1270,34 @@ async function startBot(loginWithEmail) {
 		});
 	})(appState);
 
-	if (global.GoatBot.config.autoReloginWhenChangeAccount) {
+	// Always watch account.txt for an externally pasted state (e.g. a new
+	// account after the old bot ID was suspended). This must not depend on
+	// autoReloginWhenChangeAccount, which is off in the deployed config.
+	// Registered once only: startBot() is called again on every relogin.
+	if (!global.__aliyaAccountWatcher) {
+		global.__aliyaAccountWatcher = true;
 		setTimeout(function () {
-			watch(dirAccount, async (type) => {
-				if (type == 'change' && changeFbStateByCode == false && latestChangeContentAccount != fs.statSync(dirAccount).mtimeMs) {
-					clearInterval(global.intervalRestartListenMqtt);
-					global.compulsoryStopLisening = true;
-					// await stopListening();
-					latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
-					// process.exit(2);
-					startBot();
-				}
-			});
-		}, 10000);
+			try {
+				watch(dirAccount, async (type) => {
+					if (type !== 'change') return;
+					try {
+						const currentMtime = fs.statSync(dirAccount).mtimeMs;
+						// Self-writes update latestChangeContentAccount, so any
+						// mtime difference means the state came from outside.
+						if (currentMtime === latestChangeContentAccount || changeFbStateByCode) return;
+						latestChangeContentAccount = currentMtime;
+						log.warn("LOGIN FACEBOOK", "New account.txt state detected. Switching to the new state.");
+						scheduleAccountRelogin("New FB state detected");
+					}
+					catch (err) {
+						log.err("LOGIN FACEBOOK", "Could not read account.txt change", err);
+					}
+				});
+			}
+			catch (err) {
+				log.err("LOGIN FACEBOOK", "Could not watch account.txt", err);
+			}
+		}, 3000);
 	}
 }
 
