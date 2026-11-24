@@ -10,6 +10,10 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
 	const handlerEvents = require(handlerFile)(api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData);
 
 	return async function (event) {
+		// Ignore engine "ready" signal and any event without a type (no body/threadID)
+		if (!event || !event.type || event.type === "ready")
+			return;
+
 		// Anti-Inbox check
 		if (
 			global.GoatBot.config.antiInbox == true &&
