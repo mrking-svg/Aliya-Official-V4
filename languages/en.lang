@@ -58,6 +58,8 @@ login.listenMqttClose=ListenMQTT closed
 login.listenMqttCloseByUser=ListenMQTT closed by user
 login.retryCheckLiveCookie=Retrying to check cookie... %1
 login.startBotSuccess=Bot has been started successfully, start receiving messages from users
+login.notLoggedIn=Bot is not logged in to Facebook. Check the cookies in account.txt.
+login.userBanned=You are banned from using this bot.
 
 version.tooOldVersion=You are using a too old version of Goat-Bot, please update to the latest version by typing the command: %1 into the cmd/console/terminal/shell
 

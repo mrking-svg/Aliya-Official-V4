@@ -58,6 +58,8 @@ login.listenMqttClose=ListenMQTT বন্ধ করা হয়েছে
 login.listenMqttCloseByUser=ব্যবহারকারী দ্বারা ListenMQTT বন্ধ করা হয়েছে
 login.retryCheckLiveCookie=কুকি চেক করার জন্য পুনরায় চেষ্টা করা হচ্ছে... %1
 login.startBotSuccess=বট সফলভাবে শুরু হয়েছে, ব্যবহারকারীদের কাছ থেকে মেসেজ আসা শুরু হবে
+login.notLoggedIn=বটটি ফেসবুকে লগইন করা নেই। account.txt-এর কুকি চেক করুন।
+login.userBanned=আপনি এই বট ব্যবহার থেকে নিষিদ্ধ।
 
 version.tooOldVersion=আপনি Goat-Bot এর একটি অনেক পুরোনো ভার্সন ব্যবহার করছেন, অনুগ্রহ করে cmd/console/terminal/shell এ এই কমান্ডটি টাইপ করে লেটেস্ট ভার্সনে আপডেট করুন: %1
 
