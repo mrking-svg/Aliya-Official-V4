@@ -994,30 +994,27 @@ async function startBot(loginWithEmail) {
 			const { restartListenMqtt } = global.GoatBot.config;
 			let intervalCheckLiveCookieAndRelogin = false;
 			// —————— REAL READY CHECK (READY is sent only after Facebook MQTT really answers) —————— //
-			let mqttReady = false;
-			let mqttDeadline = null;
 			// Give cloud hosts (Render/Railway) enough time for a slow MQTT handshake.
 			// READY is now emitted on MQTT connect, so this is only a safety net.
 			const MQTT_FIRST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_FIRST_TIMEOUT_MS) || 300000;
-			const MQTT_LOST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_LOST_TIMEOUT_MS) || 300000;
-			function armMqttDeadline(ms, why) {
-				if (mqttDeadline) return;
-				mqttDeadline = setTimeout(() => {
-					log.err("MQTT_WATCHDOG", why + " Asking the supervisor to restart / switch account (exit 5).");
-					process.exit(5);
-				}, ms);
-			}
+			// A drop after READY is a transient listener problem, not a dead account.
+			// If it never recovers, restart this engine (exit 7) instead of asking the
+			// supervisor to switch accounts (exit 5).
+			const MQTT_LOST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_LOST_TIMEOUT_MS) || 15 * 60 * 1000;
+			const mqttWatchdog = require("./mqttWatchdog.js").createMqttWatchdog({
+				log,
+				onFatal: () => process.exit(5),
+				onSoft: () => process.exit(7)
+			});
 			function markMqttReady() {
-				if (mqttDeadline) { clearTimeout(mqttDeadline); mqttDeadline = null; }
-				if (!mqttReady) {
-					mqttReady = true;
+				if (mqttWatchdog.markReady()) {
 					log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
 					if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
 				}
 			}
 			function markMqttDown() {
-				mqttReady = false;
-				armMqttDeadline(MQTT_LOST_TIMEOUT_MS, "Listener has been down for " + Math.round(MQTT_LOST_TIMEOUT_MS / 1000) + "s.");
+				mqttWatchdog.markDown(MQTT_LOST_TIMEOUT_MS,
+					"Listener has been down for " + Math.round(MQTT_LOST_TIMEOUT_MS / 1000) + "s.");
 			}
 			// —————————————————— CALLBACK LISTEN —————————————————— //
 			async function callBackListen(error, event) {
@@ -1219,7 +1216,7 @@ async function startBot(loginWithEmail) {
 			try { if (typeof api.setOptions == "function") api.setOptions({ emitReady: true }); } catch (e) { /* ignore */ }
 			global.GoatBot.Listening = api.listenMqtt(createCallBackListen());
 			global.GoatBot.callBackListen = callBackListen;
-			armMqttDeadline(MQTT_FIRST_TIMEOUT_MS, "Facebook MQTT did not answer within " + Math.round(MQTT_FIRST_TIMEOUT_MS / 1000) + "s (cookie dead, checkpoint, or blocked).");
+			mqttWatchdog.arm(MQTT_FIRST_TIMEOUT_MS, "Facebook MQTT did not answer within " + Math.round(MQTT_FIRST_TIMEOUT_MS / 1000) + "s (cookie dead, checkpoint, or blocked).", true);
 			// ——————————————————— UPTIME ——————————————————— //
 			if (global.GoatBot.config.serverUptime.enable == true && !global.GoatBot.config.dashBoard?.enable && !global.serverUptimeRunning) {
 				const http = require('http');

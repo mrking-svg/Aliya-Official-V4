@@ -106,6 +106,10 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
   // kills a perfectly healthy bot after MQTT_FIRST_TIMEOUT_MS (3 minutes).
   let readyEmitted = false;
   let rTimeout = null;
+  // Set only right before our own scheduled mqttClient.end(). The error that
+  // end() emits belongs to the old socket and must not be reported as a
+  // listener failure (that used to arm the login watchdog for 5 minutes).
+  let reconnecting = false;
   function emitReady() {
     if (readyEmitted) return;
     readyEmitted = true;
@@ -135,6 +139,8 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     }
   }
   mqttClient.on('error', function(err) {
+    // Controlled reconnect: this socket is already being replaced.
+    if (reconnecting) return;
     try { stopListening(); }
     catch (e) { utils.error("listenMqtt stopListening", e); }
     if (ctx.globalOptions.autoReconnect) {
@@ -178,6 +184,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       rTimeout = null;
       // stopListening() may already have nulled the client on an MQTT error.
       if (!mqttClient) return;
+      reconnecting = true;
       try { mqttClient.end(); }
       catch (e) { utils.error("listenMqtt reconnect", e); }
       listenMqtt(defaultFuncs, api, ctx, globalCallback);
