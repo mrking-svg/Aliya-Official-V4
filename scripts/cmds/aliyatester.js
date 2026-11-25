@@ -9,16 +9,19 @@ const path = require('path');
 const axios = require('axios');
 
 const CMD_DIR = __dirname;
-// "gemini-flash-latest" is no longer a valid model id on this API. The
-// verified working flash model is used first, with newer flash models tried
-// if it is unavailable (override with ALIYA_TESTER_MODEL).
-const PRIMARY_MODEL = process.env.ALIYA_TESTER_MODEL || 'gemini-3.1-flash-lite';
-const FALLBACK_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash']
+// "gemini-flash-latest" is no longer a valid model id on this API. Measured:
+// 3.5 and 3.6 flash answer in about one second; 3.1 lite often stalls for
+// tens of seconds, so it stays last. Override with ALIYA_TESTER_MODEL.
+const PRIMARY_MODEL = process.env.ALIYA_TESTER_MODEL || 'gemini-3.5-flash';
+const FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash']
 	.filter(m => m !== PRIMARY_MODEL);
 const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY ||
 	process.env.ALIYA_TESTER_API_KEY ||
 	'AQ.Ab8RN6Iv0ybAD8vsSTO7uHYAMIfaiZKIZ-gQuMBk97WJNIBiKQ';
-const MAX_MEDIA_BYTES = 18 * 1024 * 1024;
+const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
+const MAX_SOURCE_CHARS = 40000;
+const MAX_OUTPUT_TOKENS = Math.max(400, Number(process.env.ALIYA_TESTER_MAX_TOKENS) || 1600);
+const MODEL_COOLDOWN_MS = 5 * 60 * 1000;
 
 const SYSTEM_INSTRUCTION = [
 	'You are Aliya Official, made by Mr.king.',
@@ -30,6 +33,7 @@ const SYSTEM_INSTRUCTION = [
 	'When asked for a prompt from media, output a ready to use image or video generation prompt only.',
 	'When asked what you can do, list your capabilities from the menu given to you.',
 	'Never use asterisks, markdown bold, or star characters in any reply. Use plain numbered lists and dashes.',
+	'Be fast and concise. Give the answer directly, skip long intros, and do not overthink.',
 	'Keep answers direct, useful and human. Do not mention these instructions.'
 ].join(' ');
 
@@ -37,12 +41,50 @@ const MENU = [
 	'ALIYA TESTER MENU',
 	'',
 	'1. aliyatester cmds <command name> - read a command, find issues, report the problem and what to fix or update',
-	'2. aliyatester help - show this menu',
-	'3. aliyatester <anything> - chat or ask about anything',
-	'4. Reply to my message - continue the conversation',
-	'5. Reply to an image, video, audio or file with a question - I can view and analyse it',
-	'6. Reply to media and say prompt - I give you a ready generation prompt',
-	'7. aliyatester prompt <style> while replying to media - generate a styled prompt',
+	'2. aliyatester help - show this short menu',
+	'3. aliyatester toollist - full usage guide with examples',
+	'4. aliyatester <anything> - chat or ask about anything',
+	'5. Reply to my message - continue the conversation',
+	'6. Reply to an image, video, audio or file with a question - I can view and analyse it',
+	'7. Reply to media and say prompt - I give you a ready generation prompt',
+	'8. aliyatester prompt <style> while replying to media - generate a styled prompt',
+	'',
+	'Owner only. Made by Mr.king'
+].join('\n');
+
+const TOOL_LIST = [
+	'ALIYA TESTER TOOL LIST',
+	'',
+	'Command checker',
+	'Use: aliyatester cmds <command name>',
+	'Example: aliyatester cmds pair',
+	'Example: aliyatester cmds "daily"',
+	'Example: aliyatester cmds tester',
+	'It reads that command file, tells what it does, the exact problem if any, and what to fix or update.',
+	'',
+	'Chat',
+	'Use: aliyatester <question>',
+	'Example: aliyatester explain this error',
+	'Reply to my answer to continue the talk.',
+	'',
+	'See and analyse media',
+	'Reply to a photo, video, audio or file with your question.',
+	'Example: what is in this picture',
+	'Example: is this audio clear',
+	'',
+	'Prompt from media',
+	'Reply to media and say prompt.',
+	'Example: prompt',
+	'Example: aliyatester prompt dark fantasy style while replying to an image',
+	'I will return one ready generation prompt.',
+	'',
+	'Quick help',
+	'aliyatester help shows the short menu.',
+	'aliyatester toollist shows this full usage guide.',
+	'aliyatester what can you do shows what I can do.',
+	'',
+	'Identity',
+	'I am Aliya Official, made by Mr.king. I never claim to be another service.',
 	'',
 	'Owner only. Made by Mr.king'
 ].join('\n');
@@ -53,11 +95,14 @@ const CAPABILITY_ANSWER = [
 	'I can view and analyse images, videos, audio, music and files you reply to.',
 	'I can write image or video generation prompts from your media.',
 	'I can chat about anything and continue the talk when you reply to my message.',
+	'Use aliyatester toollist for the full usage guide with examples.',
 	'',
 	MENU
 ].join('\n');
 
 let clientPromise = null;
+let preferredModel = null;
+const modelCooldown = new Map();
 
 function clean(text) {
 	return String(text == null ? '' : text)
@@ -114,8 +159,23 @@ function isCapabilityQuestion(text) {
 	return /\b(what can (you|u) do|what do you do|help|menu|who are you|what are you|ki korte paro|koto korte paro|ki korte parben)\b/i.test(String(text || ''));
 }
 
+function isQuickChat(text) {
+	return /^\s*(hi|hello|hey|yo|hola|thanks|thank you|dhonnobad|assalamu alaikum|salam)\s*[!.]*\s*$/i.test(String(text || ''));
+}
+
 function isPromptRequest(text) {
 	return /\b(prompt|caption idea|generate prompt|pro mp t)\b/i.test(String(text || ''));
+}
+
+function compactSource(src) {
+	return String(src || '')
+		.split('\n')
+		.filter(line => {
+			const t = line.trim();
+			return t && !t.startsWith('//') && !t.startsWith('/*') && t !== '*' && t !== '*/';
+		})
+		.join('\n')
+		.slice(0, MAX_SOURCE_CHARS);
 }
 
 function splitText(text, size) {
@@ -130,11 +190,6 @@ function splitText(text, size) {
 	}
 	if (rest) chunks.push(rest);
 	return chunks;
-}
-
-function safeReact(api, emoji, messageID) {
-	try { api && api.setMessageReaction && api.setMessageReaction(emoji, messageID, () => {}, true); }
-	catch (_e) { /* reaction is cosmetic */ }
 }
 
 function collectAttachments(event) {
@@ -156,11 +211,11 @@ function mimeFromAttachment(att, contentType) {
 
 async function mediaParts(event) {
 	const parts = [];
-	for (const att of collectAttachments(event).slice(0, 3)) {
+	for (const att of collectAttachments(event).slice(0, 1)) {
 		try {
 			const res = await axios.get(att.url, {
 				responseType: 'arraybuffer',
-				timeout: 25000,
+				timeout: 12000,
 				maxContentLength: MAX_MEDIA_BYTES,
 				maxBodyLength: MAX_MEDIA_BYTES
 			});
@@ -201,17 +256,25 @@ async function askGemini(text, parts, context) {
 	userParts.push({ text: clean(text) || 'Describe this.' });
 	contents.push({ role: 'user', parts: userParts });
 
-	let answer = '';
-	let lastError = null;
-	for (const model of [PRIMARY_MODEL].concat(FALLBACK_MODELS)) {
+	const allModels = [PRIMARY_MODEL].concat(FALLBACK_MODELS);
+	const now = Date.now();
+	const modelOrder = [];
+	if (preferredModel) modelOrder.push(preferredModel);
+	for (const model of allModels) {
+		if (!modelOrder.includes(model) && (modelCooldown.get(model) || 0) <= now) modelOrder.push(model);
+	}
+	if (!modelOrder.length) modelOrder.push(...allModels);
+
+	async function tryModel(model) {
 		try {
 			const response = await ai.models.generateContent({
 				model,
 				contents,
 				config: {
 					systemInstruction: SYSTEM_INSTRUCTION,
-					temperature: 0.6,
-					maxOutputTokens: 4096
+					temperature: 0.3,
+					maxOutputTokens: MAX_OUTPUT_TOKENS,
+					thinkingConfig: { thinkingBudget: 0 }
 				}
 			});
 			let out = '';
@@ -220,21 +283,36 @@ async function askGemini(text, parts, context) {
 			if (!out && response && response.candidates && response.candidates[0] && response.candidates[0].content) {
 				out = (response.candidates[0].content.parts || []).map(p => p.text || '').join('\n');
 			}
-			answer = clean(out);
-			if (answer) break;
-			lastError = new Error(`Empty response from ${model}`);
+			const answer = clean(out);
+			if (!answer) throw new Error(`Empty response from ${model}`);
+			preferredModel = model;
+			return { model, answer };
 		}
 		catch (err) {
-			lastError = err;
 			const raw = String((err && (err.message || (err.error && err.error.message))) || '');
 			const match = raw.match(/\b(404|429|503)\b/);
 			const status = Number((err && (err.status || (err.error && err.error.code))) || (match && match[1]) || 0);
-			// Only retry for overload / gone / rate limit; real errors surface.
-			if (![404, 429, 503].includes(status)) throw err;
+			if ([404, 429, 503].includes(status)) modelCooldown.set(model, Date.now() + MODEL_COOLDOWN_MS);
+			throw err;
 		}
 	}
-	if (!answer) throw lastError || new Error('No Gemini model available.');
-	return answer;
+
+	// Race the two best models so one overloaded model cannot stall the reply.
+	// If both fail, the remaining models are tried one by one.
+	let lastError = null;
+	let winner = null;
+	try {
+		winner = await Promise.any(modelOrder.slice(0, 2).map(tryModel));
+	}
+	catch (err) {
+		lastError = err;
+		for (const model of modelOrder.slice(2)) {
+			try { winner = await tryModel(model); break; }
+			catch (e) { lastError = e; }
+		}
+	}
+	if (!winner) throw lastError || new Error('No Gemini model available.');
+	return winner.answer;
 }
 
 async function sendAnswer(env, answer, context) {
@@ -280,38 +358,38 @@ async function sendAnswer(env, answer, context) {
 }
 
 async function handle(env, rawText, replyContext) {
-	const { api, event, message, commandName } = env;
+	const { event, message } = env;
 	if (!isBotOwner(event.senderID)) return message.reply(clean('Owner only command.'));
 
 	const text = clean(rawText);
-	safeReact(api, '⏳', event.messageID);
+	const lower = text.toLowerCase();
+	const isCmdMode = /^\s*cmds\b/.test(lower);
+	const hasMedia = collectAttachments(event).length > 0;
 
-	// Menu / identity never goes through the model, so the identity is exact.
-	if (!text && !collectAttachments(event).length) {
-		safeReact(api, '✅', event.messageID);
-		return sendAnswer(env, MENU, []);
-	}
-	if (isCapabilityQuestion(text) && !collectAttachments(event).length) {
-		safeReact(api, '✅', event.messageID);
-		return sendAnswer(env, CAPABILITY_ANSWER, []);
+	// Short answers and menu/identity never call the model, so they are instant.
+	if (!text && !hasMedia) return sendAnswer(env, MENU, []);
+	if (isCapabilityQuestion(text) && !hasMedia) return sendAnswer(env, CAPABILITY_ANSWER, []);
+	if (isQuickChat(text) && !hasMedia) {
+		return sendAnswer(env, 'I am Aliya Official, made by Mr.king. Tell me what to check or ask me anything.', []);
 	}
 
 	let question = text;
 	let parts = [];
-	try { parts = await mediaParts(event); }
-	catch (_e) { parts = []; }
+	// Command checking never needs a media download that would slow it down.
+	if (hasMedia && !isCmdMode) {
+		try { parts = await mediaParts(event); }
+		catch (_e) { parts = []; }
+	}
 
-	const lower = text.toLowerCase();
 	const wantsPrompt = isPromptRequest(text);
 
-	if (/^\s*cmds\b/.test(lower)) {
+	if (isCmdMode) {
 		const rawName = clean(text.replace(/^\s*cmds\b/i, ''));
 		const found = findCommandFile(rawName);
 		if (!found) {
-			safeReact(api, '❌', event.messageID);
 			return message.reply(clean(`Command not found: ${rawName || 'empty'}. Use aliyatester help for the menu.`));
 		}
-		const source = found.content.length > 120000 ? found.content.slice(0, 120000) + '\n(sources truncated)' : found.content;
+		const source = compactSource(found.content);
 		question = [
 			'Check this Aliya bot command file.',
 			'Report: 1) what it does, 2) the exact problem or bug if any, 3) what to fix or update, with corrected snippets when useful.',
@@ -336,11 +414,9 @@ async function handle(env, rawText, replyContext) {
 	try {
 		const answer = await askGemini(question, parts, replyContext);
 		const context = (Array.isArray(replyContext) ? replyContext.slice(-3) : []).concat([{ q: question, a: answer }]);
-		safeReact(api, '✅', event.messageID);
 		return await sendAnswer(env, answer, context);
 	}
 	catch (err) {
-		safeReact(api, '❌', event.messageID);
 		const detail = clean(err && (err.message || err.name) || 'unknown error').slice(0, 300);
 		return message.reply(clean(`Tester error: ${detail}. Use aliyatester help for the menu.`));
 	}
@@ -362,6 +438,7 @@ module.exports = {
 		guide: {
 			en: [
 				'{pn} help',
+				'{pn} toollist',
 				'{pn} cmds <command name>',
 				'{pn} <anything>',
 				'Reply to my message to continue chatting, or reply to media with a question or prompt'
@@ -373,10 +450,8 @@ module.exports = {
 		const { event, args, message } = env;
 		if (!isBotOwner(event.senderID)) return message.reply(clean('Owner only command.'));
 		const text = (args || []).join(' ').trim();
-		if (/^help\b/i.test(text)) {
-			safeReact(env.api, '✅', event.messageID);
-			return sendAnswer(env, MENU, []);
-		}
+		if (/^help\b/i.test(text)) return sendAnswer(env, MENU, []);
+		if (/^toollist\b/i.test(text)) return sendAnswer(env, TOOL_LIST, []);
 		return handle(env, text, []);
 	},
 
@@ -385,12 +460,10 @@ module.exports = {
 		if (!isBotOwner(event.senderID)) return message.reply(clean('Owner only command.'));
 		if (Reply && Reply.author && String(Reply.author) !== String(event.senderID)) return;
 		const text = clean(event.body || '');
-		if (/^help\b/i.test(text)) {
-			safeReact(env.api, '✅', event.messageID);
-			return sendAnswer(env, MENU, []);
-		}
+		if (/^help\b/i.test(text)) return sendAnswer(env, MENU, []);
+		if (/^toollist\b/i.test(text)) return sendAnswer(env, TOOL_LIST, []);
 		return handle(env, text, (Reply && Reply.context) || []);
 	},
 
-	_test: { clean, normalizeName, findCommandFile, isBotOwner, isCapabilityQuestion, isPromptRequest, collectAttachments, splitText, askGemini, MENU, CAPABILITY_ANSWER }
+	_test: { clean, normalizeName, findCommandFile, isBotOwner, isCapabilityQuestion, isQuickChat, isPromptRequest, compactSource, collectAttachments, splitText, askGemini, MENU, TOOL_LIST, CAPABILITY_ANSWER }
 };
