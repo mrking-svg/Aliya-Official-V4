@@ -22,6 +22,14 @@ const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
 const MAX_SOURCE_CHARS = 40000;
 const MAX_OUTPUT_TOKENS = Math.max(400, Number(process.env.ALIYA_TESTER_MAX_TOKENS) || 1600);
 const MODEL_COOLDOWN_MS = 5 * 60 * 1000;
+// Image editing uses a separate image-capable model family. Override the
+// first choice with ALIYA_TESTER_IMAGE_MODEL if a newer model is available.
+const IMAGE_MODELS = [process.env.ALIYA_TESTER_IMAGE_MODEL].concat([
+	'gemini-nano-banana-2.1',
+	'gemini-3.1-flash-image',
+	'gemini-3.1-flash-lite-image',
+	'gemini-2.5-flash-image'
+]).filter((m, i, arr) => m && arr.indexOf(m) === i);
 
 const SYSTEM_INSTRUCTION = [
 	'You are Aliya Official, made by Mr.king.',
@@ -48,6 +56,7 @@ const MENU = [
 	'6. Reply to an image, video, audio or file with a question - I can view and analyse it',
 	'7. Reply to media and say prompt - I give you a ready generation prompt',
 	'8. aliyatester prompt <style> while replying to media - generate a styled prompt',
+	'9. aliyatester editimg "prompt" while replying to an image - edit the image and send it back',
 	'',
 	'Owner only. Made by Mr.king'
 ].join('\n');
@@ -78,6 +87,12 @@ const TOOL_LIST = [
 	'Example: aliyatester prompt dark fantasy style while replying to an image',
 	'I will return one ready generation prompt.',
 	'',
+	'Edit images',
+	'Reply to an image with aliyatester editimg "prompt".',
+	'Example: aliyatester editimg "make it cartoon"',
+	'Example: aliyatester editimg "remove the background and add a blue gradient"',
+	'The edited image is sent back in the chat.',
+	'',
 	'Quick help',
 	'aliyatester help shows the short menu.',
 	'aliyatester toollist shows this full usage guide.',
@@ -94,6 +109,7 @@ const CAPABILITY_ANSWER = [
 	'I can check any bot command and tell you the exact problem plus what to fix or update.',
 	'I can view and analyse images, videos, audio, music and files you reply to.',
 	'I can write image or video generation prompts from your media.',
+	'I can edit images you reply to and send back the result.',
 	'I can chat about anything and continue the talk when you reply to my message.',
 	'Use aliyatester toollist for the full usage guide with examples.',
 	'',
@@ -167,6 +183,24 @@ function isPromptRequest(text) {
 	return /\b(prompt|caption idea|generate prompt|pro mp t)\b/i.test(String(text || ''));
 }
 
+function isEditRequest(text) {
+	return /^\s*(editimg|edit\s+image|imgedit)\b/i.test(String(text || ''));
+}
+
+function editPromptFrom(text) {
+	return clean(String(text || ''))
+		.replace(/^\s*(editimg|edit\s+image|imgedit)\b/i, '')
+		.trim()
+		.replace(/^["'`]\s*|\s*["'`]$/g, '')
+		.trim();
+}
+
+function isImageAttachment(att) {
+	const type = String((att && att.type) || '').toLowerCase();
+	const url = String((att && att.url) || '');
+	return /image|photo|animatedgif/.test(type) || /\.(png|jpe?g|gif|webp|bmp)(?:\?|$)/i.test(url);
+}
+
 function compactSource(src) {
 	return String(src || '')
 		.split('\n')
@@ -201,7 +235,8 @@ function collectAttachments(event) {
 }
 
 function mimeFromAttachment(att, contentType) {
-	const type = String(att.type || '').toLowerCase();
+	if (contentType && /^image\//i.test(contentType)) return contentType;
+	const type = String((att && att.type) || '').toLowerCase();
 	if (/image|photo|animatedgif/.test(type)) return 'image/jpeg';
 	if (/video/.test(type)) return 'video/mp4';
 	if (/audio|voice/.test(type)) return 'audio/mpeg';
@@ -209,9 +244,11 @@ function mimeFromAttachment(att, contentType) {
 	return 'application/octet-stream';
 }
 
-async function mediaParts(event) {
+async function downloadParts(event, imageOnly) {
 	const parts = [];
-	for (const att of collectAttachments(event).slice(0, 1)) {
+	let attachments = collectAttachments(event);
+	if (imageOnly) attachments = attachments.filter(isImageAttachment);
+	for (const att of attachments.slice(0, 1)) {
 		try {
 			const res = await axios.get(att.url, {
 				responseType: 'arraybuffer',
@@ -231,6 +268,14 @@ async function mediaParts(event) {
 		catch (_e) { /* skip media that cannot be downloaded */ }
 	}
 	return parts;
+}
+
+function mediaParts(event) {
+	return downloadParts(event, false);
+}
+
+function imageParts(event) {
+	return downloadParts(event, true);
 }
 
 async function getClient() {
@@ -315,6 +360,72 @@ async function askGemini(text, parts, context) {
 	return winner.answer;
 }
 
+async function askImageEdit(prompt, parts) {
+	if (!parts || !parts.length) throw new Error('No image was attached.');
+	const ai = await getClient();
+	const contents = [{
+		role: 'user',
+		parts: parts.concat([{ text: clean(prompt) }])
+	}];
+
+	let lastError = null;
+	for (const model of IMAGE_MODELS) {
+		try {
+			const response = await ai.models.generateContent({
+				model,
+				contents,
+				config: { responseModalities: ['TEXT', 'IMAGE'] }
+			});
+			const responseParts = (response && response.candidates && response.candidates[0] &&
+				response.candidates[0].content && response.candidates[0].content.parts) || [];
+			const image = responseParts.find(p => p && p.inlineData && p.inlineData.data);
+			if (!image) throw new Error('No image data was returned.');
+			const buffer = typeof image.inlineData.data === 'string'
+				? Buffer.from(image.inlineData.data, 'base64')
+				: Buffer.from(image.inlineData.data);
+			if (!buffer.length) throw new Error('Empty image data was returned.');
+			return { buffer, mimeType: String(image.inlineData.mimeType || 'image/png') };
+		}
+		catch (err) {
+			lastError = err;
+		}
+	}
+	throw lastError || new Error('No image model available.');
+}
+
+function friendlyImageError(err) {
+	const raw = String((err && (err.message || (err.error && err.error.message))) || err || 'unknown error');
+	if (/429|quota|billing|rate limit/i.test(raw)) {
+		return 'Image editing is unavailable right now because the image quota or billing limit is reached.';
+	}
+	if (/404|not found|not supported|invalid model/i.test(raw)) {
+		return 'Image editing is not available on this setup.';
+	}
+	return 'Image edit failed. Try a shorter prompt or a different image.';
+}
+
+async function sendEditedImage(env, result) {
+	const { api, event, message } = env;
+	const dir = path.join(__dirname, 'cache');
+	await fs.ensureDir(dir);
+	const mime = String((result && result.mimeType) || 'image/png');
+	const ext = /jpeg|jpg/i.test(mime) ? 'jpg' : /webp/i.test(mime) ? 'webp' : /gif/i.test(mime) ? 'gif' : 'png';
+	const file = path.join(dir, `aliyatester_edit_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`);
+	await fs.writeFile(file, result.buffer);
+	const cleanup = () => { try { fs.unlinkSync(file); } catch (_e) { /* already removed */ } };
+	const stream = fs.createReadStream(file);
+	stream.on('error', () => { /* send failure is reported through the callback */ });
+	const payload = { body: 'Edited image ready.', attachment: stream };
+
+	return new Promise(resolve => {
+		try {
+			if (typeof message.reply === 'function') message.reply(payload, () => { cleanup(); resolve(); });
+			else api.sendMessage(payload, event.threadID, event.messageID, () => { cleanup(); resolve(); });
+		}
+		catch (_e) { cleanup(); resolve(); }
+	});
+}
+
 async function sendAnswer(env, answer, context) {
 	const { api, event, message, commandName } = env;
 	const author = event.senderID;
@@ -364,13 +475,33 @@ async function handle(env, rawText, replyContext) {
 	const text = clean(rawText);
 	const lower = text.toLowerCase();
 	const isCmdMode = /^\s*cmds\b/.test(lower);
-	const hasMedia = collectAttachments(event).length > 0;
+	const isEditMode = isEditRequest(text);
+	const attachments = collectAttachments(event);
+	const hasMedia = attachments.length > 0;
+	const hasImage = attachments.some(isImageAttachment);
 
 	// Short answers and menu/identity never call the model, so they are instant.
 	if (!text && !hasMedia) return sendAnswer(env, MENU, []);
 	if (isCapabilityQuestion(text) && !hasMedia) return sendAnswer(env, CAPABILITY_ANSWER, []);
 	if (isQuickChat(text) && !hasMedia) {
 		return sendAnswer(env, 'I am Aliya Official, made by Mr.king. Tell me what to check or ask me anything.', []);
+	}
+
+	if (isEditMode) {
+		if (!hasImage) return message.reply(clean('Reply to an image with: aliyatester editimg "your edit prompt"'));
+		const prompt = editPromptFrom(text);
+		if (!prompt) return message.reply(clean('Give an edit prompt. Example: aliyatester editimg "make it cartoon" while replying to an image.'));
+		let parts = [];
+		try { parts = await imageParts(event); }
+		catch (_e) { parts = []; }
+		if (!parts.length) return message.reply(clean('I could not download that image. Try replying to the image again.'));
+		try {
+			const result = await askImageEdit(prompt, parts);
+			return await sendEditedImage(env, result);
+		}
+		catch (err) {
+			return message.reply(clean(friendlyImageError(err)));
+		}
 	}
 
 	let question = text;
@@ -432,7 +563,7 @@ module.exports = {
 		role: 2,
 		shortDescription: { en: 'Owner-only command checker and tester' },
 		longDescription: {
-			en: 'Reads any bot command and reports problems with fix advice. Can view media, write prompts and chat.'
+			en: 'Reads any bot command and reports problems with fix advice. Can view media, write prompts, edit images and chat.'
 		},
 		category: 'tools',
 		guide: {
@@ -440,6 +571,7 @@ module.exports = {
 				'{pn} help',
 				'{pn} toollist',
 				'{pn} cmds <command name>',
+				'{pn} editimg "prompt" (reply to an image)',
 				'{pn} <anything>',
 				'Reply to my message to continue chatting, or reply to media with a question or prompt'
 			].join('\n')
@@ -465,5 +597,5 @@ module.exports = {
 		return handle(env, text, (Reply && Reply.context) || []);
 	},
 
-	_test: { clean, normalizeName, findCommandFile, isBotOwner, isCapabilityQuestion, isQuickChat, isPromptRequest, compactSource, collectAttachments, splitText, askGemini, MENU, TOOL_LIST, CAPABILITY_ANSWER }
+	_test: { clean, normalizeName, findCommandFile, isBotOwner, isCapabilityQuestion, isQuickChat, isPromptRequest, isEditRequest, editPromptFrom, isImageAttachment, compactSource, collectAttachments, splitText, askGemini, askImageEdit, friendlyImageError, sendEditedImage, MENU, TOOL_LIST, CAPABILITY_ANSWER }
 };
