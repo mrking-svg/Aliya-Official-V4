@@ -241,24 +241,55 @@ global.responseUptimeError = responseUptimeError;
 global.statusAccountBot = 'good';
 let changeFbStateByCode = false;
 let latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
+let lastWrittenStateRaw = "";
+let selfWriteUntil = 0;
 let dashBoardIsRunning = false;
 let accountReloginTimer = null;
 
-// Every write the bot itself makes to account.txt goes through here, so an
-// outside edit (a freshly pasted FB state for a different account) is always
-// detectable by comparing mtime. Never overwrite that outside state.
+// Compare the actual cookies, not just mtime. Git deploys / editors can touch
+// account.txt without changing the session; that must never cause a relogin.
+function stateCookies(state) {
+	const out = new Map();
+	const cookies = Array.isArray(state) ? state : (state && state.cookies) || [];
+	for (const c of cookies) {
+		if (c && c.key != null) out.set(String(c.key), String(c.value == null ? "" : c.value));
+	}
+	return out;
+}
+
+function sameAppState(a, b) {
+	try {
+		const pa = typeof a === "string" ? JSON.parse(a || "[]") : a;
+		const pb = typeof b === "string" ? JSON.parse(b || "[]") : b;
+		const ca = stateCookies(pa);
+		const cb = stateCookies(pb);
+		if (ca.size !== cb.size) return false;
+		for (const [k, v] of ca) if (cb.get(k) !== v) return false;
+		return true;
+	}
+	catch (_) {
+		return false;
+	}
+}
+
+// Every write the bot itself makes to account.txt goes through here. We keep
+// the exact raw content so the file watcher can recognise self-writes even if
+// mtime was changed later by a deploy/sync.
 function writeOwnAppState(state, why) {
 	const clean = filterKeysAppState(state);
 	if (!clean.length) return false;
+	const raw = JSON.stringify(clean, null, 2);
 	changeFbStateByCode = true;
+	selfWriteUntil = Date.now() + 5000;
 	try {
-		writeFileSync(dirAccount, JSON.stringify(clean, null, 2));
+		writeFileSync(dirAccount, raw);
+		lastWrittenStateRaw = raw;
 		stateBackup.save(clean);
 		latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
 		return true;
 	}
 	finally {
-		setTimeout(() => { changeFbStateByCode = false; }, 1000);
+		setTimeout(() => { changeFbStateByCode = false; }, 5000);
 	}
 }
 
@@ -890,7 +921,10 @@ async function startBot(loginWithEmail) {
 						if (!currentApi || typeof currentApi.getAppState !== "function") return;
 						const fresh = filterKeysAppState(currentApi.getAppState());
 						if (fresh.length) {
-							writeFileSync(dirAccount, JSON.stringify(fresh, null, 2));
+							const raw = JSON.stringify(fresh, null, 2);
+							writeFileSync(dirAccount, raw);
+							lastWrittenStateRaw = raw;
+							selfWriteUntil = Date.now() + 5000;
 							stateBackup.save(fresh);
 						}
 					}
@@ -898,16 +932,13 @@ async function startBot(loginWithEmail) {
 				});
 			}
 
+			// No periodic account.txt writes. Rewriting the state every few minutes
+			// made hosts/git sync look like "new state pasted", which killed uptime.
+			// Fresh cookies are still persisted once on graceful exit (hook above),
+			// so a valid state normally stays good for weeks without any input.
+			if (global.intervalRefreshFbstate) clearInterval(global.intervalRefreshFbstate);
 			if (global.GoatBot.config.autoRefreshFbstate == true) {
-				saveFreshAppState("startup");
-				// Rolling refresh keeps cookies alive for weeks; 10 minutes by default.
-				const FBSTATE_REFRESH_MS = Math.max(60000,
-					Number(process.env.ALIYA_FBSTATE_REFRESH_MS) ||
-					Number(global.GoatBot.config.fbstateRefreshMs) ||
-					10 * 60 * 1000);
-				if (global.intervalRefreshFbstate) clearInterval(global.intervalRefreshFbstate);
-				global.intervalRefreshFbstate = setInterval(() => saveFreshAppState("auto"), FBSTATE_REFRESH_MS);
-				if (typeof global.intervalRefreshFbstate.unref === "function") global.intervalRefreshFbstate.unref();
+				log.info("REFRESH FBSTATE", "Periodic writes disabled; state is kept until restart.");
 			}
 			if (hasBanned == true) {
 				log.err('GBAN', getText('login', 'youAreBanned'));
@@ -1320,9 +1351,21 @@ async function startBot(loginWithEmail) {
 					if (type !== 'change' && type !== 'rename') return;
 					try {
 						const currentMtime = fs.statSync(dirAccount).mtimeMs;
-						// Self-writes update latestChangeContentAccount, so any
-						// mtime difference means the state came from outside.
-						if (currentMtime === latestChangeContentAccount || changeFbStateByCode) return;
+						// Ignore the bot's own write window and unchanged mtime.
+						if (currentMtime === latestChangeContentAccount ||
+							changeFbStateByCode || Date.now() < selfWriteUntil) return;
+
+						const currentRaw = fs.readFileSync(dirAccount, "utf8");
+						// A deploy/sync can rewrite the same cookies with a new
+						// mtime. That is not a new account - do not relogin.
+						if (currentRaw === lastWrittenStateRaw ||
+							sameAppState(lastWrittenStateRaw, currentRaw)) {
+							lastWrittenStateRaw = currentRaw;
+							latestChangeContentAccount = currentMtime;
+							return;
+						}
+
+						lastWrittenStateRaw = currentRaw;
 						latestChangeContentAccount = currentMtime;
 						log.warn("LOGIN FACEBOOK", "New account.txt state detected. Switching to the new state.");
 						scheduleAccountRelogin("New FB state detected");

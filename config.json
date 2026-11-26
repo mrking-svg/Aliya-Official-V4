@@ -146,8 +146,8 @@
     "ignoreCmds": "",
     "ignoreEvents": ""
   },
-  "autoRefreshFbstate": true,
-  "fbstateRefreshMs": 600000,
+  "autoRefreshFbstate": false,
+  "fbstateRefreshMs": 0,
   "autoReloginWhenChangeAccount": false,
   "autoRestartWhenListenMqttError": false,
   "restartListenMqtt": {
