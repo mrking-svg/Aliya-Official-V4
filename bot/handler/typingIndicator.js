@@ -11,10 +11,20 @@ function options() {
 	return {
 		enabled: cfg.enable !== false && cfg.enabled !== false,
 		refreshMs: Math.max(1000, Number(cfg.refreshMs) || 5000),
-		maxMs: Math.max(10000, Number(cfg.maxMs) || 60000),
+		maxMs: Math.max(10000, Number(cfg.maxMs) || 300000),
 		onReply: cfg.onReply !== false,
-		onReaction: cfg.onReaction !== false
+		onReaction: cfg.onReaction !== false,
+		onSend: cfg.onSend !== false
 	};
+}
+
+function isEnabled(kind) {
+	const cfg = options();
+	if (!cfg.enabled) return false;
+	if (kind === "reply" && !cfg.onReply) return false;
+	if (kind === "reaction" && !cfg.onReaction) return false;
+	if (kind === "send" && !cfg.onSend) return false;
+	return true;
 }
 
 function firstParamName(fn) {
@@ -76,11 +86,19 @@ function release(key) {
 	if (rec.detected && rec.detected.canStop) fire(rec.detected, rec.api, key, false);
 }
 
+// Delivery has finished: release every handle for this thread, including an
+// outer command handle, so typing stops as soon as the response is sent.
+function stopThread(threadID) {
+	const key = String(threadID);
+	const rec = active.get(key);
+	if (!rec) return;
+	rec.refs = 1;
+	release(key);
+}
+
 function start(api, threadID, kind) {
 	const cfg = options();
-	if (!cfg.enabled) return { stop() { } };
-	if (kind === "reply" && !cfg.onReply) return { stop() { } };
-	if (kind === "reaction" && !cfg.onReaction) return { stop() { } };
+	if (!isEnabled(kind)) return { stop() { } };
 	if (!api || !threadID) return { stop() { } };
 
 	const detected = detect(api);
@@ -123,4 +141,4 @@ function stopAll() {
 
 process.once("exit", stopAll);
 
-module.exports = { start, runWith, stopAll, detect };
+module.exports = { start, runWith, stopAll, stopThread, isEnabled, detect };

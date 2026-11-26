@@ -750,6 +750,9 @@ async function startBot(loginWithEmail) {
 			}
 
 			global.GoatBot.fcaApi = api;
+			// Every outgoing message (text/image/video/audio/file) keeps the typing
+			// indicator on until Facebook confirms delivery.
+			require("../handler/typingSend.js").wrap(api);
 			if (!api.ws3 || typeof api.ws3.relogin !== "function") {
 				api.ws3 = Object.assign({}, api.ws3 || {}, {
 					relogin: () => {

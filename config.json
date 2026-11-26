@@ -84,9 +84,11 @@
   "typingIndicator": {
     "enable": true,
     "refreshMs": 5000,
+    "maxMs": 300000,
     "onReply": true,
     "onReaction": true,
-    "notes": "shows the bot is typing while a command runs; refreshMs keeps it visible on slow commands"
+    "onSend": true,
+    "notes": "shows the bot is typing while a command runs and while any text/image/video/audio response is being delivered; refreshMs keeps it visible on slow sends"
   },
   "commandSpamGuard": {
     "enable": true,
