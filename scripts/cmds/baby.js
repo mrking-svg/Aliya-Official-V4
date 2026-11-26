@@ -34,7 +34,7 @@ module.exports.config = {
   description: "Smartest response bot API integrated with fast performance",
   category: "chat",
   guide: {
-    en: "{pn} [message] | {pn} teach [trigger] - [reply] , [reply] | {pn} teach on | {pn} edit [new reply]"
+    en: "{pn} [message] | {pn} teach [trigger] - [reply] , [reply] | {pn} teach on | {pn} find [trigger] | {pn} edit [new reply]"
   }
 };
 
@@ -87,12 +87,6 @@ const defaultReplies = [
   "eto questions Kno koro boring Lage edi 😴",
   "Watch Muhhobbat gumsuda meri (a pakistan series/drama you will have some relax vipe)its available on YouTube 😌",
   "kobe je  Mr.king Real vabe khusi hobe k jne 🛌🎀"
-];
-
-const teachPrompts = [
-  "I am listening. Reply to this message with your teach 🐇",
-  "Teach me something new. Just reply here 🧐",
-  "Go ahead, say it. I am ready to learn ✨"
 ];
 
 const botRequest = async (method, route, body = {}) => {
@@ -200,8 +194,37 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
       return api.sendMessage({ body: "❌ Database stats offline!", effect: "love" }, event.threadID, event.messageID);
     }
 
+    if (/^find\b/i.test(msg)) {
+      const query = rawMsg.replace(/^\s*find\s*/i, "").trim();
+      if (!query) {
+        return api.sendMessage(makeBold("Use: find [trigger]"), event.threadID, event.messageID);
+      }
+      try {
+        const found = await botRequest("post", "find", { trigger: query });
+        const responses = Array.isArray(found.responses) ? found.responses : [];
+        const text = responses.length
+          ? `🔎 𝐅𝐨𝐮𝐧𝐝 : ${found.trigger || query}\n𝐓𝐨𝐭𝐚𝐥 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞𝐬: ${formatCount(responses.length)}\n\n` +
+            responses.map((r, i) => `${i + 1}. ${r}`).join("\n")
+          : `🔎 𝐍𝐨 𝐭𝐞𝐚𝐜𝐡 𝐟𝐨𝐮𝐧𝐝 𝐟𝐨𝐫: ${query}`;
+        return api.sendMessage(makeBold(text), event.threadID, event.messageID);
+      } catch (e) {
+        const err = e.response && e.response.data && e.response.data.error;
+        return api.sendMessage(makeBold(err || "❌ Could not find that teach."), event.threadID, event.messageID);
+      }
+    }
+
     if (msg === "teach on") {
-      const prompt = teachPrompts[Math.floor(Math.random() * teachPrompts.length)];
+      let prompt = "";
+      let promptTrigger = "baby";
+      try {
+        const randomTeach = await botRequest("get", "random");
+        if (randomTeach && randomTeach.message) {
+          prompt = String(randomTeach.message);
+          promptTrigger = String(randomTeach.trigger || "baby");
+        }
+      } catch (e) {}
+      if (!prompt) prompt = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
+
       return api.sendMessage(makeBold(prompt), event.threadID, (err, info) => {
         if (err || !info) return;
         global.GoatBot.onReply.set(info.messageID, {
@@ -209,7 +232,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
           type: "teachOn",
           messageID: info.messageID,
           author: event.senderID,
-          trigger: prompt
+          trigger: promptTrigger
         });
         const timer = setTimeout(() => {
           teachTimers.delete(info.messageID);
