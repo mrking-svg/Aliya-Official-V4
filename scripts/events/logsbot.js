@@ -56,7 +56,10 @@ module.exports = {
 			msg += getLang("footer", author, threadName, threadID, time);
 
 			for (const adminID of config.adminBot) {
-				api.sendMessage(msg, adminID);
+				try {
+					const p = api.sendMessage(msg, adminID);
+					if (p && typeof p.catch === "function") p.catch(() => {});
+				} catch (_) {}
 			}
 		} catch (err) {
 			console.error("[ ALIYA v4 LOGSBOT ERROR ]", err);

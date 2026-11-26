@@ -97,6 +97,8 @@ function validJSON(pathDir) {
 try {
 	if (process.env.ACCOUNT_TXT) fs.writeFileSync(path.join(__dirname, "account.txt"), process.env.ACCOUNT_TXT);
 	if (!fs.existsSync(path.join(__dirname, "account.txt"))) fs.writeFileSync(path.join(__dirname, "account.txt"), "[]");
+	// If the state file was emptied/corrupted, recover the last known good copy.
+	require("./bot/login/stateBackup").restoreIfNeeded();
 }
 catch (e) { console.warn("[ALIYA] Could not prepare account.txt:", e.message); }
 

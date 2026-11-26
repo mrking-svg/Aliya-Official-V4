@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const createFuncMessage = global.utils.message;
 const handlerCheckDB = require("./handlerCheckData.js");
+const approval = require("../../includes/approve");
 
 module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData) => {
 	const devFile = path.join(__dirname, "handlerEvents.dev.js");
@@ -21,6 +22,14 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
 			(event.senderID || event.userID || event.isGroup == false)
 		)
 			return;
+
+		// Group approval gate: the bot still joins every group and posts its
+		// connected message, but commands/chat only work after approval.
+		try {
+			if (!approval.allow(event, api)) return;
+		} catch (err) {
+			// A gate error must never take the bot offline.
+		}
 
 		const message = createFuncMessage(api, event);
 

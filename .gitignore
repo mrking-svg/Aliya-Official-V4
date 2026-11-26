@@ -1,3 +1,4 @@
 # Everything is tracked - private repo, upload all files
 # Dependencies are installed by npm on deploy; never commit them
 node_modules/
+account.backup.txt

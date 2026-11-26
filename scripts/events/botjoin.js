@@ -1,12 +1,13 @@
 // Credit : 0xMr_King x ┃ Tanin Islam
 const fs = require("fs-extra");
 const path = require("path");
+const axios = require("axios");
+const { Readable } = require("stream");
 
 const DIRECT_IMAGE_URL = "https://i.imgur.com/q1CYPUA.jpeg";
 
 const ownerInfo = {
   name: "Aliya Official V4",
-  contact: "https://m.me/0xmrking",
   supportGroup: "https://m.me/j/AbY50_CsjwrZMPkP/?send_source=gc%3Acopy_invite_link_t"
 };
 
@@ -18,19 +19,50 @@ function getPrefix(threadID) {
   return (global.GoatBot && global.GoatBot.config && global.GoatBot.config.prefix) || "(";
 }
 
+function contactLink() {
+  try {
+    const approval = require("../../includes/approve");
+    if (typeof approval.contactLinks === "function") return approval.contactLinks()[0];
+  } catch (_) {}
+  return "https://m.me/0xmrking";
+}
+
+async function getRemoteImageStream(url) {
+  if (global.utils && typeof global.utils.getStreamFromURL === "function") {
+    try {
+      const stream = await global.utils.getStreamFromURL(url);
+      if (stream) return stream;
+    } catch (_) {}
+  }
+
+  try {
+    const res = await axios.get(url, {
+      responseType: "arraybuffer",
+      timeout: 10000,
+      headers: { "User-Agent": "Mozilla/5.0" }
+    });
+    const buffer = Buffer.from(res.data || []);
+    if (buffer.length) return Readable.from(buffer);
+  } catch (_) {}
+  return null;
+}
+
 module.exports = {
   config: {
     name: "botjoin",
-    version: "4.1.0",
+    version: "5.0.0",
     author: "0xMr_King x ┃ Tanin Islam",
     category: "events"
   },
 
   onStart: async function ({ event, api }) {
-    if (event.logMessageType !== "log:subscribe") return;
+    if (!event || event.logMessageType !== "log:subscribe") return;
 
     const threadID = String(event.threadID);
-    const botID = String(api.getCurrentUserID());
+    let botID = "";
+    try { botID = String(api.getCurrentUserID()); } catch (_) {}
+    if (!botID) return;
+
     const added = (event.logMessageData && event.logMessageData.addedParticipants) || [];
     if (!added.some(user => String(user.userFbId) === botID)) return;
 
@@ -50,32 +82,33 @@ module.exports = {
 
 ✧─────── ͟͟͞͞Aliya Official V4 ───────✧
 👑 𝐎𝐰𝐧𝐞𝐫 : ${ownerInfo.name}
-💬 𝐂𝐨𝐧𝐭𝐚𝐜𝐭 : ${ownerInfo.contact}
+💬 𝐂𝐨𝐧𝐭𝐚𝐜𝐭 : ${contactLink()}
 🤖 𝐒𝐮𝐩𝐩𝐨𝐫𝐭 𝐆𝐂 : ${ownerInfo.supportGroup}`;
 
-    let sent = false;
-
+    // Send the image as a real downloaded attachment. Using { url } only makes
+    // a link preview, so the imgur link used to show as plain text.
     try {
-      await api.sendMessage({ body: textMsg, url: DIRECT_IMAGE_URL }, threadID);
-      sent = true;
-    } catch (_) {}
-
-    if (!sent) {
-      const imagePath = path.join(__dirname, "../../func/botconnect.jpeg");
-      if (fs.existsSync(imagePath)) {
+      const stream = await getRemoteImageStream(DIRECT_IMAGE_URL);
+      if (stream) {
         try {
-          const attachment = fs.createReadStream(imagePath);
-          attachment.on("error", () => {});
-          await api.sendMessage({ body: textMsg, attachment }, threadID);
-          sent = true;
+          await api.sendMessage({ body: textMsg, attachment: stream }, threadID);
+          return;
         } catch (_) {}
       }
-    }
+    } catch (_) {}
 
-    if (!sent) {
+    const imagePath = path.join(__dirname, "../../func/botconnect.jpeg");
+    if (fs.existsSync(imagePath)) {
       try {
-        await api.sendMessage(textMsg, threadID);
+        const attachment = fs.createReadStream(imagePath);
+        attachment.on("error", () => {});
+        await api.sendMessage({ body: textMsg, attachment }, threadID);
+        return;
       } catch (_) {}
     }
+
+    try {
+      await api.sendMessage(textMsg, threadID);
+    } catch (_) {}
   }
 };

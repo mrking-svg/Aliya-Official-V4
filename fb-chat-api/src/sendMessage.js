@@ -227,11 +227,8 @@ module.exports = function (defaultFuncs, api, ctx) {
   }
 
   function handleEffect(msg, form, callback, cb) {
-    // "effect: love" is accepted everywhere so commands never crash, but it is
-    // ignored by default: this session cannot render power-ups reliably and
-    // pushing every reply through MQTT broke reply IDs and flooded the socket.
-    // Set effectViaHttp: true explicitly to opt into the legacy HTTP fields.
-    if (!msg.effectViaHttp) return cb();
+    // Send the power-up through the normal HTTP form: that keeps the real
+    // messageID for replies and avoids the MQTT socket flood of the old path.
     const effect = resolveEffect(msg.effect || msg.messageEffect);
     if (!effect) return cb();
 

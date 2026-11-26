@@ -1,15 +1,18 @@
 // ══════════════════════════════════════════════
 // Credit : 0xMr_King x ┃ Tanin Islam
 // ══════════════════════════════════════════════
-// গ্রুপ অ্যাপ্রুভাল গেট
-// গ্রুপে কোনো মেসেজ যাবে না, শুধু অ্যাডমিনের ইনবক্সে নোটিশ যাবে
+// Group approval gate.
+// The bot joins every group, but nobody can use it until the group is approved.
+// Approvals can be permanent (reply "1") or timed (reply "1 add 7" = 7 days).
 // ══════════════════════════════════════════════
 const fs = require("fs");
 const path = require("path");
 
 const CREDITS = "0xMr_King x ┃ Tanin Islam";
-const FILE = path.join(__dirname, "..", "scripts", "cmds", "cache", "approvedThreads.json");
+const FILE = process.env.APPROVAL_STATE_FILE ||
+  path.join(__dirname, "..", "scripts", "cmds", "cache", "approvedThreads.json");
 const CONFIG_FILE = path.join(__dirname, "..", "config.json");
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 let state = { seeded: false, threads: {}, pending: {} };
 
@@ -35,20 +38,60 @@ function save() {
   }
 }
 
-// ── অনুমোদন / পেন্ডিং ──
-const isApproved = id => !!state.threads[String(id)];
-const isPending = id => !!state.pending[String(id)];
+function normalizeEntry(entry) {
+  if (!entry || typeof entry !== "object") return null;
+  const expiresAt = Number(entry.expiresAt) || 0;
+  if (expiresAt && Date.now() >= expiresAt) return null;
+  return {
+    by: entry.by ? String(entry.by) : null,
+    at: entry.at || new Date().toISOString(),
+    expiresAt: expiresAt || null,
+    days: Number(entry.days) || 0
+  };
+}
 
-function approve(id, by) {
+// ── approval / pending ──
+function isApproved(id) {
   const k = String(id);
-  state.threads[k] = { by: by ? String(by) : null, at: new Date().toISOString() };
+  const entry = normalizeEntry(state.threads[k]);
+  if (!entry) {
+    if (state.threads[k]) { delete state.threads[k]; save(); }
+    return false;
+  }
+  return true;
+}
+
+function isPending(id) {
+  return !!state.pending[String(id)];
+}
+
+function approvalInfo(id) {
+  const k = String(id);
+  const entry = normalizeEntry(state.threads[k]);
+  if (!entry) {
+    if (state.threads[k]) { delete state.threads[k]; save(); }
+    return null;
+  }
+  return entry;
+}
+
+function approve(id, by, days = 0) {
+  const k = String(id);
+  const n = Math.max(0, Math.floor(Number(days) || 0));
+  state.threads[k] = {
+    by: by ? String(by) : null,
+    at: new Date().toISOString(),
+    days: n,
+    expiresAt: n > 0 ? Date.now() + n * DAY_MS : null
+  };
   delete state.pending[k];
   save();
+  return state.threads[k];
 }
 
 function addPending(id, by) {
   const k = String(id);
-  if (state.threads[k]) return;
+  if (isApproved(k)) return;
   state.pending[k] = { by: by ? String(by) : null, at: new Date().toISOString() };
   save();
 }
@@ -61,17 +104,17 @@ function remove(id) {
   if (changed) save();
 }
 
-const list = () => Object.keys(state.threads);
+const list = () => Object.keys(state.threads).filter(isApproved);
 const pendingList = () => Object.keys(state.pending);
 const getPendingInfo = id => state.pending[String(id)] || null;
 
-// pending কমান্ড থেকে কল করার জন্য — গ্রুপে কোনো মেসেজ পাঠায় না
-async function approveById(api, tid, by) {
-  approve(tid, by);
+// Called from pending.js / approve.js — never sends anything to the group itself.
+async function approveById(api, tid, by, days = 0) {
+  approve(tid, by, days);
   return true;
 }
 
-// ── কনফিগ / অ্যাডমিন ──
+// ── config / admin ──
 function readConfig() {
   try {
     return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
@@ -82,13 +125,13 @@ function readConfig() {
 
 function getAdminBots() {
   const cfg = readConfig();
-  const g = global.config || {};
+  const g = global.GoatBot?.config || {};
   return [...new Set([...(cfg.adminBot || []), ...(g.adminBot || [])].map(String))];
 }
 
 function isAdmin(id) {
   const cfg = readConfig();
-  const g = global.config || {};
+  const g = global.GoatBot?.config || {};
   const all = [
     ...(cfg.adminBot || []), ...(cfg.developer || []),
     ...(g.adminBot || []), ...(g.developer || [])
@@ -98,17 +141,37 @@ function isAdmin(id) {
 
 function getPrefix() {
   const cfg = readConfig();
-  return cfg.PREFIX || (global.config && global.config.PREFIX) || "/";
+  const g = global.GoatBot?.config || {};
+  return cfg.PREFIX || cfg.prefix || g.PREFIX || g.prefix || "(";
 }
 
 function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// ── অ্যাডমিনের ইনবক্সে নোটিশ (গ্রুপে কিছু যায় না) ──
+function contactLinks() {
+  const cfg = readConfig();
+  const g = global.GoatBot?.config || {};
+  const ids = [...new Set([
+    ...(cfg.adminBot || []), ...(cfg.developer || []),
+    ...(g.adminBot || []), ...(g.developer || [])
+  ].map(String))];
+  const links = ids.filter(id => /^\d+$/.test(id)).map(id => `https://m.me/${id}`);
+  return links.length ? links : ["https://m.me/0xmrking"];
+}
+
+function approvalRequiredText() {
+  return (
+    "🔒 This group is not approved to use the bot yet.\n" +
+    "Contact admin for approval: " + contactLinks().join(" | ") + "\n" +
+    "Bot has joined successfully. Approval is required only to use commands."
+  );
+}
+
+// ── admin inbox notice (nothing is posted in the group) ──
 async function notifyAdmins(api, tid, adderID) {
   try {
-    let groupName = "নামহীন গ্রুপ";
+    let groupName = "Unnamed group";
     let members = "?";
     try {
       const info = await api.getThreadInfo(tid);
@@ -116,10 +179,10 @@ async function notifyAdmins(api, tid, adderID) {
       members = (info.participantIDs || []).length || "?";
     } catch (_) {}
 
-    let adderName = "অজানা";
+    let adderName = "Unknown";
     try {
       const u = await api.getUserInfo(adderID);
-      adderName = (u && u[adderID] && u[adderID].name) || "অজানা";
+      adderName = (u && u[adderID] && u[adderID].name) || "Unknown";
     } catch (_) {}
 
     let time;
@@ -130,59 +193,60 @@ async function notifyAdmins(api, tid, adderID) {
     }
 
     const msg =
-`🔔 বটকে একটি গ্রুপে অ্যাড করা হয়েছে, কিন্তু অ্যাপ্রুভ করা হয়নি
+`🔔 The bot was added to a group, but the group is not approved
 
-🏠 গ্রুপ: ${groupName}
-🆔 গ্রুপ আইডি: ${tid}
-👥 মেম্বার: ${members}
+🏠 Group: ${groupName}
+🆔 Group ID: ${tid}
+👥 Members: ${members}
 
-👤 অ্যাড করেছে: ${adderName}
-🆔 ইউজার আইডি: ${adderID}
-🔗 প্রোফাইল: https://www.facebook.com/${adderID}
+👤 Added by: ${adderName}
+🆔 User ID: ${adderID}
+🔗 Profile: https://www.facebook.com/${adderID}
 
-🕒 সময়: ${time}
-📌 অবস্থা: ⏳ পেন্ডিং (বট ওই গ্রুপে চুপ আছে)
+🕒 Time: ${time}
+📌 Status: ⏳ Pending (bot stays in the group)
 
-👉 লিস্ট দেখতে: ${getPrefix()}pending`;
+👉 See the list: ${getPrefix()}pending`;
 
     for (const adminID of getAdminBots()) {
       try {
         await api.sendMessage(msg, adminID);
-      } catch (e) {
-        console.log("[APPROVAL] অ্যাডমিনকে নোটিশ পাঠানো যায়নি:", adminID);
-      }
+      } catch (_) {}
     }
   } catch (e) {
     console.log("[APPROVAL] notify error:", e.message);
   }
 }
 
-// প্রথমবার চালুর সময় আগের সব থ্রেড অনুমোদিত ধরা হয়
+// First run: existing groups are already trusted, new groups go to pending.
 function seedOnce() {
   if (state.seeded) return true;
   const ids = (global.data && global.data.allThreadID) || [];
-  if (ids.length === 0 && process.uptime() < 120) return false;
+  // Never seed an empty list too early: threads may still be loading. Otherwise
+  // existing groups would wrongly become pending after a restart.
+  if (ids.length === 0 && process.uptime() < 600) return false;
   ids.forEach(id => {
-    state.threads[String(id)] = { by: "seed", at: new Date().toISOString() };
+    if (!state.threads[String(id)]) state.threads[String(id)] = { by: "seed", at: new Date().toISOString(), days: 0, expiresAt: null };
   });
   state.seeded = true;
   save();
-  console.log(`[APPROVAL] ${ids.length} টি আগের থ্রেড অনুমোদিত তালিকায় ঢোকানো হলো`);
   return true;
 }
 
-const warned = new Map();
-function warnOnce(tid) {
+const noticed = new Map();
+function notifyOnceInGroup(api, tid) {
   const now = Date.now();
-  if (now - (warned.get(tid) || 0) > 10 * 60 * 1000) {
-    warned.set(tid, now);
-    console.log(`[APPROVAL] ${tid} অনুমোদিত নয় — ইভেন্ট ইগনোর (পেন্ডিং)`);
-  }
+  if (now - (noticed.get(String(tid)) || 0) < 10 * 60 * 1000) return;
+  noticed.set(String(tid), now);
+  try {
+    const p = api.sendMessage(approvalRequiredText(), tid);
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  } catch (_) {}
 }
 
-// true = ইভেন্ট চলতে দাও, false = সম্পূর্ণ ইগনোর
+// true = let the event continue, false = ignore it.
 function allow(event, api) {
-  const tid = String(event.threadID || "");
+  const tid = String(event?.threadID || "");
   if (!tid) return true;
   if (!seedOnce()) return true;
 
@@ -194,14 +258,14 @@ function allow(event, api) {
       : event.senderID
   );
 
-  // ইনবক্স (১-টু-১) গেটের আওতায় নয়
+  // Private chats are never gated.
   const isGroup = event.isGroup === true || (event.isGroup === undefined && actor !== tid);
   if (!isGroup) return true;
 
   let botID = "";
   try { botID = String(api.getCurrentUserID()); } catch (_) {}
 
-  // বট কিক/লিভ হলে সব রেকর্ড মুছে ফেলা
+  // Bot kicked/left: forget the group.
   if (
     event.type === "event" &&
     event.logMessageType === "log:unsubscribe" &&
@@ -211,25 +275,21 @@ function allow(event, api) {
     return false;
   }
 
-  // বটকে গ্রুপে অ্যাড করা হলে
+  // Bot added to a group: the bot ALWAYS joins and posts the connected message.
+  // Non-admin adders only make the group pending for command usage.
   if (event.type === "event" && event.logMessageType === "log:subscribe") {
     const d = event.logMessageData || {};
     const added = (d.addedParticipants || []).map(p => String(p.userFbId));
-    if (added.includes(botID)) {
-      if (isAdmin(actor)) {
-        approve(tid, actor);              // অ্যাডমিন অ্যাড করলে সরাসরি অনুমোদিত
-        return true;
-      }
-      addPending(tid, actor);             // অন্য কেউ অ্যাড করলে পেন্ডিং
-      notifyAdmins(api, tid, actor);      // অ্যাডমিনের ইনবক্সে নোটিশ
-      warnOnce(tid);
-      return false;
+    if (added.includes(botID) && !isAdmin(actor)) {
+      addPending(tid, actor);
+      notifyAdmins(api, tid, actor);
     }
+    return true;
   }
 
   if (isApproved(tid)) return true;
 
-  // অনুমোদনহীন গ্রুপেও অ্যাডমিনের approve / pending / out কমান্ড চলবে
+  // Admins can always run approval commands from anywhere.
   const isMsg = event.type === "message" || event.type === "message_reply";
   if (isMsg && isAdmin(actor) && typeof event.body === "string") {
     const prefix = escapeRegex(getPrefix());
@@ -237,15 +297,18 @@ function allow(event, api) {
     if (re.test(event.body)) return true;
   }
 
-  // তালিকায় নেই এমন গ্রুপ চুপচাপ পেন্ডিংয়ে যাবে (নোটিশ ছাড়া)
-  if (!isPending(tid)) addPending(tid, null);
+  // Never answer to the bot's own messages.
+  if (botID && String(actor) === botID) return true;
 
-  warnOnce(tid);
+  if (!isPending(tid)) addPending(tid, null);
+  if (isMsg) notifyOnceInGroup(api, tid);
   return false;
 }
 
 module.exports = {
-  allow, approve, approveById, remove,
-  isApproved, isPending, list, pendingList, getPendingInfo,
-  isAdmin, credits: CREDITS
+  allow, approve, approveById, addPending, remove,
+  isApproved, isPending, approvalInfo,
+  list, pendingList, getPendingInfo,
+  isAdmin, contactLinks, approvalRequiredText,
+  DAY_MS, credits: CREDITS
 };

@@ -44,6 +44,7 @@ function compareVersion(version1, version2) {
 }
 
 const { writeFileSync, readFileSync, existsSync, watch } = require("fs-extra");
+const stateBackup = require("./stateBackup");
 const handlerWhenListenHasError = require("./handlerWhenListenHasError.js");
 const checkLiveCookie = require("./checkLiveCookie.js");
 
@@ -252,6 +253,7 @@ function writeOwnAppState(state, why) {
 	changeFbStateByCode = true;
 	try {
 		writeFileSync(dirAccount, JSON.stringify(clean, null, 2));
+		stateBackup.save(clean);
 		latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
 		return true;
 	}
@@ -887,7 +889,10 @@ async function startBot(loginWithEmail) {
 						const currentApi = global.__aliyaCurrentApi;
 						if (!currentApi || typeof currentApi.getAppState !== "function") return;
 						const fresh = filterKeysAppState(currentApi.getAppState());
-						if (fresh.length) writeFileSync(dirAccount, JSON.stringify(fresh, null, 2));
+						if (fresh.length) {
+							writeFileSync(dirAccount, JSON.stringify(fresh, null, 2));
+							stateBackup.save(fresh);
+						}
 					}
 					catch (_e) { /* best effort only */ }
 				});
@@ -895,8 +900,11 @@ async function startBot(loginWithEmail) {
 
 			if (global.GoatBot.config.autoRefreshFbstate == true) {
 				saveFreshAppState("startup");
-				// 15 minutes by default; override with ALIYA_FBSTATE_REFRESH_MS if needed.
-				const FBSTATE_REFRESH_MS = Math.max(60000, Number(process.env.ALIYA_FBSTATE_REFRESH_MS) || 15 * 60 * 1000);
+				// Rolling refresh keeps cookies alive for weeks; 10 minutes by default.
+				const FBSTATE_REFRESH_MS = Math.max(60000,
+					Number(process.env.ALIYA_FBSTATE_REFRESH_MS) ||
+					Number(global.GoatBot.config.fbstateRefreshMs) ||
+					10 * 60 * 1000);
 				if (global.intervalRefreshFbstate) clearInterval(global.intervalRefreshFbstate);
 				global.intervalRefreshFbstate = setInterval(() => saveFreshAppState("auto"), FBSTATE_REFRESH_MS);
 				if (typeof global.intervalRefreshFbstate.unref === "function") global.intervalRefreshFbstate.unref();
