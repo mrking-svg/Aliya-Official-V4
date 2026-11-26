@@ -145,10 +145,6 @@ function getPrefix() {
   return cfg.PREFIX || cfg.prefix || g.PREFIX || g.prefix || "(";
 }
 
-function escapeRegex(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
 function contactLinks() {
   const cfg = readConfig();
   const g = global.GoatBot?.config || {};
@@ -289,13 +285,11 @@ function allow(event, api) {
 
   if (isApproved(tid)) return true;
 
-  // Admins can always run approval commands from anywhere.
+  // Bot owner/admins can use every command in every group, approved or not.
+  // This also lets their bare approval replies (1 / 1 add 7 / c1) reach
+  // pending.js instead of being blocked by the gate.
   const isMsg = event.type === "message" || event.type === "message_reply";
-  if (isMsg && isAdmin(actor) && typeof event.body === "string") {
-    const prefix = escapeRegex(getPrefix());
-    const re = new RegExp("^\\s*(?:" + prefix + ")?\\s*(approve|pending|out)\\b", "i");
-    if (re.test(event.body)) return true;
-  }
+  if (isAdmin(actor)) return true;
 
   // Never answer to the bot's own messages.
   if (botID && String(actor) === botID) return true;
