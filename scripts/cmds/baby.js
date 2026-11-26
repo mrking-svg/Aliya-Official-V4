@@ -98,7 +98,7 @@ const defaultReplies = [
 
 const botRequest = async (method, route, body = {}) => {
   const url = `${baseApiUrl}/api/bot/${route}`;
-  const config = { timeout: 8000, headers: { "x-bot-token": botToken } };
+  const config = { timeout: 15000, headers: { "x-bot-token": botToken } };
   const res = method === "get" ? await axios.get(url, config) : await axios.post(url, body, config);
   return res.data;
 };
@@ -151,8 +151,9 @@ async function sendTeachPrompt(api, event, session) {
   let trigger = session.trigger || "baby";
   try {
     const randomTeach = await botRequest("get", "random");
-    if (randomTeach && randomTeach.message) {
-      prompt = String(randomTeach.message);
+    const line = randomTeach && (randomTeach.message || randomTeach.response || randomTeach.text);
+    if (line) {
+      prompt = String(line);
       trigger = String(randomTeach.trigger || trigger);
     }
   } catch (_) {}
