@@ -60,18 +60,18 @@ module.exports = {
 
     // ✅ /spin top leaderboard (simple message, needs usersData if leaderboard API exists)
     if (subCommand === "top") {
-      return message.reply("🏆 Spin leaderboard not implemented with API yet.");
+      return message.reply({ body: "🏆 Spin leaderboard not implemented with API yet.", effect: "love" });
     }
 
     // ✅ /spin <amount>
     const betAmount = parseBet(subCommand);
     if (isNaN(betAmount) || betAmount <= 0) {
-      return message.reply("❌ Usage:\n/spin <amount>\n/spin top");
+      return message.reply({ body: "❌ Usage:\n/spin <amount>\n/spin top", effect: "love" });
     }
 
     let balance = await getBalance(senderID);
     if (balance < betAmount) {
-      return message.reply(`❌ Not enough money.\n💰 Your balance: ${compact(balance)} $`);
+      return message.reply({ body: `❌ Not enough money.\n💰 Your balance: ${compact(balance)} $`, effect: "love" });
     }
 
     // Deduct bet first
@@ -100,10 +100,10 @@ module.exports = {
     const newBalance = reward > 0 ? await winGame(senderID, reward) : balance;
 
     return message.reply(
-`${outcome.text}
+{ body: `${outcome.text}
 🎰 You bet: ${compact(betAmount)} $
 💸 You won: ${compact(reward)} $
-💰 New balance: ${compact(newBalance)} $`
+💰 New balance: ${compact(newBalance)} $`, effect: "love" }
     );
   }
 };

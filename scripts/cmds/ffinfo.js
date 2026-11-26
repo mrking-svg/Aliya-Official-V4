@@ -42,7 +42,7 @@ module.exports = {
 
         onStart: async function ({ api, event, args, message, getLang }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam";
-                if (this.config.author !== authorName) return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+                if (this.config.author !== authorName) return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
 
                 try {
                         const uid = args[0]; if (!uid) return message.reply(getLang("noUid"));

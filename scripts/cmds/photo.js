@@ -22,7 +22,7 @@ module.exports = {
 
     if (args.length < 2) {
       return api.sendMessage(
-`╭─❍
+{ body: `╭─❍
 │ ✨ PHOTO360 STYLE MAKER
 ├─────────────
 │ Usage:
@@ -30,7 +30,7 @@ module.exports = {
 │
 │ Example:
 │ photo 1 Mamun
-╰─────────────`,
+╰─────────────`, effect: "love" },
         event.threadID,
         event.messageID
       );
@@ -69,13 +69,13 @@ module.exports = {
 
     if (!templates[templateID]) {
       return api.sendMessage(
-`❌ Invalid template ID!
+{ body: `❌ Invalid template ID!
 
 ✅ Available IDs:
 1 - 25
 
 Example:
-ephoto 5 Mamun`,
+ephoto 5 Mamun`, effect: "love" },
         event.threadID,
         event.messageID
       );
@@ -92,7 +92,7 @@ ephoto 5 Mamun`,
     try {
 
       await api.sendMessage(
-        "⏳ | Creating your stylish image...",
+        { body: "⏳ | Creating your stylish image...", effect: "love" },
         event.threadID
       );
 
@@ -127,7 +127,7 @@ ephoto 5 Mamun`,
       console.log(error);
 
       return api.sendMessage(
-        `❌ Failed to generate image!\n\n${error.message}`,
+        { body: `❌ Failed to generate image!\n\n${error.message}`, effect: "love" },
         event.threadID,
         event.messageID
       );

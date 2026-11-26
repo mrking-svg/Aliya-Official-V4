@@ -21,7 +21,7 @@ module.exports = {
     const senderData = await usersData.get(senderID);
     const currentBalance = senderData.money || 0;
     if (currentBalance < cost) {
-      return api.sendMessage("❌ confession Korte to chaccho But onak e spam Kore tai 0xMr_King x ┃ Tanin Islam re bolo Balance dite tylei hobe", threadID, messageID);
+      return api.sendMessage({ body: "❌ confession Korte to chaccho But onak e spam Kore tai 0xMr_King x ┃ Tanin Islam re bolo Balance dite tylei hobe", effect: "love" }, threadID, messageID);
     }
 
     let targetID;
@@ -30,7 +30,7 @@ module.exports = {
     } else if (Object.keys(mentions).length > 0) {
       targetID = Object.keys(mentions)[0];
     } else {
-      return api.sendMessage("⚠️ Please reply to a user or mention them to make a confession!", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ Please reply to a user or mention them to make a confession!", effect: "love" }, threadID, messageID);
     }
 
     try {
@@ -140,7 +140,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       api.setMessageReaction("❌", messageID, (err) => {}, true);
-      return api.sendMessage("❌ ছবি তৈরি করতে সমস্যা হয়েছে! দয়া করে আবার চেষ্টা করুন।", threadID, messageID);
+      return api.sendMessage({ body: "❌ ছবি তৈরি করতে সমস্যা হয়েছে! দয়া করে আবার চেষ্টা করুন।", effect: "love" }, threadID, messageID);
     }
   }
 };

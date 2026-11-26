@@ -22,7 +22,7 @@ const repoLink = "";
 module.exports.onStart = async function ({ api, event }) {
 
   return api.sendMessage(
-`╭━━〔 🤖 বট সেটআপ গাইড 〕━━╮
+{ body: `╭━━〔 🤖 বট সেটআপ গাইড 〕━━╮
 
 📌 কীভাবে বট সেটআপ করবেন (সহজ ধাপ)
 
@@ -61,7 +61,7 @@ module.exports.onStart = async function ({ api, event }) {
 📁 বটের রিপো (Fork করুন):
 🔗 ${repoLink}
 
-╰━━━━━━━━━━━━━━━━━━╯`,
+╰━━━━━━━━━━━━━━━━━━╯`, effect: "love" },
     event.threadID,
     event.messageID
   );
@@ -86,7 +86,7 @@ module.exports.handleEvent = async function ({ api, event }) {
   if (trigger.includes(msg)) {
 
     return api.sendMessage(
-`╭━━〔 🤖 বট সেটআপ সাহায্য 〕━━╮
+{ body: `╭━━〔 🤖 বট সেটআপ সাহায্য 〕━━╮
 
 📌 সহজভাবে:
 • ভিডিও দেখে সেটআপ করুন
@@ -99,7 +99,7 @@ module.exports.handleEvent = async function ({ api, event }) {
 📁 বটের রিপো (Fork করুন):
 🔗 ${repoLink}
 
-╰━━━━━━━━━━━━━━━━━━╯`,
+╰━━━━━━━━━━━━━━━━━━╯`, effect: "love" },
       event.threadID,
       event.messageID
     );

@@ -21,11 +21,11 @@ module.exports = {
         onStart: async function ({ api, message, event }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam"; 
                 if (this.config.author !== authorName) {
-                        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+                        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
                 }
 
                 const timeStart = Date.now();
-                const checkingMsg = await message.reply("⏳ Checking bot ping...");
+                const checkingMsg = await message.reply({ body: "⏳ Checking bot ping...", effect: "love" });
                 const ping = Date.now() - timeStart;
 
                 const response = `✅ 𝐏𝐢𝐧𝐠 𝐂𝐡𝐞𝐜𝐤 𝐑𝐞𝐬𝐮𝐥𝐭\n` +

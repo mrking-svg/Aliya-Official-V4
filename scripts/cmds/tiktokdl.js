@@ -20,7 +20,7 @@ module.exports = {
     const input = args.join(" ").trim();
 
     if (!input) {
-      return message.reply("Please provide a valid TikTok video URL!");
+      return message.reply({ body: "Please provide a valid TikTok video URL!", effect: "love" });
     }
 
     api.setMessageReaction("🏯", event.messageID, () => {}, true);
@@ -67,7 +67,7 @@ module.exports = {
     } catch (error) {
       console.error("TikTokDL Error:", error.message);
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply("Failed to download TikTok video, please check the link and try again!");
+      return message.reply({ body: "Failed to download TikTok video, please check the link and try again!", effect: "love" });
     }
   }
 };

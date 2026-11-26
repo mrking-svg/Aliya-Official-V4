@@ -43,11 +43,11 @@ module.exports = {
         : event.messageReply?.senderID;
  
       if (!targetID)
-        return message.reply('🔹 কাউকে mention বা reply দাও!');
+        return message.reply({ body: '🔹 কাউকে mention বা reply দাও!', effect: "love" });
       if (targetID === event.senderID)
-        return message.reply('😂 নিজেকে dim বানানো নিষেধ!');
+        return message.reply({ body: '😂 নিজেকে dim বানানো নিষেধ!', effect: "love" });
  
-      await message.reply('⏳ Dim বানানো হচ্ছে...');
+      await message.reply({ body: '⏳ Dim বানানো হচ্ছে...', effect: "love" });
  
       const avatarBuffer = await fetchAvatar(targetID);
       const avatar = await loadImage(avatarBuffer);
@@ -131,9 +131,9 @@ module.exports = {
     } catch (e) {
       console.error(e);
       if (e.message.includes('Failed to fetch avatar')) {
-        message.reply('❌ Avatar fetch করতে সমস্যা হয়েছে! ব্যবহারকারীর প্রোফাইল private হতে পারে।');
+        message.reply({ body: '❌ Avatar fetch করতে সমস্যা হয়েছে! ব্যবহারকারীর প্রোফাইল private হতে পারে।', effect: "love" });
       } else {
-        message.reply('❌ Dim বানাতে সমস্যা হয়েছে!');
+        message.reply({ body: '❌ Dim বানাতে সমস্যা হয়েছে!', effect: "love" });
       }
     }
   }

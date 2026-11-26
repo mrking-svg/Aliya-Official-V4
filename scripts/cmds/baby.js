@@ -86,7 +86,7 @@ const fetchBotResponse = async (text) => {
 
 module.exports.onStart = async ({ api, event, args }) => {
     if (module.exports.config.author !== "0xMr_King x ┃ Tanin Islam") {
-        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
     }
     
     const rawMsg = args ? args.join(" ") : "";
@@ -108,7 +108,7 @@ module.exports.onStart = async ({ api, event, args }) => {
                     return api.sendMessage(makeBold(stats), event.threadID, event.messageID);
                 }
             } catch (e) {
-                return api.sendMessage("❌ Database stats offline!", event.threadID, event.messageID);
+                return api.sendMessage({ body: "❌ Database stats offline!", effect: "love" }, event.threadID, event.messageID);
             }
         }
 

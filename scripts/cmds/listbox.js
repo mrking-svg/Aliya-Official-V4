@@ -33,9 +33,9 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
 
  if (isNaN(index) || !handleReply.groupid[index]) {
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃ ❌ 𝐈𝐍𝐕𝐀𝐋𝐈𝐃 𝐍𝐔𝐌𝐁𝐄𝐑
-╰${LINE}╯`, threadID);
+╰${LINE}╯`, effect: "love" }, threadID);
  }
 
  const idgr = handleReply.groupid[index];
@@ -52,14 +52,14 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
  global.data.threadBanned.set(idgr, { dateAdded: time });
 
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃  🚫 𝐁𝐀𝐍 𝐒𝐔𝐂𝐂𝐄𝐒𝐒
 ┣${THIN}
 ┃ 🔷 𝐍𝐚𝐦𝐞 : ${groupName}
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ┃ ⏰ 𝐓𝐢𝐦𝐞 : ${time}
 ╰${LINE}╯
-   ${module.exports.config.credits}`, threadID);
+   ${module.exports.config.credits}`, effect: "love" }, threadID);
  }
 
  if (["unban", "ub"].includes(action)) {
@@ -71,63 +71,63 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
  global.data.threadBanned.delete(idgr);
 
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃  ✅ 𝐔𝐍𝐁𝐀𝐍 𝐒𝐔𝐂𝐂𝐄𝐒𝐒
 ┣${THIN}
 ┃ 🔷 𝐍𝐚𝐦𝐞 : ${groupName}
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ┃ ⏰ 𝐓𝐢𝐦𝐞 : ${time}
 ╰${LINE}╯
-   ${module.exports.config.credits}`, threadID);
+   ${module.exports.config.credits}`, effect: "love" }, threadID);
  }
 
  if (action === "del") {
  await Threads.delData(idgr);
 
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃  🗑️ 𝐃𝐄𝐋𝐄𝐓𝐄 𝐒𝐔𝐂𝐂𝐄𝐒𝐒
 ┣${THIN}
 ┃ 🔷 𝐍𝐚𝐦𝐞 : ${groupName}
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ┃ ✔ 𝐃𝐚𝐭𝐚 𝐑𝐞𝐦𝐨𝐯𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲
 ╰${LINE}╯
-   ${module.exports.config.credits}`, threadID);
+   ${module.exports.config.credits}`, effect: "love" }, threadID);
  }
 
  if (action === "out") {
  api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃  👋 𝐋𝐄𝐀𝐕𝐈𝐍𝐆 𝐆𝐑𝐎𝐔𝐏
 ┣${THIN}
 ┃ 🔷 ${groupName}
-╰${LINE}╯`,
+╰${LINE}╯`, effect: "love" },
  idgr,
  () => api.removeUserFromGroup(api.getCurrentUserID(), idgr)
  );
 
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃  ✅ 𝐎𝐔𝐓 𝐒𝐔𝐂𝐂𝐄𝐒𝐒
 ┣${THIN}
 ┃ 🔷 𝐍𝐚𝐦𝐞 : ${groupName}
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ╰${LINE}╯
-   ${module.exports.config.credits}`, threadID);
+   ${module.exports.config.credits}`, effect: "love" }, threadID);
  }
 
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃ ⚠️ 𝐔𝐧𝐤𝐧𝐨𝐰𝐧 𝐀𝐜𝐭𝐢𝐨𝐧
 ┃ ban | unban | del | out
-╰${LINE}╯`, threadID);
+╰${LINE}╯`, effect: "love" }, threadID);
 
  } catch (e) {
  console.log(e);
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃ ❌ 𝐄𝐫𝐫𝐨𝐫 𝐎𝐜𝐜𝐮𝐫𝐫𝐞𝐝!
-╰${LINE}╯`, threadID);
+╰${LINE}╯`, effect: "love" }, threadID);
  }
 };
 
@@ -153,9 +153,9 @@ module.exports.onStart = async function ({ api, event, args }) {
 
  if (!threadList.length) {
  return api.sendMessage(
-`╭${LINE}╮
+{ body: `╭${LINE}╮
 ┃ ❌ 𝐍𝐨 𝐆𝐫𝐨𝐮𝐩 𝐅𝐨𝐮𝐧𝐝!
-╰${LINE}╯`, event.threadID);
+╰${LINE}╯`, effect: "love" }, event.threadID);
  }
 
  threadList.sort((a, b) => b.count - a.count);

@@ -19,5 +19,5 @@ module.exports.config = {
 module.exports.onStart = async function({ api, event, args,Threads, Users }) {
 delete require.cache[require.resolve(global.client.configPath)];
 global.config = require(global.client.configPath);
-return api.sendMessage("[OK] Reloading config...", event.threadID, event.messageID);    
+return api.sendMessage({ body: "[OK] Reloading config...", effect: "love" }, event.threadID, event.messageID);    
 } 

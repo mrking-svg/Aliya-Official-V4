@@ -306,7 +306,7 @@ module.exports = {
 
       setReaction(api, event.messageID, REACTIONS.SEARCHING);
 
-      const editMsg = await message.reply(`${OUTPUTS.SEARCHING} "${searchQuery}"...`);
+      const editMsg = await message.reply({ body: `${OUTPUTS.SEARCHING} "${searchQuery}"...`, effect: "love" });
 
       const songs = await handleSearch(searchQuery);
 
@@ -336,7 +336,7 @@ module.exports = {
     } catch (error) {
       console.error("[music]", error);
       setReaction(api, event.messageID, REACTIONS.FAILED);
-      return message.reply(`${REACTIONS.FAILED} ${OUTPUTS.API_ERROR}`);
+      return message.reply({ body: `${REACTIONS.FAILED} ${OUTPUTS.API_ERROR}`, effect: "love" });
     }
   },
 
@@ -347,12 +347,12 @@ module.exports = {
 
       const input = event.body.trim();
       if (!REGEX.VALID_NUMBER.test(input)) {
-        return message.reply(`${OUTPUTS.INVALID_SELECTION}.`);
+        return message.reply({ body: `${OUTPUTS.INVALID_SELECTION}.`, effect: "love" });
       }
 
       const index = parseInt(input, 10) - 1;
       if (index < 0 || index >= Reply.songs.length) {
-        return message.reply(`${OUTPUTS.INVALID_SELECTION}.`);
+        return message.reply({ body: `${OUTPUTS.INVALID_SELECTION}.`, effect: "love" });
       }
 
       const selectedSong = Reply.songs[index];
@@ -370,7 +370,7 @@ module.exports = {
     } catch (error) {
       console.error("[music onReply]", error);
       setReaction(api, event.messageID, REACTIONS.FAILED);
-      return message.reply(`${REACTIONS.FAILED} ${OUTPUTS.API_ERROR}`);
+      return message.reply({ body: `${REACTIONS.FAILED} ${OUTPUTS.API_ERROR}`, effect: "love" });
     }
   }
 };

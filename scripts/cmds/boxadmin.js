@@ -32,7 +32,7 @@ module.exports.onStart = async function({ api, event, args }) {
     if (action === "me") action = "add";
 
     if (!["add", "remove"].includes(action)) 
-      return api.sendMessage("🌸 Usage : boxadmin me | boxadmin add/remove @mention | reply", threadID, event.messageID);
+      return api.sendMessage({ body: "🌸 Usage : boxadmin me | boxadmin add/remove @mention | reply", effect: "love" }, threadID, event.messageID);
 
     let uid;
     let targetName;
@@ -46,7 +46,7 @@ module.exports.onStart = async function({ api, event, args }) {
     } else if (args[1]?.toLowerCase() === "me") {
       uid = event.senderID;
     } else {
-      return api.sendMessage("🌸 Usage : boxadmin me | boxadmin add/remove @mention | reply", threadID, event.messageID);
+      return api.sendMessage({ body: "🌸 Usage : boxadmin me | boxadmin add/remove @mention | reply", effect: "love" }, threadID, event.messageID);
     }
 
     const userInfo = await api.getUserInfo([uid, event.senderID]);
@@ -68,27 +68,27 @@ module.exports.onStart = async function({ api, event, args }) {
     const targetIsAdmin = threadInfo.adminIDs.some(admin => admin.id == uid);
 
     if (!botIsAdmin && uid !== event.senderID) 
-      return api.sendMessage("এই কমান্ডটি Usage  করার জন্য আগে আমাকে গ্রুপের এডমিন দিতে হবে 🌺", threadID, event.messageID);
+      return api.sendMessage({ body: "এই কমান্ডটি Usage  করার জন্য আগে আমাকে গ্রুপের এডমিন দিতে হবে 🌺", effect: "love" }, threadID, event.messageID);
 
     if (action === "add") {
       if (targetIsAdmin) 
-        return api.sendMessage(`${targetName} আগে থেকেই গ্রুপের এডমিন রয়েছেন ✅`, threadID, event.messageID);
+        return api.sendMessage({ body: `${targetName} আগে থেকেই গ্রুপের এডমিন রয়েছেন ✅`, effect: "love" }, threadID, event.messageID);
 
       await api.changeAdminStatus(threadID, uid, true);
       if (uid === event.senderID) 
-        return api.sendMessage(`✅ ${senderName} নিজেকে এডমিন বানিয়েছে! 🌸`, threadID, event.messageID);
+        return api.sendMessage({ body: `✅ ${senderName} নিজেকে এডমিন বানিয়েছে! 🌸`, effect: "love" }, threadID, event.messageID);
       else 
-        return api.sendMessage(`✅ ${senderName} ${targetName}-কে এডমিন বানিয়েছে! 😘`, threadID, event.messageID);
+        return api.sendMessage({ body: `✅ ${senderName} ${targetName}-কে এডমিন বানিয়েছে! 😘`, effect: "love" }, threadID, event.messageID);
 
     } else if (action === "remove") {
       if (!targetIsAdmin) 
-        return api.sendMessage(`${targetName} এখনো গ্রুপের এডমিন নয়! ❌`, threadID, event.messageID);
+        return api.sendMessage({ body: `${targetName} এখনো গ্রুপের এডমিন নয়! ❌`, effect: "love" }, threadID, event.messageID);
 
       await api.changeAdminStatus(threadID, uid, false);
       if (uid === event.senderID) 
-        return api.sendMessage(` ${senderName} নিজেকে এডমিন থেকে রিমুভ করেছে! 🐸`, threadID, event.messageID);
+        return api.sendMessage({ body: ` ${senderName} নিজেকে এডমিন থেকে রিমুভ করেছে! 🐸`, effect: "love" }, threadID, event.messageID);
       else 
-        return api.sendMessage(` ${targetName} কে এডমিন থেকে রিমুভ করেছে! 🤣`, threadID, event.messageID);
+        return api.sendMessage({ body: ` ${targetName} কে এডমিন থেকে রিমুভ করেছে! 🤣`, effect: "love" }, threadID, event.messageID);
     }
 
   } catch (e) {

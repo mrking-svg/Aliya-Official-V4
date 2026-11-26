@@ -113,7 +113,7 @@ module.exports = {
       fs.unlinkSync(avatarPath);
     } catch (err) {
       console.error(err);
-      message.reply("❌ কিছু ভুল হয়েছে!");
+      message.reply({ body: "❌ কিছু ভুল হয়েছে!", effect: "love" });
     }
   }
 };

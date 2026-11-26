@@ -40,13 +40,13 @@ module.exports = {
         onStart: async function ({ api, args, message, event, commandName, getLang }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam"; 
                 if (this.config.author !== authorName) {
-                        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+                        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
                 }
 
                 const { threadID, messageID, senderID } = event;
                 const input = args.join(" ");
 
-                if (!input) return api.sendMessage("• Please provide a song name or send link.", threadID, messageID);
+                if (!input) return api.sendMessage({ body: "• Please provide a song name or send link.", effect: "love" }, threadID, messageID);
 
                 const checkurl = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:\S+)?$/;
 

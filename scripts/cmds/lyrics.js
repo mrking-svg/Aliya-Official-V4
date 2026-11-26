@@ -20,7 +20,7 @@ module.exports = {
   onStart: async function ({ message, args, api, event }) {
     try {
       const query = args.join(" ");
-      if (!query) return message.reply("⚠️ গানের নাম লিখে সার্চ করো! যেমন: `/lyrics Nadaaniyan`");
+      if (!query) return message.reply({ body: "⚠️ গানের নাম লিখে সার্চ করো! যেমন: `/lyrics Nadaaniyan`", effect: "love" });
 
       if (api && typeof api.sendTypingIndicator === "function") {
         try { api.sendTypingIndicator(event.threadID, () => {}); } catch (e) {}
@@ -35,7 +35,7 @@ module.exports = {
 
       if (!songLyrics) {
         console.error("[lyrics] API returned no lyrics:", JSON.stringify(resData)?.slice(0, 300));
-        return message.reply("❌ এই গানের লিরিক্স খুঁজে পাওয়া যায়নি, অন্য গান দিয়ে চেষ্টা করো!");
+        return message.reply({ body: "❌ এই গানের লিরিক্স খুঁজে পাওয়া যায়নি, অন্য গান দিয়ে চেষ্টা করো!", effect: "love" });
       }
 
       // Messenger rejects very long messages
@@ -55,7 +55,7 @@ module.exports = {
 
     } catch (err) {
       console.error("[lyrics] failed:", why(err), err?.response?.data || err?.message);
-      return message.reply(`❌ লিরিক্স ফেচ করতে সমস্যা হয়েছে, একটু পর আবার চেষ্টা করো! (${why(err)})`);
+      return message.reply({ body: `❌ লিরিক্স ফেচ করতে সমস্যা হয়েছে, একটু পর আবার চেষ্টা করো! (${why(err)})`, effect: "love" });
     }
   }
 };

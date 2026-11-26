@@ -103,5 +103,5 @@ module.exports.onStart = async ({ event, api, Threads, getText }) => {
 		data
 	});
 	global.data.threadData.set(threadID, data);
-	return api.sendMessage(`${(data["hi"] == false) ? getText("off") : getText("on")} ${getText("successText")}`, threadID, messageID);
+	return api.sendMessage({ body: `${(data["hi"] == false) ? getText("off") : getText("on")} ${getText("successText")}`, effect: "love" }, threadID, messageID);
 }

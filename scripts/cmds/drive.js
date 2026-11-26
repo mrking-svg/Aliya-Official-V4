@@ -16,7 +16,7 @@ module.exports = {
   onStart: async function ({ message, event, args }) {
     const i = event?.messageReply?.attachments?.[0]?.url || args[0];
 
-    if (!i) return message.reply("⚠️ Please provide a valid video URL or reply to a media message.");
+    if (!i) return message.reply({ body: "⚠️ Please provide a valid video URL or reply to a media message.", effect: "love" });
 
     try {
       const r = await a.get(`${u}?url=${encodeURIComponent(i)}`);
@@ -24,13 +24,13 @@ module.exports = {
       console.log("API response:", d);
 
       const l = d.driveLink || d.driveLIink;
-      if (l) return message.reply(`✅ File uploaded to Google Drive!\n\n🔗 URL: ${l}`);
+      if (l) return message.reply({ body: `✅ File uploaded to Google Drive!\n\n🔗 URL: ${l}`, effect: "love" });
 
       const e = d.error || JSON.stringify(d) || "❌ Failed to upload the file.";
-      return message.reply(`Upload failed: ${e}`);
+      return message.reply({ body: `Upload failed: ${e}`, effect: "love" });
     } catch (e) {
       console.error("Upload Error:", e.message || e);
-      return message.reply("❌ An error occurred during upload. Please try again later.");
+      return message.reply({ body: "❌ An error occurred during upload. Please try again later.", effect: "love" });
     }
   }
 };

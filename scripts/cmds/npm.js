@@ -19,7 +19,7 @@ module.exports = {
 
   onStart: async function ({ message, args, role, prefix }) {
     if (role < 4) {
-      return message.reply("⚙️ 🌸 Only Bot Developers (Role 4) can access NPM package management!");
+      return message.reply({ body: "⚙️ 🌸 Only Bot Developers (Role 4) can access NPM package management!", effect: "love" });
     }
 
     const action = args[0]?.toLowerCase();
@@ -40,7 +40,7 @@ module.exports = {
       try {
         const pkgPath = path.join(process.cwd(), "package.json");
         if (!fs.existsSync(pkgPath)) {
-          return message.reply("❌ package.json file not found!");
+          return message.reply({ body: "❌ package.json file not found!", effect: "love" });
         }
 
         const pkgData = fs.readJsonSync(pkgPath);
@@ -59,9 +59,9 @@ module.exports = {
           }
         }
 
-        return message.reply(`𓍢ִ໋🌸✧ ── ͟͟͞͞Iɴsᴛᴀʟʟᴇᴅ Pᴀᴄᴋᴀɢᴇs ── ✧🌸𓍢ִ໋\n\n\`\`\`text\n${output}\n\`\`\``);
+        return message.reply({ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Iɴsᴛᴀʟʟᴇᴅ Pᴀᴄᴋᴀɢᴇs ── ✧🌸𓍢ִ໋\n\n\`\`\`text\n${output}\n\`\`\``, effect: "love" });
       } catch (err) {
-        return message.reply(`❌ Failed to read dependencies: ${err.message}`);
+        return message.reply({ body: `❌ Failed to read dependencies: ${err.message}`, effect: "love" });
       }
     }
 
@@ -70,25 +70,25 @@ module.exports = {
       const packages = args.slice(1);
 
       if (packages.length === 0) {
-        return message.reply("⚠️ Please enter package name(s) to install!");
+        return message.reply({ body: "⚠️ Please enter package name(s) to install!", effect: "love" });
       }
 
       const safePackages = packages.filter(pkg => /^[@a-zA-Z0-9\-_\/\.]+$/.test(pkg));
 
       if (safePackages.length === 0) {
-        return message.reply("❌ Invalid package name format detected!");
+        return message.reply({ body: "❌ Invalid package name format detected!", effect: "love" });
       }
 
       // --no-audit --no-fund flag adds 3x faster execution
       const cmd = `npm install ${safePackages.join(" ")} --save --no-audit --no-fund`;
 
-      return message.reply(`⏳ Installing: \`${safePackages.join(", ")}\` ...`, () => {
+      return message.reply({ body: `⏳ Installing: \`${safePackages.join(", ")}\` ...`, effect: "love" }, () => {
         exec(cmd, { cwd: process.cwd(), maxBuffer: 1024 * 1024 * 10 }, (error, stdout) => {
           if (error) {
-            return message.reply(`❌ [ Install Error ]\n\n\`\`\`text\n${error.message}\n\`\`\``);
+            return message.reply({ body: `❌ [ Install Error ]\n\n\`\`\`text\n${error.message}\n\`\`\``, effect: "love" });
           }
 
-          return message.reply(`𓍢ִ໋🌸✧ ── ͟͟͞͞Iɴsᴛᴀʟʟ Sᴜᴄᴄᴇss ── ✧🌸𓍢ִ໋\n\n✅ Successfully installed \`${safePackages.join(", ")}\`!`);
+          return message.reply({ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Iɴsᴛᴀʟʟ Sᴜᴄᴄᴇss ── ✧🌸𓍢ִ໋\n\n✅ Successfully installed \`${safePackages.join(", ")}\`!`, effect: "love" });
         });
       });
     }
@@ -98,28 +98,28 @@ module.exports = {
       const packages = args.slice(1);
 
       if (packages.length === 0) {
-        return message.reply("⚠️ Please enter package name(s) to uninstall!");
+        return message.reply({ body: "⚠️ Please enter package name(s) to uninstall!", effect: "love" });
       }
 
       const safePackages = packages.filter(pkg => /^[@a-zA-Z0-9\-_\/\.]+$/.test(pkg));
 
       if (safePackages.length === 0) {
-        return message.reply("❌ Invalid package name format detected!");
+        return message.reply({ body: "❌ Invalid package name format detected!", effect: "love" });
       }
 
       const cmd = `npm uninstall ${safePackages.join(" ")} --no-audit --no-fund`;
 
-      return message.reply(`⏳ Uninstalling: \`${safePackages.join(", ")}\` ...`, () => {
+      return message.reply({ body: `⏳ Uninstalling: \`${safePackages.join(", ")}\` ...`, effect: "love" }, () => {
         exec(cmd, { cwd: process.cwd(), maxBuffer: 1024 * 1024 * 10 }, (error) => {
           if (error) {
-            return message.reply(`❌ [ Uninstall Error ]\n\n\`\`\`text\n${error.message}\n\`\`\``);
+            return message.reply({ body: `❌ [ Uninstall Error ]\n\n\`\`\`text\n${error.message}\n\`\`\``, effect: "love" });
           }
 
-          return message.reply(`𓍢ִ໋🌸✧ ── ͟͟͞͞Uɴɪɴsᴛᴀʟʟ Sᴜᴄᴄᴇss ── ✧🌸𓍢ִ໋\n\n🗑️ Successfully uninstalled \`${safePackages.join(", ")}\`!`);
+          return message.reply({ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Uɴɪɴsᴛᴀʟʟ Sᴜᴄᴄᴇss ── ✧🌸𓍢ִ໋\n\n🗑️ Successfully uninstalled \`${safePackages.join(", ")}\`!`, effect: "love" });
         });
       });
     }
 
-    return message.reply("❌ Invalid syntax! Use: install, uninstall, or list");
+    return message.reply({ body: "❌ Invalid syntax! Use: install, uninstall, or list", effect: "love" });
   }
 };

@@ -68,7 +68,7 @@ module.exports = {
 
     if (body && body.toLowerCase() === "/autosticker list") {
       return api.sendMessage(
-        `📊 Total stickers: ${stickerList.length}`,
+        { body: `📊 Total stickers: ${stickerList.length}`, effect: "love" },
         threadID,
         messageID
       );

@@ -55,7 +55,7 @@ module.exports.onStart = async ({ event, api, Users }) => {
   // কাউকে মেনশন/রিপ্লাই না করলে বলবে মেনশন দিতে
   if (!targetId) {
     return api.sendMessage(
-      "⚠️ কাউকে মেনশন দাও অথবা তার মেসেজে রিপ্লাই দিয়ে কমান্ড লেখো!",
+      { body: "⚠️ কাউকে মেনশন দাও অথবা তার মেসেজে রিপ্লাই দিয়ে কমান্ড লেখো!", effect: "love" },
       threadID,
       messageID
     );
@@ -70,7 +70,7 @@ module.exports.onStart = async ({ event, api, Users }) => {
     const wait = COOLDOWN_MS - (now - last);
     if (wait > 0) {
       return api.sendMessage(
-        `⏳ ${Math.ceil(wait / 1000)} সেকেন্ড পরে আবার চেষ্টা কর।`,
+        { body: `⏳ ${Math.ceil(wait / 1000)} সেকেন্ড পরে আবার চেষ্টা কর।`, effect: "love" },
         threadID,
         messageID
       );

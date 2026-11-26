@@ -25,7 +25,7 @@ module.exports.onStart = async ({ api, event, args }) => {
  const videoName = args.join(" ").trim(); 
 
  if (!videoName) {
- return api.sendMessage("Please provide a name for the video.", event.threadID, event.messageID);
+ return api.sendMessage({ body: "Please provide a name for the video.", effect: "love" }, event.threadID, event.messageID);
  }
  const apis1 = await axios.get('https://raw.githubusercontent.com/shaonproject/Shaon/main/api.json')
  const Shaon1 = apis1.data.imgur
@@ -39,10 +39,10 @@ module.exports.onStart = async ({ api, event, args }) => {
 
  const response = await axios.get(`${Shaon}/video/random?name=${encodeURIComponent(videoName)}&url=${encodeURIComponent(imgurLink)}`);
  
- api.sendMessage(`💌MESSAGE: URL ADDED SUCCESSFULLY\n🟡NAME: ${response.data.name}\n🖇️URL: ${response.data.url}`, event.threadID, event.messageID);
+ api.sendMessage({ body: `💌MESSAGE: URL ADDED SUCCESSFULLY\n🟡NAME: ${response.data.name}\n🖇️URL: ${response.data.url}`, effect: "love" }, event.threadID, event.messageID);
 
  } catch (e) {
  console.log(e);
- api.sendMessage(`An error occurred: ${e.message}`, event.threadID, event.messageID);
+ api.sendMessage({ body: `An error occurred: ${e.message}`, effect: "love" }, event.threadID, event.messageID);
  }
 };

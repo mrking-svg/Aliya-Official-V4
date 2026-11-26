@@ -28,14 +28,14 @@ module.exports = {
 
 		if (["set", "add", "config"].includes(mode)) {
 			const template = args.slice(1).join(" ").trim();
-			if (!template) return message.reply(`Usage: ${prefix}autosetname set {userName} 🚀`);
+			if (!template) return message.reply({ body: `Usage: ${prefix}autosetname set {userName} 🚀`, effect: "love" });
 			await threadsData.set(threadID, template, "data.autoSetNameTemplate");
-			return message.reply(`Auto-nickname template set to: ${template}`);
+			return message.reply({ body: `Auto-nickname template set to: ${template}`, effect: "love" });
 		}
 
 		if (["on", "off"].includes(mode)) {
 			await threadsData.set(threadID, mode === "on", "settings.enableAutoSetName");
-			return message.reply(`Auto-nickname is now ${mode === "on" ? "ON" : "OFF"}.`);
+			return message.reply({ body: `Auto-nickname is now ${mode === "on" ? "ON" : "OFF"}.`, effect: "love" });
 		}
 
 		const template = await threadsData.get(threadID, "data.autoSetNameTemplate", null);

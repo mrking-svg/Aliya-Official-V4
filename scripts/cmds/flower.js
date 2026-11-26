@@ -23,7 +23,7 @@ module.exports = {
 
   onStart: async function ({ api, event, message }) {
     try {
-      const loadingMessage = await message.reply("🐤 | 𝗟𝗼𝗮𝗱𝗶𝗻𝗴 𝗿𝗮𝗻𝗱𝗼𝗺 𝗙𝗹𝗼𝘄𝗲𝗿...𝗣𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁..!!");
+      const loadingMessage = await message.reply({ body: "🐤 | 𝗟𝗼𝗮𝗱𝗶𝗻𝗴 𝗿𝗮𝗻𝗱𝗼𝗺 𝗙𝗹𝗼𝘄𝗲𝗿...𝗣𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁..!!", effect: "love" });
 
       setTimeout(() => {
         api.unsendMessage(loadingMessage.messageID);
@@ -32,7 +32,7 @@ module.exports = {
       const apiUrl = await mahmud();
       const res = await axios.get(`${apiUrl}/api/album/mahmud/videos/flower?userID=${event.senderID}`);
       if (!res.data.success || !res.data.videos.length)
-        return api.sendMessage("❌ | No videos found.", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ | No videos found.", effect: "love" }, event.threadID, event.messageID);
 
       const url = res.data.videos[Math.floor(Math.random() * res.data.videos.length)];
       const filePath = path.join(__dirname, "temp_video.mp4");
@@ -55,11 +55,11 @@ module.exports = {
       });
 
       writer.on("error", () => {
-        api.sendMessage("❌ | Download error.", event.threadID, event.messageID);
+        api.sendMessage({ body: "❌ | Download error.", effect: "love" }, event.threadID, event.messageID);
       });
     } catch (e) {
       console.error("ERROR:", e);
-      api.sendMessage("🥹error, contact 0xMr_King x ┃ Tanin Islam.", event.threadID, event.messageID);
+      api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

@@ -33,24 +33,24 @@ module.exports.onStart = async function ({ api, event, args, Currencies }) {
   const { loadImage, createCanvas } = require("canvas");
 
   if (args.length < 2)
-    return api.sendMessage("Please enter your choice and bet amount!", threadID, messageID);
+    return api.sendMessage({ body: "Please enter your choice and bet amount!", effect: "love" }, threadID, messageID);
 
   var allface = ["bau", "cua", "tom", "ca", "nai", "ga"];
   var betChoice = args[0].toLowerCase();
 
   if (!allface.includes(betChoice))
-    return api.sendMessage(`Invalid choice "${betChoice}"!`, threadID, messageID);
+    return api.sendMessage({ body: `Invalid choice "${betChoice}"!`, effect: "love" }, threadID, messageID);
 
   var dataMoney = await Currencies.getData(senderID);
   var money = dataMoney.money;
   var betAmount = parseBet(args[1]);
 
   if (isNaN(betAmount) || betAmount < 1)
-    return api.sendMessage("Invalid bet amount!", threadID, messageID);
+    return api.sendMessage({ body: "Invalid bet amount!", effect: "love" }, threadID, messageID);
   if (betAmount < min)
-    return api.sendMessage(`Minimum bet is ${compact(min)}$!`, threadID, messageID);
+    return api.sendMessage({ body: `Minimum bet is ${compact(min)}$!`, effect: "love" }, threadID, messageID);
   if (betAmount > money)
-    return api.sendMessage(`You don't have enough money to bet ${compact(betAmount)}$!`, threadID, messageID);
+    return api.sendMessage({ body: `You don't have enough money to bet ${compact(betAmount)}$!`, effect: "love" }, threadID, messageID);
 
   var luckynumber = Math.floor(Math.random() * 100) + 1;
   if (luckynumber > tlt) allface.splice(allface.indexOf(betChoice), 1);

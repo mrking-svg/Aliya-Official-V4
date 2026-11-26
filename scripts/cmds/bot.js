@@ -37,8 +37,8 @@ module.exports.onStart = ({ api, event, args }) => {
   // শুধু "bot" বা "bot কিছু-একটা" হলে একদম চুপ — বেবি কোড রিপ্লাই দিবে।
   if (sub !== "on" && sub !== "off" && sub !== "status") return;
 
-  if (!power) return api.sendMessage("❌ includes/power.js not found.", event.threadID, event.messageID);
-  if (!power.creditOk()) return api.sendMessage("❌ Credit mismatch, system disabled.\n👑 Credit: 0xMr_King x ┃ Tanin Islam", event.threadID, event.messageID);
+  if (!power) return api.sendMessage({ body: "❌ includes/power.js not found.", effect: "love" }, event.threadID, event.messageID);
+  if (!power.creditOk()) return api.sendMessage({ body: "❌ Credit mismatch, system disabled.\n👑 Credit: 0xMr_King x ┃ Tanin Islam", effect: "love" }, event.threadID, event.messageID);
 
   // শুধু on/off/status দিলেই অ্যাডমিন চেক হবে
   // অ্যাডমিন না হলে একদম চুপ — কোনো রিপ্লাই নেই

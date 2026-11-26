@@ -24,11 +24,11 @@ module.exports = {
  } else if (mentions && Object.keys(mentions).length > 0) {
  targetID = Object.keys(mentions)[0];
  } else {
- return message.reply("Please mention someone or reply to a message.");
+ return message.reply({ body: "Please mention someone or reply to a message.", effect: "love" });
  }
 
  if (targetID === senderID) {
- return message.reply("You can't give gu to yourself.");
+ return message.reply({ body: "You can't give gu to yourself.", effect: "love" });
  }
 
  const senderAvatarUrl = `https://graph.facebook.com/${senderID}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
@@ -95,7 +95,7 @@ module.exports = {
  });
  } catch (err) {
  console.log(err);
- message.reply("Something went wrong while generating the image.");
+ message.reply({ body: "Something went wrong while generating the image.", effect: "love" });
  }
  }
 };

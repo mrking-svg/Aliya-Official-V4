@@ -32,7 +32,7 @@ module.exports = {
 
 		} catch (err) {  
 			console.log(err);  
-			return message.reply("❌ 𝐂𝐡𝐮𝐝𝐥𝐢𝐧𝐠 𝐏𝐨𝐧𝐠");  
+			return message.reply({ body: "❌ 𝐂𝐡𝐮𝐝𝐥𝐢𝐧𝐠 𝐏𝐨𝐧𝐠", effect: "love" });  
 		}  
 	}
 };

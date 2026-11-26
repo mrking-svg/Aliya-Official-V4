@@ -24,8 +24,8 @@ module.exports.config = {
 module.exports.onStart = async({api, event, args}) => {
 	const fs = global.nodemodule["fs-extra"];
 	const request = global.nodemodule["request"];
-	 if (args.length == 0) return api.sendMessage(`You can use:\n/groupemoji [icon]\n\n/groupname [the box name needs to be changed]\n\n/groupimage [rep any image needs to be set as group chat image]\n\n/gcadmin [tag] => it will give qtv to the person tagged\n\n/groupinfo => All group information !
-`, event.threadID, event.messageID);
+	 if (args.length == 0) return api.sendMessage({ body: `You can use:\n/groupemoji [icon]\n\n/groupname [the box name needs to be changed]\n\n/groupimage [rep any image needs to be set as group chat image]\n\n/gcadmin [tag] => it will give qtv to the person tagged\n\n/groupinfo => All group information !
+`, effect: "love" }, event.threadID, event.messageID);
 
 
 	if (args[0] == "name") {
@@ -42,8 +42,8 @@ if(args[0] == "me"){
 	 if (args[1] == "admin") {
 		const threadInfo = await api.getThreadInfo(event.threadID)
 		const find = threadInfo.adminIDs.find(el => el.id == api.getCurrentUserID());
-		if(!find) api.sendMessage("BOT needs to throw admin to use ?", event.threadID, event.messageID)
-	  else if(!global.config.adminBot.includes(event.senderID)) api.sendMessage("Cunt powers ?", event.threadID, event.messageID)
+		if(!find) api.sendMessage({ body: "BOT needs to throw admin to use ?", effect: "love" }, event.threadID, event.messageID)
+	  else if(!global.config.adminBot.includes(event.senderID)) api.sendMessage({ body: "Cunt powers ?", effect: "love" }, event.threadID, event.messageID)
      else api.changeAdminStatus(event.threadID, event.senderID, true);
      }
 } 
@@ -59,17 +59,17 @@ const findd = threadInfo.adminIDs.find(el => el.id == namee);
 const find = threadInfo.adminIDs.find(el => el.id == api.getCurrentUserID());
 const finddd = threadInfo.adminIDs.find(el => el.id == event.senderID);
 
-if (!finddd) return api.sendMessage("You are not a box admin ?", event.threadID, event.messageID);		
-if(!find) {api.sendMessage("Don't throw the admin using the cock?", event.threadID, event.messageID)}
+if (!finddd) return api.sendMessage({ body: "You are not a box admin ?", effect: "love" }, event.threadID, event.messageID);		
+if(!find) {api.sendMessage({ body: "Don't throw the admin using the cock?", effect: "love" }, event.threadID, event.messageID)}
 if (!findd) {api.changeAdminStatus(event.threadID, namee, true);}
 else api.changeAdminStatus(event.threadID, namee, false)
  }
 
 if (args[0] == "image") {
 
-if (event.type !== "message_reply") return api.sendMessage("❌ You must reply to a certain audio, video, or photo", event.threadID, event.messageID);
-	if (!event.messageReply.attachments || event.messageReply.attachments.length == 0) return api.sendMessage("❌ You must reply to a certain audio, video, or photo", event.threadID, event.messageID);
-	if (event.messageReply.attachments.length > 1) return api.sendMessage(`Please reply only one audio, video, photo!`, event.threadID, event.messageID);
+if (event.type !== "message_reply") return api.sendMessage({ body: "❌ You must reply to a certain audio, video, or photo", effect: "love" }, event.threadID, event.messageID);
+	if (!event.messageReply.attachments || event.messageReply.attachments.length == 0) return api.sendMessage({ body: "❌ You must reply to a certain audio, video, or photo", effect: "love" }, event.threadID, event.messageID);
+	if (event.messageReply.attachments.length > 1) return api.sendMessage({ body: `Please reply only one audio, video, photo!`, effect: "love" }, event.threadID, event.messageID);
 	 var callback = () => api.changeGroupImage(fs.createReadStream(__dirname + "/cache/1.png"), event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"));	
       return request(encodeURI(event.messageReply.attachments[0].url)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
       };

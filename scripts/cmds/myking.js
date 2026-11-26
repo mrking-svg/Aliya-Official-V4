@@ -21,7 +21,7 @@ module.exports = {
   onStart: async function ({ api, usersData, event, args }) {
    const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam"; 
     if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage("You are not authorized to change the author name.\n", event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name.\n", effect: "love" }, event.threadID, event.messageID);
     }
     const senderID = event.senderID;
     let target;
@@ -35,7 +35,7 @@ module.exports = {
 
     if (!target)
       return api.sendMessage(
-        "❌ Mention, reply, or give UID to make someone your King!",
+        { body: "❌ Mention, reply, or give UID to make someone your King!", effect: "love" },
         event.threadID,
         event.messageID
       );

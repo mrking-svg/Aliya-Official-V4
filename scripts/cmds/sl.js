@@ -22,16 +22,16 @@ module.exports = {
     try {
       config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
     } catch (err) {
-      return message.reply("❌ Can't load config file.");
+      return message.reply({ body: "❌ Can't load config file.", effect: "love" });
     }
 
     if (!input) {
       const status = config.optionsFca.selfListen ? "ON" : "OFF";
-      return message.reply(`🤖 selfListen is currently ${status}.\nUse /sl on or /sl off`);
+      return message.reply({ body: `🤖 selfListen is currently ${status}.\nUse /sl on or /sl off`, effect: "love" });
     }
 
     if (!["on", "off"].includes(input)) {
-      return message.reply("❌ Invalid option. Use /sl on or /sl off");
+      return message.reply({ body: "❌ Invalid option. Use /sl on or /sl off", effect: "love" });
     }
 
     const newValue = input === "on";
@@ -46,7 +46,7 @@ module.exports = {
       console.log(`[SL COMMAND] selfListen changed to ${newValue} by ${event.senderID} at ${new Date().toLocaleString()}`);
     } catch (err) {
       console.error("[SL COMMAND ERROR]", err);
-      message.reply("❌ Failed to update config.");
+      message.reply({ body: "❌ Failed to update config.", effect: "love" });
     }
   }
 };

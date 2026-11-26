@@ -55,6 +55,9 @@ function detect(api) {
 
 function fire(detected, api, threadID, on) {
 	if (!detected) return;
+	// Never push typing packets into a socket that is already reconnecting.
+	const mqtt = api && api.ctx && api.ctx.mqttClient;
+	if (mqtt && mqtt.connected === false) return;
 	const tid = String(threadID);
 	const cb = () => { };
 	let result;
@@ -83,7 +86,10 @@ function release(key) {
 	clearInterval(rec.timer);
 	clearTimeout(rec.safety);
 	active.delete(key);
-	if (rec.detected && rec.detected.canStop) fire(rec.detected, rec.api, key, false);
+	// Sending the message itself clears Facebook's typing state. Sending an
+	// extra "stop" packet for every response only floods the MQTT socket.
+	if (rec.detected && rec.detected.canStop && rec.kind !== "send")
+		fire(rec.detected, rec.api, key, false);
 }
 
 // Delivery has finished: release every handle for this thread, including an
@@ -111,16 +117,22 @@ function start(api, threadID, kind) {
 		return { stop: () => release(key) };
 	}
 
-	const rec = { api, detected, refs: 1, timer: null, safety: null };
+	const rec = { api, detected, refs: 1, timer: null, safety: null, kind };
 	active.set(key, rec);
 	fire(detected, api, key, true);
-	rec.timer = setInterval(() => fire(detected, api, key, true), cfg.refreshMs);
-	if (rec.timer && typeof rec.timer.unref === "function") rec.timer.unref();
+
+	// Long-running commands still refresh, but ordinary sends do not: one
+	// typing packet per response is enough and keeps the listener stable.
+	if (kind !== "send") {
+		rec.timer = setInterval(() => fire(detected, api, key, true), cfg.refreshMs);
+		if (rec.timer && typeof rec.timer.unref === "function") rec.timer.unref();
+	}
+
 	rec.safety = setTimeout(() => {
 		const current = active.get(key);
 		if (current) current.refs = 1;
 		release(key);
-	}, cfg.maxMs);
+	}, kind === "send" ? 30000 : cfg.maxMs);
 	if (rec.safety && typeof rec.safety.unref === "function") rec.safety.unref();
 	return { stop: () => release(key) };
 }

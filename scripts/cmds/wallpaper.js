@@ -23,7 +23,7 @@ module.exports.config = {
 
 module.exports.onStart = async ({ api, event, args }) => {
   if (args.length === 0) {
-    api.sendMessage("ছবি অনুসন্ধান করার জন্য একটি নাম প্রদান করুন.🌸", event.threadID, event.messageID);
+    api.sendMessage({ body: "ছবি অনুসন্ধান করার জন্য একটি নাম প্রদান করুন.🌸", effect: "love" }, event.threadID, event.messageID);
     return;
   }
 
@@ -40,7 +40,7 @@ module.exports.onStart = async ({ api, event, args }) => {
     });
 
     if (wallpapers.length === 0) {
-      api.sendMessage("প্রদত্ত প্রশ্নের জন্য কোন ওয়ালপেপার পাওয়া যায়নি.❌", event.threadID, event.messageID);
+      api.sendMessage({ body: "প্রদত্ত প্রশ্নের জন্য কোন ওয়ালপেপার পাওয়া যায়নি.❌", effect: "love" }, event.threadID, event.messageID);
       return;
     }
 
@@ -87,11 +87,11 @@ module.exports.onStart = async ({ api, event, args }) => {
 
       api.sendMessage(msg, event.threadID, event.messageID);
     } else {
-      api.sendMessage("An error occurred while fetching the wallpapers.", event.threadID, event.messageID);
+      api.sendMessage({ body: "An error occurred while fetching the wallpapers.", effect: "love" }, event.threadID, event.messageID);
     }
 
   } catch (error) {
     console.error(error);
-    api.sendMessage("An error occurred while fetching wallpapers.", event.threadID, event.messageID);
+    api.sendMessage({ body: "An error occurred while fetching wallpapers.", effect: "love" }, event.threadID, event.messageID);
   }
 };

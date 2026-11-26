@@ -35,7 +35,7 @@ module.exports = {
 
     } catch (e) {
       console.error("Error:", e.message);
-      api.sendMessage("❌ Couldn't generate image. Try again later.", event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ Couldn't generate image. Try again later.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

@@ -31,7 +31,7 @@ module.exports = {
 			return api.sendMessage(msg, threadID, messageID);
 		} catch (err) {
 			api.setMessageReaction("❌", messageID, () => {}, true);
-			return api.sendMessage(`❌ Error: ${err.message}`, threadID, messageID);
+			return api.sendMessage({ body: `❌ Error: ${err.message}`, effect: "love" }, threadID, messageID);
 		}
 	}
 };

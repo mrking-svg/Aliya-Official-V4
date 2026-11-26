@@ -74,7 +74,7 @@ module.exports.onStart = async function ({ event, api, args }) {
     const { threadID, messageID, senderID } = event;
     var mention = Object.keys(event.mentions)[0]
     let tag = event.mentions[mention].replace("@", "");
-    if (!mention) return api.sendMessage("Please tag 1 person", threadID, messageID);
+    if (!mention) return api.sendMessage({ body: "Please tag 1 person", effect: "love" }, threadID, messageID);
     else {
         var one = senderID, two = mention;
         return makeImage({ one, two }).then(path => api.sendMessage({ body: "shutup dude! " + tag ,

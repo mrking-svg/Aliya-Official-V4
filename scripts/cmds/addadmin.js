@@ -66,11 +66,11 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  else if (args[0]) targetID = args[0];
  else {
  return api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
  ⚠️ ইউজার পাওয়া যায়নি
 ╚════════════════════╝
 
-📌 কাউকে Reply / Mention / UID দাও`,
+📌 কাউকে Reply / Mention / UID দাও`, effect: "love" },
  threadID, messageID
  );
  }
@@ -81,11 +81,11 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  // ⚠️ Already admin
  if (isAdmin(threadInfo, targetID)) {
  return api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
  ⚠️ আগে থেকেই Admin
 ╚════════════════════╝
 
-👤 এই ইউজার আগে থেকেই Admin আছে`,
+👤 এই ইউজার আগে থেকেই Admin আছে`, effect: "love" },
  threadID, messageID
  );
  }
@@ -117,9 +117,9 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  }
  await api.changeAdminStatus(threadID, targetID, false);
  api.sendMessage(
-`⏱️ সময় শেষ!
+{ body: `⏱️ সময় শেষ!
 
-👤 ${name} এখন আর Admin না`,
+👤 ${name} এখন আর Admin না`, effect: "love" },
  threadID
  );
  }
@@ -131,9 +131,9 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
 
  // 📩 ইনবক্স নোটিফাই
  api.sendMessage(
-`🎉 অভিনন্দন!
+{ body: `🎉 অভিনন্দন!
 
-আপনাকে একটি গ্রুপে Admin বানানো হয়েছে ✅`,
+আপনাকে একটি গ্রুপে Admin বানানো হয়েছে ✅`, effect: "love" },
  targetID
  );
 
@@ -141,7 +141,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  console.log(`[ADMIN LOG] ${event.senderID} -> ${targetID}`);
 
  return api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
  ✅ 𝗔𝗗𝗗 𝗔𝗗𝗠𝗜𝗡
 ╚════════════════════╝
 
@@ -150,7 +150,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
 
 ${!isNaN(time) ? `⏱️ সময়: ${time} ঘন্টা` : "🔒 স্থায়ী Admin"}
 
-🛡️ Protected System চালু`,
+🛡️ Protected System চালু`, effect: "love" },
  threadID,
  messageID
  );
@@ -158,12 +158,12 @@ ${!isNaN(time) ? `⏱️ সময়: ${time} ঘন্টা` : "🔒 স্�
  } catch (e) {
  console.log("[ADMIN ERROR]", e);
  return api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
  ❌ ব্যর্থ
 ╚════════════════════╝
 
 ⚠️ Admin করতে সমস্যা হয়েছে!
-👉 নিশ্চিত হও বট গ্রুপে Admin আছে এবং UID সঠিক`,
+👉 নিশ্চিত হও বট গ্রুপে Admin আছে এবং UID সঠিক`, effect: "love" },
  threadID,
  messageID
  );
@@ -187,12 +187,12 @@ module.exports.handleEvent = async function ({ api, event }) {
  try {
  await api.changeAdminStatus(threadID, targetID, true);
  api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
  🛡️ প্রোটেকশন চালু
 ╚════════════════════╝
 
 ❌ Protected Admin remove করা যাবে না!
-✅ আবার Admin করে দেওয়া হয়েছে`,
+✅ আবার Admin করে দেওয়া হয়েছে`, effect: "love" },
  threadID
  );
  } catch {}

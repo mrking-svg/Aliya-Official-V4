@@ -16,7 +16,7 @@ module.exports = {
     const input = args.join(" ").trim();
 
     if (!input) {
-      return message.reply("𓍢ִ໋🌸✧ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ a Chess.com ᴜsᴇʀɴᴀᴍᴇ ᴏʀ ᴛʏᴘᴇ \"chess puzzle\"! ✧🌸𓍢ִ໋");
+      return message.reply({ body: "𓍢ִ໋🌸✧ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ a Chess.com ᴜsᴇʀɴᴀᴍᴇ ᴏʀ ᴛʏᴘᴇ \"chess puzzle\"! ✧🌸𓍢ִ໋", effect: "love" });
     }
 
     const headers = { "User-Agent": "GoatBot-ChessPlugin/1.0" };
@@ -46,7 +46,7 @@ module.exports = {
         return message.reply(msgData);
       } catch (err) {
         api.setMessageReaction("❌", event.messageID, () => {}, true);
-        return message.reply("𓍢ִ໋🌸✧ Fᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ ᴅᴀɪʟʏ ᴘᴜᴢᴢʟᴇ! ✧🌸𓍢ִ໋");
+        return message.reply({ body: "𓍢ִ໋🌸✧ Fᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ ᴅᴀɪʟʏ ᴘᴜᴢᴢʟᴇ! ✧🌸𓍢ִ໋", effect: "love" });
       }
     }
 
@@ -95,7 +95,7 @@ module.exports = {
 
     } catch (err) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply(`𓍢ִ໋🌸✧ Pʟᴀʏᴇʀ "${input}" ɴᴏᴛ ғᴏᴜɴᴅ ᴏɴ Cʜᴇss.ᴄᴏᴍ! ✧🌸𓍢ִ໋`);
+      return message.reply({ body: `𓍢ִ໋🌸✧ Pʟᴀʏᴇʀ "${input}" ɴᴏᴛ ғᴏᴜɴᴅ ᴏɴ Cʜᴇss.ᴄᴏᴍ! ✧🌸𓍢ִ໋`, effect: "love" });
     }
   }
 };

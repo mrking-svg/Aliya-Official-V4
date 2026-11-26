@@ -15,29 +15,29 @@
     const { threadID, messageID, senderID } = event;
 
     if (!args[0]) {
-      return api.sendMessage("⚠️ 𝖯𝗅𝖾𝖺𝗌𝖾 𝖾𝗇𝗍𝖾𝗋 𝖺 𝖻𝖾𝗍 𝖺𝗆𝗈𝗎𝗇𝗍! 𝖤𝗑𝖺𝗆𝗉𝗅𝖾: /𝗏𝗌𝗅𝗈𝗍 100𝗄", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ 𝖯𝗅𝖾𝖺𝗌𝖾 𝖾𝗇𝗍𝖾𝗋 𝖺 𝖻𝖾𝗍 𝖺𝗆𝗈𝗎𝗇𝗍! 𝖤𝗑𝖺𝗆𝗉𝗅𝖾: /𝗏𝗌𝗅𝗈𝗍 100𝗄", effect: "love" }, threadID, messageID);
     }
 
     const MAX_BET = 100000000000000;
     const bet = parseShortAmount(args[0]);
 
     if (isNaN(bet) || bet <= 0) {
-      return api.sendMessage("⚠️ 𝖨𝗇𝗏𝖺𝗅𝗂𝖽 𝖻𝖾𝗍 𝖺𝗆𝗈𝗎𝗇𝗍!", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ 𝖨𝗇𝗏𝖺𝗅𝗂𝖽 𝖻𝖾𝗍 𝖺𝗆𝗈𝗎𝗇𝗍!", effect: "love" }, threadID, messageID);
     }
 
     if (bet < 50) {
-      return api.sendMessage("⚠️ 𝖬𝗂𝗇𝗂𝗆𝗎𝗆 𝖻𝖾𝗍 𝗂𝗌 𝟧𝟢 𝖼𝗈𝗂𝗇𝗌.", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ 𝖬𝗂𝗇𝗂𝗆𝗎𝗆 𝖻𝖾𝗍 𝗂𝗌 𝟧𝟢 𝖼𝗈𝗂𝗇𝗌.", effect: "love" }, threadID, messageID);
     }
 
     if (bet > MAX_BET) {
-      return api.sendMessage("⚠️ 𝖬𝖺𝗑𝗂𝗆𝗎𝗆 𝖻𝖾𝗍 𝗅𝗂𝗆𝗂𝗍 𝗂𝗌 𝟣𝟢𝟢𝖳 𝖼𝗈𝗂𝗇𝗌!", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ 𝖬𝖺𝗑𝗂𝗆𝗎𝗆 𝖻𝖾𝗍 𝗅𝗂𝗆𝗂𝗍 𝗂𝗌 𝟣𝟢𝟢𝖳 𝖼𝗈𝗂𝗇𝗌!", effect: "love" }, threadID, messageID);
     }
 
     const userData = await usersData.get(senderID);
     const userMoney = userData.money || 0;
 
     if (userMoney < bet) {
-      return api.sendMessage(`❌ 𝖨𝗇𝗌𝗎𝖿𝖿𝗂𝖼𝗂𝖾𝗇𝗍 𝖻𝖺𝗅𝖺𝗇𝖼𝖾!\n💳 𝖸𝗈𝗎𝗋 𝖡𝖺𝗅𝖺𝗇𝖼𝖾: ${formatNumber(userMoney)}`, threadID, messageID);
+      return api.sendMessage({ body: `❌ 𝖨𝗇𝗌𝗎𝖿𝖿𝗂𝖼𝗂𝖾𝗇𝗍 𝖻𝖺𝗅𝖺𝗇𝖼𝖾!\n💳 𝖸𝗈𝗎𝗋 𝖡𝖺𝗅𝖺𝗇𝖼𝖾: ${formatNumber(userMoney)}`, effect: "love" }, threadID, messageID);
     }
 
     const items = ["🎰", "💎", "👑", "7️⃣", "🔥", "⚡", "🍀"];

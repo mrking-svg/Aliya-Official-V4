@@ -46,7 +46,7 @@ module.exports.onStart = async ({ api, event, args }) => {
         request(getURL).pipe(fs.createWriteStream(__dirname + `/cache/slap.${ext}`)).on("close", callback);
 			})
     .catch(err => {
-                     api.sendMessage("Failed to generate gif, be sure that you've tag someone!", event.threadID, event.messageID);
+                     api.sendMessage({ body: "Failed to generate gif, be sure that you've tag someone!", effect: "love" }, event.threadID, event.messageID);
     api.setMessageReaction("☹️", event.messageID, (err) => {}, true);
                   })     
 }

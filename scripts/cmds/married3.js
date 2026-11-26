@@ -93,7 +93,7 @@ module.exports.onStart = async function ({ event, api, args }) {
     ];
     const caption = captions[Math.floor(Math.random() * captions.length)];
 
-    if (!mention[0]) return api.sendMessage("Please mention 1 person.", threadID, messageID);
+    if (!mention[0]) return api.sendMessage({ body: "Please mention 1 person.", effect: "love" }, threadID, messageID);
     else {
         const one = senderID, two = mention[0];
         return makeImage({ one, two }).then(path =>

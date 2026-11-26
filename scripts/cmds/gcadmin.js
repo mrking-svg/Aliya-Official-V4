@@ -29,7 +29,7 @@ module.exports = {
     try {
       threadInfo = await api.getThreadInfo(threadID);
     } catch (e) {
-      return api.sendMessage("❌ Could not fetch thread info.", threadID);
+      return api.sendMessage({ body: "❌ Could not fetch thread info.", effect: "love" }, threadID);
     }
 
     // Check admin roles
@@ -39,13 +39,13 @@ module.exports = {
 
     // Permission check
     if (!isOwner && !isGroupAdmin && !isBotAdmin) {
-      return api.sendMessage("❌ You do not have permission to use this command.", threadID);
+      return api.sendMessage({ body: "❌ You do not have permission to use this command.", effect: "love" }, threadID);
     }
 
     // Command validation
     const action = args[0];
     if (!["add", "remove"].includes(action)) {
-      return api.sendMessage("❌ Invalid command.\nUse: /admin add @tag or /admin remove @tag", threadID);
+      return api.sendMessage({ body: "❌ Invalid command.\nUse: /admin add @tag or /admin remove @tag", effect: "love" }, threadID);
     }
 
     // Identify target user
@@ -62,7 +62,7 @@ module.exports = {
     }
 
     if (!uid) {
-      return api.sendMessage("❌ Please reply/mention or provide a UID.", threadID);
+      return api.sendMessage({ body: "❌ Please reply/mention or provide a UID.", effect: "love" }, threadID);
     }
 
     // Apply admin status
@@ -79,7 +79,7 @@ module.exports = {
       );
 
     } catch (err) {
-      api.sendMessage("❌ Failed. Make sure the bot is an admin in this group.", threadID);
+      api.sendMessage({ body: "❌ Failed. Make sure the bot is an admin in this group.", effect: "love" }, threadID);
       console.error(err);
     }
   }

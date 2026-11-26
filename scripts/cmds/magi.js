@@ -40,7 +40,7 @@ module.exports = {
 
         const cfg = cfgRes.data;
         if (!cfg.success || !cfg.url) {
-          return message.reply(`❌ API তে "${IMAGE_NAME}" config পাওয়া যায়নি!`);
+          return message.reply({ body: `❌ API তে "${IMAGE_NAME}" config পাওয়া যায়নি!`, effect: "love" });
         }
 
         templateUrl  = cfg.url;
@@ -48,7 +48,7 @@ module.exports = {
         msgTemplates = cfg.messages || [];
 
         if (!facePos) {
-          return message.reply("❌ API তে face position config নেই!");
+          return message.reply({ body: "❌ API তে face position config নেই!", effect: "love" });
         }
 
       } catch (e) {
@@ -83,7 +83,7 @@ module.exports = {
       }
 
       if (!avatarURL) {
-        return message.reply("❌ প্রোফাইল পিক পাওয়া যায়নি!\nএই user এর avatar Facebook API থেকে পাচ্ছি না।");
+        return message.reply({ body: "❌ প্রোফাইল পিক পাওয়া যায়নি!\nএই user এর avatar Facebook API থেকে পাচ্ছি না।", effect: "love" });
       }
 
       let userName = "তুই";

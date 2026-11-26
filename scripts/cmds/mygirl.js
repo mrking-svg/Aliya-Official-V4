@@ -15,14 +15,14 @@ module.exports.config = {
 module.exports.onStart = async ({ event, api, args }) => {
   const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam"; 
     if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
     }
   try {
     const { threadID, messageID, senderID } = event;
     const mention = Object.keys(event.mentions)[0] || (event.messageReply && event.messageReply.senderID);
 
     if (!mention)
-      return api.sendMessage("Please tag or reply to 1 person", threadID, messageID);
+      return api.sendMessage({ body: "Please tag or reply to 1 person", effect: "love" }, threadID, messageID);
 
     const user1 = senderID;
     const user2 = mention;
@@ -42,6 +42,6 @@ module.exports.onStart = async ({ event, api, args }) => {
 
   } catch (error) {
     console.error(error);
-    api.sendMessage("🥹error, contact 0xMr_King x ┃ Tanin Islam.", event.threadID, event.messageID);
+    api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, event.threadID, event.messageID);
   }
 };

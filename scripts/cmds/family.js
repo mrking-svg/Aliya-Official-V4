@@ -29,7 +29,7 @@ module.exports.config = {
 module.exports.onStart = async ({ event, api, args }) => {
   var TOKEN = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
   try {
-    if(global.client.family == true) return api.sendMessage("The system is processing a request from another box, please come back later", event.threadID, event.messageID);
+    if(global.client.family == true) return api.sendMessage({ body: "The system is processing a request from another box, please come back later", effect: "love" }, event.threadID, event.messageID);
     global.client.family = true;
     var timestart = Date.now();
     const fs = global.nodemodule["fs-extra"];
@@ -100,9 +100,9 @@ module.exports.onStart = async ({ event, api, args }) => {
     };
         if(s > ybground || s > xbground) {
           global.client.family = false;
-          return api.sendMessage(`Size avatar phải nhỏ hơn size background\nSize background: X: ${xbground}, Y: ${ybground}`, threadID, messageID);
+          return api.sendMessage({ body: `Size avatar phải nhỏ hơn size background\nSize background: X: ${xbground}, Y: ${ybground}`, effect: "love" }, threadID, messageID);
         }
-        api.sendMessage(`🔢Estimated number of photos: ${idtv.length}\n🆒 Background Size: ${xbground} x ${ybground}\n🆕Avatar Size: ${s}${mode}\n#️⃣Color: ${color}\n⏳Processing your request, it may take up to 1 minute to complete...`,threadID, messageID);
+        api.sendMessage({ body: `🔢Estimated number of photos: ${idtv.length}\n🆒 Background Size: ${xbground} x ${ybground}\n🆕Avatar Size: ${s}${mode}\n#️⃣Color: ${color}\n⏳Processing your request, it may take up to 1 minute to complete...`, effect: "love" },threadID, messageID);
     var loadkhung = await Canvas.loadImage("https://i.ibb.co/H41cdDM/1624768781720.png");//("https://s1.uphinh.org/2021/06/24/1624551553171.png");
     var title = args.slice(2).join(" ") || threadInfo.name;
     var path_alltv = __dirname+`/cache/alltv${threadID}${Date.now()}.png`;
@@ -175,7 +175,7 @@ module.exports.onStart = async ({ event, api, args }) => {
           attachment: fs.createReadStream(path_alltv, { 'highWaterMark': 128 * 1024 })
        }, threadID, (e, info) => {
          if(e) {
-            api.sendMessage("An error occurred, please try again later", threadID, messageID);
+            api.sendMessage({ body: "An error occurred, please try again later", effect: "love" }, threadID, messageID);
          };
          fs.unlinkSync(path_alltv);
        }, messageID);
@@ -189,7 +189,7 @@ module.exports.onStart = async ({ event, api, args }) => {
             attachment: fs.createReadStream(path_alltv, { 'highWaterMark': 128 * 1024 })
          }, threadID, (e, info) => {
            if(e) {
-              api.sendMessage("An error occurred, please try again later", threadID, messageID);
+              api.sendMessage({ body: "An error occurred, please try again later", effect: "love" }, threadID, messageID);
            };
            fs.unlinkSync(path_alltv);
          }, messageID);

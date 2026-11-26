@@ -32,7 +32,7 @@ module.exports = {
       });
 
       if (!femaleOnly.length) {
-        return api.sendMessage("🎀 𝐍𝐨 𝐟𝐞𝐦𝐚𝐥𝐞 𝐮𝐬𝐞𝐫𝐬 𝐟𝐨𝐮𝐧𝐝 𝐢𝐧 𝐭𝐡𝐢𝐬 𝐠𝐫𝐨𝐮𝐩!", threadID, messageID);
+        return api.sendMessage({ body: "🎀 𝐍𝐨 𝐟𝐞𝐦𝐚𝐥𝐞 𝐮𝐬𝐞𝐫𝐬 𝐟𝐨𝐮𝐧𝐝 𝐢𝐧 𝐭𝐡𝐢𝐬 𝐠𝐫𝐨𝐮𝐩!", effect: "love" }, threadID, messageID);
       }
 
       const pick = femaleOnly[Math.floor(Math.random() * femaleOnly.length)];
@@ -68,7 +68,7 @@ module.exports = {
       );
 
     } catch (err) {
-      api.sendMessage("🎀 𝐄𝐫𝐫𝐨𝐫 𝐨𝐜𝐜𝐮𝐫𝐫𝐞𝐝!", threadID, messageID);
+      api.sendMessage({ body: "🎀 𝐄𝐫𝐫𝐨𝐫 𝐨𝐜𝐜𝐮𝐫𝐫𝐞𝐝!", effect: "love" }, threadID, messageID);
     }
   }
 };

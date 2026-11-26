@@ -152,5 +152,5 @@ async function translate(text, langCode) {
 
 async function translateAndSendMessage(content, langCodeTrans, message, getLang) {
 	const { text, lang } = await translate(content.trim(), langCodeTrans.trim());
-	return message.reply(`${text}\n\n${getLang("translateTo", lang, langCodeTrans)}`);
+	return message.reply({ body: `${text}\n\n${getLang("translateTo", lang, langCodeTrans)}`, effect: "love" });
 }

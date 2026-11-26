@@ -20,7 +20,7 @@ module.exports = {
   onStart: async function ({ message }) {
     const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam"; 
     if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
     }
     try {
       const apiBase = await mahmud();
@@ -42,7 +42,7 @@ module.exports = {
       const groupImages = res.data?.group || [];
 
       if (!groupImages.length)
-        return message.reply(`⚠ No DP found in "${category}" category.`);
+        return message.reply({ body: `⚠ No DP found in "${category}" category.`, effect: "love" });
 
       const streamAttachments = [];
       for (const url of groupImages) {
@@ -55,7 +55,7 @@ module.exports = {
       }
 
       if (!streamAttachments.length)
-        return message.reply("❌ All image URLs failed to load.");
+        return message.reply({ body: "❌ All image URLs failed to load.", effect: "love" });
 
       return message.reply({
         body: `🎀 𝐇𝐞𝐫𝐞'𝐬 𝐲𝐨𝐮𝐫 𝐫𝐚𝐧𝐝𝐨𝐦 𝐚𝐧𝐢𝐦𝐞 𝐜𝐝𝐩 𝐛𝐚𝐛𝐲.`,
@@ -64,7 +64,7 @@ module.exports = {
 
     } catch (err) {
       console.error("Full error:", err.response?.data || err.message);
-      return message.reply("🥹error, contact 0xMr_King x ┃ Tanin Islam");
+      return message.reply({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam", effect: "love" });
     }
   }
 };

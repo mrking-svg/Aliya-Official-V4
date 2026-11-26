@@ -23,7 +23,7 @@ module.exports = {
 
     // শুধুমাত্র এডমিন
     if (!adminIDs.includes(senderID)) {
-      return api.sendMessage("❌ শুধু এডমিনরাই এই কমান্ড ব্যবহার করতে পারবে!", threadID);
+      return api.sendMessage({ body: "❌ শুধু এডমিনরাই এই কমান্ড ব্যবহার করতে পারবে!", effect: "love" }, threadID);
     }
 
     const action = args[0]?.toLowerCase();
@@ -31,20 +31,20 @@ module.exports = {
     // 🔒 LOCK
     if (action === "on" || action === "lock") {
       if (lockedThreads[threadID]) 
-        return api.sendMessage("✅ গ্রুপ আগেই লক করা আছে!", threadID);
+        return api.sendMessage({ body: "✅ গ্রুপ আগেই লক করা আছে!", effect: "love" }, threadID);
 
       try {
         await api.addUserToGroup(pageID, threadID);
       } catch (e) {}
 
       lockedThreads[threadID] = true;
-      return api.sendMessage("🔒 গ্রুপ লক করা হলো! এখন কেউ মেসেজ দিতে পারবে না।", threadID);
+      return api.sendMessage({ body: "🔒 গ্রুপ লক করা হলো! এখন কেউ মেসেজ দিতে পারবে না।", effect: "love" }, threadID);
     }
 
     // 🔓 UNLOCK
     if (action === "off" || action === "unlock") {
       if (!lockedThreads[threadID])
-        return api.sendMessage("✅ গ্রুপ আগেই আনলক আছে!", threadID);
+        return api.sendMessage({ body: "✅ গ্রুপ আগেই আনলক আছে!", effect: "love" }, threadID);
 
       delete lockedThreads[threadID];
 
@@ -55,11 +55,11 @@ module.exports = {
         console.error("❌ পেজ রিমুভ করতে সমস্যা:", e.message);
       }
 
-      return api.sendMessage("🔓 গ্রুপ আনলক করা হলো! এখন সবাই মেসেজ দিতে পারবে।", threadID);
+      return api.sendMessage({ body: "🔓 গ্রুপ আনলক করা হলো! এখন সবাই মেসেজ দিতে পারবে।", effect: "love" }, threadID);
     }
 
     // ভুল ইনপুট
-    return api.sendMessage("❌ ব্যবহার: /lock on অথবা /lock off", threadID);
+    return api.sendMessage({ body: "❌ ব্যবহার: /lock on অথবা /lock off", effect: "love" }, threadID);
   },
 
   // 🔇 কেউ মেসেজ দিলে (যদি লক থাকে)

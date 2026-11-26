@@ -57,7 +57,7 @@ module.exports = {
 
 		if (deletedCount === 0) {
 			api.setMessageReaction("☃️", event.messageID, () => {}, true);
-			return message.reply("✨ | Cache folder is already clean! No temporary files found.");
+			return message.reply({ body: "✨ | Cache folder is already clean! No temporary files found.", effect: "love" });
 		}
 
 		// Convert bytes to KB or MB

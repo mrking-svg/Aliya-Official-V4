@@ -73,12 +73,12 @@ module.exports = {
 		if (raw) {
 			bet = parseSmartAmount(raw);
 			if (!Number.isFinite(bet) || bet < 1000)
-				return message.reply("⚠️ | 𝐌𝐢𝐧𝐢𝐦𝐮𝐦 𝐛𝐞𝐭 𝐢𝐬 $𝟏𝐊.");
+				return message.reply({ body: "⚠️ | 𝐌𝐢𝐧𝐢𝐦𝐮𝐦 𝐛𝐞𝐭 𝐢𝐬 $𝟏𝐊.", effect: "love" });
 			if (bet > 1000000)
-				return message.reply("❌ | 𝐌𝐚𝐱𝐢𝐦𝐮𝐦 𝐛𝐞𝐭 𝐢𝐬 $𝟏𝐌.");
+				return message.reply({ body: "❌ | 𝐌𝐚𝐱𝐢𝐦𝐮𝐦 𝐛𝐞𝐭 𝐢𝐬 $𝟏𝐌.", effect: "love" });
 			const user = await usersData.get(senderID);
 			if ((user.money || 0) < bet)
-				return message.reply(`❌ | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐨𝐧𝐥𝐲 𝐡𝐚𝐯𝐞 $${formatNumber(user.money || 0)}.`);
+				return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐨𝐧𝐥𝐲 𝐡𝐚𝐯𝐞 $${formatNumber(user.money || 0)}.`, effect: "love" });
 			await usersData.set(senderID, { money: (user.money || 0) - bet });
 		}
 
@@ -112,10 +112,10 @@ module.exports = {
 		const guess = String(event.body || "").trim().toLowerCase();
 		const answer = String(Reply.word || "").toLowerCase();
 		if (Date.now() > (Reply.expires || 0))
-			return message.reply(`⏰ | 𝐓𝐢𝐦𝐞 𝐢𝐬 𝐮𝐩. 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬: ${Reply.word}`);
+			return message.reply({ body: `⏰ | 𝐓𝐢𝐦𝐞 𝐢𝐬 𝐮𝐩. 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬: ${Reply.word}`, effect: "love" });
 
 		if (guess !== answer)
-			return message.reply(`❌ | 𝐖𝐫𝐨𝐧𝐠 𝐚𝐧𝐬𝐰𝐞𝐫. 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬: ${Reply.word}`);
+			return message.reply({ body: `❌ | 𝐖𝐫𝐨𝐧𝐠 𝐚𝐧𝐬𝐰𝐞𝐫. 𝐓𝐡𝐞 𝐰𝐨𝐫𝐝 𝐰𝐚𝐬: ${Reply.word}`, effect: "love" });
 
 		const user = await usersData.get(event.senderID) || {};
 		const betWin = Reply.bet > 0 ? Reply.bet * 2 : 0;

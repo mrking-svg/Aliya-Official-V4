@@ -6,7 +6,7 @@ module.exports = {
   config: { name: "nagin", version: "2.0", author: "0xMr_King x ┃ Tanin Islam", countDown: 5, role: 0, category: "Tag Fun", guide: { en: "{pn} @mention" } },
   onStart: async function ({ event, message }) {
     const mentionID = Object.keys(event.mentions)[0] || event.messageReply?.senderID;
-    if (!mentionID) return message.reply("❌ | Mention someone!");
+    if (!mentionID) return message.reply({ body: "❌ | Mention someone!", effect: "love" });
     const config = (await axios.get(`${API_BASE}/api/images/nagin`)).data;
     const ts = Date.now();
     const basePath = __dirname + `/cache/nagin_base_${ts}.jpg`;

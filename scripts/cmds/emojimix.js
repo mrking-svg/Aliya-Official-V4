@@ -25,7 +25,7 @@ module.exports = {
 
       if (args.length < 2) {
         return api.sendMessage(
-          `❌ Please provide two emojis.\nExample: ${prefix}emojimix 😭 🫦`,
+          { body: `❌ Please provide two emojis.\nExample: ${prefix}emojimix 😭 🫦`, effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -47,7 +47,7 @@ module.exports = {
 
       if (!response.data || response.data.length < 100) {
         return api.sendMessage(
-          "❌ Failed to generate mixed emoji image.",
+          { body: "❌ Failed to generate mixed emoji image.", effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -66,7 +66,7 @@ module.exports = {
     } catch (error) {
       console.error("EmojiMix Error:", error.message);
       api.sendMessage(
-        "❌ Something went wrong while generating emoji mix. Please try again later!",
+        { body: "❌ Something went wrong while generating emoji mix. Please try again later!", effect: "love" },
         event.threadID,
         event.messageID
       );

@@ -28,7 +28,7 @@ module.exports = {
 
       if (!Array.isArray(gamesList) || gamesList.length === 0) {
         api.setMessageReaction("❌", event.messageID, () => {}, true);
-        return message.reply(`𓍢ִ໋🌸✧ Nᴏ ɢᴀᴍᴇs ғᴏᴜɴᴅ ғᴏʀ Cᴀᴛᴇɢᴏʀʏ "${category}"! ✧🌸𓍢ִ໋`);
+        return message.reply({ body: `𓍢ִ໋🌸✧ Nᴏ ɢᴀᴍᴇs ғᴏᴜɴᴅ ғᴏʀ Cᴀᴛᴇɢᴏʀʏ "${category}"! ✧🌸𓍢ִ໋`, effect: "love" });
       }
 
       const randomGame = gamesList[Math.floor(Math.random() * gamesList.length)];
@@ -70,7 +70,7 @@ ${description}
 
     } catch (error) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply("𓍢ִ໋🌸✧ Fᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ ɢᴀᴍᴇs ғʀᴏᴍ FʀᴇᴇTᴏGᴀᴍᴇ! ✧🌸𓍢ִ໋");
+      return message.reply({ body: "𓍢ִ໋🌸✧ Fᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ ɢᴀᴍᴇs ғʀᴏᴍ FʀᴇᴇTᴏGᴀᴍᴇ! ✧🌸𓍢ִ໋", effect: "love" });
     }
   }
 };

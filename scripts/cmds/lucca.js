@@ -83,7 +83,7 @@ module.exports = {
 			cfg = data;
 		} catch (e) {
 			console.error("Lucca API error:", e.message);
-			return message.reply("Error hoyeche, abar try korun.");
+			return message.reply({ body: "Error hoyeche, abar try korun.", effect: "love" });
 		}
 
 		const txt = cfg.texts || {};

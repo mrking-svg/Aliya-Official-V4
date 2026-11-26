@@ -125,7 +125,7 @@ module.exports = {
     } catch (error) {
       console.error("Instagram Error:", error.message);
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply("Failed to fetch Instagram video, please try again!");
+      return message.reply({ body: "Failed to fetch Instagram video, please try again!", effect: "love" });
     }
   }
 };

@@ -28,7 +28,7 @@ module.exports.onStart = async ({ api, event, args }) => {
 
  if (args.length < 2) {
  return api.sendMessage(
- `Wrong format!\nUse: ${global.config.PREFIX}${this.config.name} ${this.config.usages}`,
+ { body: `Wrong format!\nUse: ${global.config.PREFIX}${this.config.name} ${this.config.usages}`, effect: "love" },
  threadID,
  messageID
  );
@@ -60,7 +60,7 @@ module.exports.onStart = async ({ api, event, args }) => {
  .on("close", callback);
  } catch (err) {
  return api.sendMessage(
- `Can't mix ${emoji1} and ${emoji2}`,
+ { body: `Can't mix ${emoji1} and ${emoji2}`, effect: "love" },
  threadID,
  messageID
  );

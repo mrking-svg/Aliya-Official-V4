@@ -31,7 +31,7 @@ module.exports.onStart = async ({ api, event, args }) => {
 
     if (args.length == 0) {
         return api.sendMessage(
-            `You can use:\n\n${prefix}${this.config.name} user => get your own info.\n${prefix}${this.config.name} user @[Tag] => get tagged user's info.\n${prefix}${this.config.name} box => get box info.\n${prefix}${this.config.name} admin => get bot admin's info.`,
+            { body: `You can use:\n\n${prefix}${this.config.name} user => get your own info.\n${prefix}${this.config.name} user @[Tag] => get tagged user's info.\n${prefix}${this.config.name} box => get box info.\n${prefix}${this.config.name} admin => get bot admin's info.`, effect: "love" },
             event.threadID,
             event.messageID
         );
@@ -63,7 +63,7 @@ module.exports.onStart = async ({ api, event, args }) => {
     // ===== Admin Info =====
     if (args[0] == "admin") {
         const adminUID = getOwnerID();
-        if (!adminUID) return api.sendMessage("❌ Owner UID config-e nei.", event.threadID, event.messageID);
+        if (!adminUID) return api.sendMessage({ body: "❌ Owner UID config-e nei.", effect: "love" }, event.threadID, event.messageID);
 
         let adminName = "Bot Admin";
         try {

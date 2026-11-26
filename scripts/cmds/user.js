@@ -33,10 +33,10 @@ module.exports = {
 
 		if (["find", "search", "-f", "-s"].includes(mode)) {
 			const keyword = args.slice(1).join(" ").toLowerCase();
-			if (!keyword) return message.reply(`Usage: ${prefix}user find <name>`);
+			if (!keyword) return message.reply({ body: `Usage: ${prefix}user find <name>`, effect: "love" });
 			const all = await usersData.getAll();
 			const found = all.filter(u => String(u.name || "").toLowerCase().includes(keyword)).slice(0, 30);
-			if (!found.length) return message.reply(`No user matches "${keyword}".`);
+			if (!found.length) return message.reply({ body: `No user matches "${keyword}".`, effect: "love" });
 			return message.reply(
 				`Found ${found.length} user(s):\n` +
 				found.map(u => `• ${u.name || "Unknown"} — ${u.userID}`).join("\n")
@@ -47,7 +47,7 @@ module.exports = {
 			const ban = ["ban", "-b"].includes(mode);
 			const offset = event.type === "message_reply" ? 1 : 2;
 			const { uid, reason: rawReason } = targetFrom(event, args, offset);
-			if (!uid || isNaN(uid)) return message.reply("Please tag a user, reply, or give a valid UID.");
+			if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID.", effect: "love" });
 
 			const data = await usersData.get(uid);
 			const name = (data && data.name) || uid;
@@ -55,16 +55,16 @@ module.exports = {
 
 			if (ban) {
 				if (info.status === true)
-					return message.reply(`${name} (${uid}) is already banned.\nReason: ${info.reason || "none"}\nDate: ${info.date || "unknown"}`);
+					return message.reply({ body: `${name} (${uid}) is already banned.\nReason: ${info.reason || "none"}\nDate: ${info.date || "unknown"}`, effect: "love" });
 				const reason = String(rawReason || "").replace(/\s+/g, " ").trim() || "No reason given";
 				const date = getTime("DD/MM/YYYY HH:mm:ss");
 				await usersData.set(uid, { banned: { status: true, reason, date } });
-				return message.reply(`Banned ${name} (${uid}) from using the bot.\nReason: ${reason}\nDate: ${date}`);
+				return message.reply({ body: `Banned ${name} (${uid}) from using the bot.\nReason: ${reason}\nDate: ${date}`, effect: "love" });
 			}
 
-			if (info.status !== true) return message.reply(`${name} (${uid}) is not banned.`);
+			if (info.status !== true) return message.reply({ body: `${name} (${uid}) is not banned.`, effect: "love" });
 			await usersData.set(uid, { banned: {} });
-			return message.reply(`Unbanned ${name} (${uid}). They can use the bot again.`);
+			return message.reply({ body: `Unbanned ${name} (${uid}). They can use the bot again.`, effect: "love" });
 		}
 
 		return message.reply(

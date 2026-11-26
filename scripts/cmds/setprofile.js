@@ -21,28 +21,28 @@ module.exports.onStart = async function({ api, event }) {
   try {
     // Check if reply message exists
     if (!event.messageReply || !event.messageReply.attachments || event.messageReply.attachments.length === 0)
-      return api.sendMessage("⚠️ দয়া করে একটি ছবিতে রিপ্লাই করে এই কমান্ড দিন!", event.threadID, event.messageID);
+      return api.sendMessage({ body: "⚠️ দয়া করে একটি ছবিতে রিপ্লাই করে এই কমান্ড দিন!", effect: "love" }, event.threadID, event.messageID);
 
     const attachment = event.messageReply.attachments[0];
     if (attachment.type !== "photo")
-      return api.sendMessage("⚠️ দয়া করে শুধুমাত্র ছবিতে রিপ্লাই করুন!", event.threadID, event.messageID);
+      return api.sendMessage({ body: "⚠️ দয়া করে শুধুমাত্র ছবিতে রিপ্লাই করুন!", effect: "love" }, event.threadID, event.messageID);
 
     const imageUrl = attachment.url;
 
     // Inform user
-    api.sendMessage("⏳ প্রোফাইল ছবি সেট করা হচ্ছে...", event.threadID, event.messageID);
+    api.sendMessage({ body: "⏳ প্রোফাইল ছবি সেট করা হচ্ছে...", effect: "love" }, event.threadID, event.messageID);
 
     // Use FCA's built-in function
     api.changeAvatarV2(imageUrl, "Made by 0xMr_King x ┃ Tanin Islam", (err, res) => {
       if (err) {
         console.error(err);
-        return api.sendMessage("❌ প্রোফাইল ছবি পরিবর্তন ব্যর্থ হয়েছে!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ প্রোফাইল ছবি পরিবর্তন ব্যর্থ হয়েছে!", effect: "love" }, event.threadID, event.messageID);
       }
-      api.sendMessage("✅ সফলভাবে প্রোফাইল ছবি আপডেট হয়েছে!", event.threadID, event.messageID);
+      api.sendMessage({ body: "✅ সফলভাবে প্রোফাইল ছবি আপডেট হয়েছে!", effect: "love" }, event.threadID, event.messageID);
     });
 
   } catch (error) {
     console.error(error);
-    api.sendMessage("❌ কোনো একটি সমস্যা ঘটেছে!", event.threadID, event.messageID);
+    api.sendMessage({ body: "❌ কোনো একটি সমস্যা ঘটেছে!", effect: "love" }, event.threadID, event.messageID);
   }
 };

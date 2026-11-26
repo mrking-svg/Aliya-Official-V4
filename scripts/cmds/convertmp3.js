@@ -21,10 +21,10 @@ module.exports = {
     try {
       // 🔗 Get video URL from args or replied message
       const url = args.join(" ") || event.messageReply?.attachments?.[0]?.url;
-      if (!url) return api.sendMessage("⚠️ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴠɪᴅᴇᴏ ᴜʀʟ!", threadID, messageID);
+      if (!url) return api.sendMessage({ body: "⚠️ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴠɪᴅᴇᴏ ᴜʀʟ!", effect: "love" }, threadID, messageID);
 
       // ⏳ Font ABC style message
-      api.sendMessage("Mᴘ3 ᴘʀᴏᴄᴇssɪɴɢ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ⏳", threadID, messageID);
+      api.sendMessage({ body: "Mᴘ3 ᴘʀᴏᴄᴇssɪɴɢ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ⏳", effect: "love" }, threadID, messageID);
 
       // 📥 Download video
       const { data } = await axios.get(url, { responseType: "arraybuffer" });
@@ -43,7 +43,7 @@ module.exports = {
 
     } catch (err) {
       console.log(err);
-      api.sendMessage("⚠️ Fᴀɪʟᴇᴅ ᴛᴏ ᴄᴏɴᴠᴇʀᴛ ᴠɪᴅᴇᴏ!", threadID, messageID);
+      api.sendMessage({ body: "⚠️ Fᴀɪʟᴇᴅ ᴛᴏ ᴄᴏɴᴠᴇʀᴛ ᴠɪᴅᴇᴏ!", effect: "love" }, threadID, messageID);
     }
   }
 };

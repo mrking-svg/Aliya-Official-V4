@@ -21,7 +21,7 @@ module.exports = {
       // শুধু ACTIVE গ্রুপ
       const groups = allThreads.filter(t => t.isGroup && t.isSubscribed);
       if (!groups.length) 
-        return api.sendMessage("⚠️ Bot is not currently in any group.", threadID, messageID);
+        return api.sendMessage({ body: "⚠️ Bot is not currently in any group.", effect: "love" }, threadID, messageID);
 
       const page = 1;
       const start = (page - 1) * perPage;
@@ -48,7 +48,7 @@ module.exports = {
 
     } catch (e) {
       console.error(e);
-      api.sendMessage("❌ Failed to fetch active group list.", threadID, messageID);
+      api.sendMessage({ body: "❌ Failed to fetch active group list.", effect: "love" }, threadID, messageID);
     }
   },
 
@@ -61,13 +61,13 @@ module.exports = {
     // PAGE কমান্ড
     if (args[0] === "page") {
       const pageNum = parseInt(args[1]);
-      if (isNaN(pageNum) || pageNum < 1) return api.sendMessage("❌ Invalid page number", event.threadID);
+      if (isNaN(pageNum) || pageNum < 1) return api.sendMessage({ body: "❌ Invalid page number", effect: "love" }, event.threadID);
 
       const start = (pageNum - 1) * perPage;
       const end = start + perPage;
       const currentGroups = Reply.groups.slice(start, end);
 
-      if (!currentGroups.length) return api.sendMessage("⚠️ No more groups", event.threadID);
+      if (!currentGroups.length) return api.sendMessage({ body: "⚠️ No more groups", effect: "love" }, event.threadID);
 
       let msg = `📦 | 𝙱𝙾𝚇 𝙻𝙸𝚂𝚃 (𝙿𝙰𝙶𝙴 ${pageNum})\n\n`;
       currentGroups.forEach((g, i) => {
@@ -93,16 +93,16 @@ module.exports = {
       const addUserToGroup = async (uid, tid, name) => {
         try {
           await api.addUserToGroup(uid, tid);
-          await api.sendMessage(`✅ Aᴅᴅᴇᴅ Yᴏᴜ Tᴏ: ${name}`, event.threadID);
+          await api.sendMessage({ body: `✅ Aᴅᴅᴇᴅ Yᴏᴜ Tᴏ: ${name}`, effect: "love" }, event.threadID);
         } catch {
-          await api.sendMessage(`❌ Fᴀɪʟᴅ Tᴏ Aᴅᴅ Yᴏᴜ ᴛᴏ: ${name}`, event.threadID);
+          await api.sendMessage({ body: `❌ Fᴀɪʟᴅ Tᴏ Aᴅᴅ Yᴏᴜ ᴛᴏ: ${name}`, effect: "love" }, event.threadID);
         }
       };
 
       for (let i = 1; i < args.length; i++) {
         const index = parseInt(args[i]) - 1;
         if (isNaN(index) || index < 0 || index >= Reply.groups.length) {
-          await api.sendMessage(`❌ Iɴᴠᴀʟɪᴅ Nᴜᴍʙᴇʀ: ${args[i]}`, event.threadID);
+          await api.sendMessage({ body: `❌ Iɴᴠᴀʟɪᴅ Nᴜᴍʙᴇʀ: ${args[i]}`, effect: "love" }, event.threadID);
           continue;
         }
         const g = Reply.groups[index];

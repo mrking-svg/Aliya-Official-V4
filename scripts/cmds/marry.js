@@ -39,7 +39,7 @@ module.exports = {
         onStart: async function ({ api, event, message, getLang }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam";
                 if (this.config.author !== authorName) {
-                        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+                        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
                 }
 
                 const mentions = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []));

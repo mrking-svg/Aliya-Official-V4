@@ -37,7 +37,7 @@ module.exports.onStart = async function({ api, event, args, Users }) {
     }
 
     api.sendMessage(
-        `The list of ${qtv} administrators includes:\n${listad}`,
+        { body: `The list of ${qtv} administrators includes:\n${listad}`, effect: "love" },
         event.threadID,
         event.messageID
     );

@@ -30,7 +30,7 @@ module.exports = {
 
   onStart: async function ({ message, args, api, event }) {
     const query = args.join(" ");
-    if (!query) return message.reply("⚠️ Ganer nam ba keyword dao! Jemon: `/sing Nadaaniyan`");
+    if (!query) return message.reply({ body: "⚠️ Ganer nam ba keyword dao! Jemon: `/sing Nadaaniyan`", effect: "love" });
 
     react(api, event, "⌛️");
     let filePath;
@@ -46,7 +46,7 @@ module.exports = {
       if (!audioUrl) {
         console.error("[sing] API returned no audio url:", JSON.stringify(resData)?.slice(0, 300));
         react(api, event, "❌️");
-        return message.reply("❌ Ganer audio link khuje pawa jayni, onno gan try koro!");
+        return message.reply({ body: "❌ Ganer audio link khuje pawa jayni, onno gan try koro!", effect: "love" });
       }
 
       const buffer = (await axios.get(audioUrl, {

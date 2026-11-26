@@ -45,13 +45,13 @@ module.exports = {
         onStart: async function ({ api, args, message, event, getLang }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam";
                 if (this.config.author !== authorName) {
-                        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+                        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
                 }
 
                 const { threadID, messageID } = event;
                 const input = args.join(" ");
 
-                if (!input) return api.sendMessage("• Baby, please provide a song name.", threadID, messageID);
+                if (!input) return api.sendMessage({ body: "• Baby, please provide a song name.", effect: "love" }, threadID, messageID);
 
                 try {
                         const apiUrl = await baseApiUrl();

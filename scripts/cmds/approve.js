@@ -35,7 +35,7 @@ module.exports.onStart = async function ({ api, event, args }) {
   // /approve remove
   if (sub === "remove") {
     approval.remove(threadID);
-    return api.sendMessage("🛑 এই গ্রুপের অনুমোদন তুলে নেওয়া হলো।", threadID, messageID);
+    return api.sendMessage({ body: "🛑 এই গ্রুপের অনুমোদন তুলে নেওয়া হলো।", effect: "love" }, threadID, messageID);
   }
 
   // /approve <গ্রুপ আইডি>  (যেকোনো জায়গা থেকে, যেমন আপনার ইনবক্স থেকে)
@@ -49,5 +49,5 @@ module.exports.onStart = async function ({ api, event, args }) {
 
   // /approve  (এই গ্রুপেই)
   approval.approve(threadID, senderID);
-  return api.sendMessage("✅ এই গ্রুপ অনুমোদিত হয়েছে। বট এখন সক্রিয়।", threadID, messageID);
+  return api.sendMessage({ body: "✅ এই গ্রুপ অনুমোদিত হয়েছে। বট এখন সক্রিয়।", effect: "love" }, threadID, messageID);
 };

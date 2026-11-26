@@ -77,7 +77,7 @@ module.exports = {
 
     const now = Date.now();
     if (cooldown.get(uid) && now - cooldown.get(uid) < 3000)
-      return message.reply("⏳ Please wait 3 seconds before using this command again.");
+      return message.reply({ body: "⏳ Please wait 3 seconds before using this command again.", effect: "love" });
     cooldown.set(uid, now);
 
     // Auto-clean expired VIPs
@@ -107,11 +107,11 @@ module.exports = {
 
       if (!vipData || !vipData.expires || vipData.expires <= Date.now()) {
         return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Status ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Status ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ᥫ᭡ Status : ❌ Inactive
 ᥫ᭡ Notice : You do not have an active VIP subscription.
-📌 Buy VIP using: {p}vip buy <days>`
+📌 Buy VIP using: {p}vip buy <days>`, effect: "love" }
         );
       }
 
@@ -119,12 +119,12 @@ module.exports = {
       const userName = await usersData.getName(uid);
 
       return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Status ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Status ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ᥫ᭡ User : ${userName}
 ᥫ᭡ Status : ✅ Active VIP
 ᥫ᭡ Expires : ${formatDate(vipData.expires)}
-ᥫ᭡ Time Left : ${timeLeft}`
+ᥫ᭡ Time Left : ${timeLeft}`, effect: "love" }
       );
     }
 
@@ -142,13 +142,13 @@ module.exports = {
         }
       }
 
-      if (!count) return message.reply("⚠️ No active VIP users found in database.");
+      if (!count) return message.reply({ body: "⚠️ No active VIP users found in database.", effect: "love" });
       return message.reply(out);
     }
 
     /* ───────── ADMIN ADD VIP ───────── */
     if (args[0] === "add") {
-      if (role < 2) return message.reply("❌ This command is restricted to Bot Admins only!");
+      if (role < 2) return message.reply({ body: "❌ This command is restricted to Bot Admins only!", effect: "love" });
 
       let days = parseInt(args[1]);
       let tid = getTargetID();
@@ -159,7 +159,7 @@ module.exports = {
       }
 
       if (!days || isNaN(days) || days <= 0) {
-        return message.reply("❌ Please provide a valid number of days! Example: {p}vip add 10");
+        return message.reply({ body: "❌ Please provide a valid number of days! Example: {p}vip add 10", effect: "love" });
       }
 
       // If no reply, mention, or UID target, default target to caller (admin)
@@ -175,18 +175,18 @@ module.exports = {
       const name = await usersData.getName(tid);
 
       return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP System ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP System ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ᥫ᭡ Action : VIP Added Successfully
 ᥫ᭡ User : ${name}
 ᥫ᭡ Duration : ${days} days
-ᥫ᭡ Expiration : ${formatDate(expires)}`
+ᥫ᭡ Expiration : ${formatDate(expires)}`, effect: "love" }
       );
     }
 
     /* ───────── ADMIN REMOVE VIP ───────── */
     if (args[0] === "remove") {
-      if (role < 2) return message.reply("❌ This command is restricted to Bot Admins only!");
+      if (role < 2) return message.reply({ body: "❌ This command is restricted to Bot Admins only!", effect: "love" });
 
       let tid = getTargetID();
       if (!tid) tid = uid;
@@ -196,10 +196,10 @@ module.exports = {
       const name = await usersData.getName(tid);
 
       return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP System ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP System ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ᥫ᭡ Action : VIP Removed
-ᥫ᭡ User : ${name}`
+ᥫ᭡ User : ${name}`, effect: "love" }
       );
     }
 
@@ -208,9 +208,9 @@ module.exports = {
       const days = parseInt(args[1]);
       if (!days || isNaN(days) || days <= 0) {
         return message.reply(
-`❌ Invalid duration provided.
+{ body: `❌ Invalid duration provided.
 📌 Usage: {p}vip buy <days>
-📌 Example: {p}vip buy 15`
+📌 Example: {p}vip buy 15`, effect: "love" }
         );
       }
 
@@ -220,12 +220,12 @@ module.exports = {
 
       if (wallet < price) {
         return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Purchase ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Purchase ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ❌ Insufficient Balance!
 ᥫ᭡ Required Price : ${formatMoney(price)}
 ᥫ᭡ Your Balance : ${formatMoney(wallet)}
-ᥫ᭡ Remaining Needed : ${formatMoney(price - wallet)}`
+ᥫ᭡ Remaining Needed : ${formatMoney(price - wallet)}`, effect: "love" }
         );
       }
 
@@ -238,18 +238,18 @@ module.exports = {
       await usersData.set(uid, { data: { ...currentData, vip: { expires } } });
 
       return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Activated ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Activated ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ᥫ᭡ Duration : ${days} days
 ᥫ᭡ Price Paid : ${formatMoney(price)}
 ᥫ᭡ Current Balance : ${formatMoney(wallet - price)}
-ᥫ᭡ Expiration Date : ${formatDate(expires)}`
+ᥫ᭡ Expiration Date : ${formatDate(expires)}`, effect: "love" }
       );
     }
 
     /* ───────── VIP PRICE MENU (DEFAULT) ───────── */
     return message.reply(
-`𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Rate Card ── ✧🌸𓍢ִ໋🌷͙֒  
+{ body: `𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 VIP Rate Card ── ✧🌸𓍢ִ໋🌷͙֒  
 
 ᥫ᭡ 1 Day  → 25M
 ᥫ᭡ 2 Days → 50M
@@ -259,7 +259,7 @@ module.exports = {
 ᥫ᭡ 30 Days → 750M
 
 📌 Buy VIP : {p}vip buy <days>
-📌 Check VIP Status : {p}vip my`
+📌 Check VIP Status : {p}vip my`, effect: "love" }
     );
   }
 };

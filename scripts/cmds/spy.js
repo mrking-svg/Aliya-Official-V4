@@ -59,7 +59,7 @@ module.exports = {
 
           if (!targetID) {
             return message.reply(
-              "⚠️ Profile link থেকে UID পাওয়া যায়নি। সরাসরি UID ব্যবহার করো।"
+              { body: "⚠️ Profile link থেকে UID পাওয়া যায়নি। সরাসরি UID ব্যবহার করো।", effect: "love" }
             );
           }
         }
@@ -208,7 +208,7 @@ module.exports = {
       api.setMessageReaction(messageID, "❌", () => {}, true);
 
       return message.reply(
-        "⚠️ User information পাওয়া যায়নি। UID সঠিক কি না যাচাই করে আবার চেষ্টা করো।"
+        { body: "⚠️ User information পাওয়া যায়নি। UID সঠিক কি না যাচাই করে আবার চেষ্টা করো।", effect: "love" }
       );
     }
   }

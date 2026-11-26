@@ -77,18 +77,18 @@ module.exports = {
  });
 
  writer.on("error", async () => {
- await message.reply("❌ Video write failed!");
+ await message.reply({ body: "❌ Video write failed!", effect: "love" });
  });
 
  } catch (err) {
 
  if (err.response?.status == 429) {
- return message.reply("⚠️ Server busy! Try again later.");
+ return message.reply({ body: "⚠️ Server busy! Try again later.", effect: "love" });
  }
 
  console.log(err);
 
- return message.reply("❌ Video load failed!");
+ return message.reply({ body: "❌ Video load failed!", effect: "love" });
  }
  }
 };

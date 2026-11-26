@@ -1,6 +1,7 @@
 "use strict";
 
 var utils = require("../utils");
+const { resolveEffect } = require("../lib/effects");
 // @NethWs3Dev
 
 var allowedProperties = {
@@ -12,6 +13,9 @@ var allowedProperties = {
   body: true,
   mentions: true,
   location: true,
+  effect: true,
+  messageEffect: true,
+  effectViaHttp: true,
 };
 
 module.exports = function (defaultFuncs, api, ctx) {
@@ -222,6 +226,23 @@ module.exports = function (defaultFuncs, api, ctx) {
     cb();
   }
 
+  function handleEffect(msg, form, callback, cb) {
+    // "effect: love" is accepted everywhere so commands never crash, but it is
+    // ignored by default: this session cannot render power-ups reliably and
+    // pushing every reply through MQTT broke reply IDs and flooded the socket.
+    // Set effectViaHttp: true explicitly to opt into the legacy HTTP fields.
+    if (!msg.effectViaHttp) return cb();
+    const effect = resolveEffect(msg.effect || msg.messageEffect);
+    if (!effect) return cb();
+
+    const effectId = effect.legacyId || effect.styleId;
+    form["message_effects[0][effect_id]"] = effectId;
+    form["message_effects[0][effect_unified_id]"] = effect.styleId;
+    form["message_effects[0][effect_type]"] = effect.effectType;
+    form["message_effects[0][effect_name]"] = effect.styleName;
+    cb();
+  }
+
   function handleEmoji(msg, form, callback, cb) {
     if (msg.emojiSize != null && msg.emoji == null) {
       return callback({ error: "emoji property is empty" });
@@ -425,11 +446,13 @@ module.exports = function (defaultFuncs, api, ctx) {
 
     handleLocation(msg, form, callback, () =>
       handleSticker(msg, form, callback, () =>
-        handleAttachment(msg, form, callback, () =>
-          handleUrl(msg, form, callback, () =>
-            handleEmoji(msg, form, callback, () =>
-              handleMention(msg, form, callback, () =>
-                send(form, threadID, messageAndOTID, callback, isGroup)
+        handleEffect(msg, form, callback, () =>
+          handleAttachment(msg, form, callback, () =>
+            handleUrl(msg, form, callback, () =>
+              handleEmoji(msg, form, callback, () =>
+                handleMention(msg, form, callback, () =>
+                  send(form, threadID, messageAndOTID, callback, isGroup)
+                )
               )
             )
           )

@@ -20,15 +20,15 @@ module.exports = {
     if (args[0] && args[0].toLowerCase() === "off") {
       if (activeMurgi.has(event.threadID)) {
         activeMurgi.set(event.threadID, false);
-        return message.reply("🛑 ওকে বস মাগী কে আর চুদবো না.");
+        return message.reply({ body: "🛑 ওকে বস মাগী কে আর চুদবো না.", effect: "love" });
       } else {
-        return message.reply("⚠️ Murgi mode is not running.");
+        return message.reply({ body: "⚠️ Murgi mode is not running.", effect: "love" });
       }
     }
 
     const mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []))[0];
     if (!mention) {
-      return message.reply("কোন মাগির মেয়েকে চুদবো বস আপনি শুধু মেনশন দিন 🥵💦");
+      return message.reply({ body: "কোন মাগির মেয়েকে চুদবো বস আপনি শুধু মেনশন দিন 🥵💦", effect: "love" });
     }
 
     const name = event.mentions[mention];
@@ -79,7 +79,7 @@ module.exports = {
     ];
 
     activeMurgi.set(event.threadID, true);
-    message.reply("🔥 Murgi mode started.");
+    message.reply({ body: "🔥 Murgi mode started.", effect: "love" });
 
     try {
       while (activeMurgi.get(event.threadID)) {
@@ -96,7 +96,7 @@ module.exports = {
     } catch (err) {
       console.error(err);
       activeMurgi.delete(event.threadID);
-      message.reply("Something went wrong!");
+      message.reply({ body: "Something went wrong!", effect: "love" });
     }
   }
 };

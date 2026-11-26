@@ -31,12 +31,12 @@ module.exports = {
 
     if (!targetID) {
       return message.reply(
-        "Please reply to someone's message or mention them to use this command."
+        { body: "Please reply to someone's message or mention them to use this command.", effect: "love" }
       );
     }
 
     if (targetID === senderID) {
-      return message.reply("You can't use this command on yourself.");
+      return message.reply({ body: "You can't use this command on yourself.", effect: "love" });
     }
 
     try {
@@ -91,7 +91,7 @@ module.exports = {
       fs.unlink(filePath, () => {});
     } catch (err) {
       console.error(err);
-      return message.reply("Failed to generate the image. Please try again.");
+      return message.reply({ body: "Failed to generate the image. Please try again.", effect: "love" });
     }
   }
 };

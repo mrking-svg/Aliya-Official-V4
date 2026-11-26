@@ -25,7 +25,7 @@ module.exports = {
     
     const isAuthorValid = await checkAuthor(module.exports.config.author);
     if (!isAuthorValid) {
-      await message.reply("Author changer alert! This command belongs to the bot owner.");
+      await message.reply({ body: "Author changer alert! This command belongs to the bot owner.", effect: "love" });
       return;
     }
 
@@ -55,7 +55,7 @@ module.exports = {
     } catch (error) {
       if (process.env.DEBUG_API)
         console.error("Error fetching OnlyTik video:", error.message);
-      message.reply(" video paowa jayni, slightly por try koro.");
+      message.reply({ body: " video paowa jayni, slightly por try koro.", effect: "love" });
     }
   }
 };

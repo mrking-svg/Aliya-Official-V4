@@ -64,7 +64,7 @@ async function sendList(api, event) {
 
   // 🔒 Credit lock
   if (!creditOk()) {
-    return api.sendMessage("⛔ Credit was changed! Command disabled.", threadID, messageID);
+    return api.sendMessage({ body: "⛔ Credit was changed! Command disabled.", effect: "love" }, threadID, messageID);
   }
 
   try {
@@ -96,7 +96,7 @@ ${formatList(botIDs, users, 15)}
     return api.sendMessage(body, threadID, messageID);
   } catch (e) {
     console.log("adminlist error:", e);
-    return api.sendMessage("❌ Something went wrong.", threadID, messageID);
+    return api.sendMessage({ body: "❌ Something went wrong.", effect: "love" }, threadID, messageID);
   }
 }
 

@@ -78,7 +78,7 @@ module.exports = {
 			);
 		}
 		catch (error) {
-			return message.reply("❌ Cry meme toiri korte parini.");
+			return message.reply({ body: "❌ Cry meme toiri korte parini.", effect: "love" });
 		}
 	}
 };

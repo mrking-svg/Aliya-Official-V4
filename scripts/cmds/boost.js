@@ -35,7 +35,7 @@ module.exports = {
         `✨ RAM Freed: ${freed > 0 ? freed : "0.5"} MB`
       );
     } catch (e) {
-      return message.reply(`❌ Boost failed: ${e.message}`);
+      return message.reply({ body: `❌ Boost failed: ${e.message}`, effect: "love" });
     }
   }
 };

@@ -18,18 +18,18 @@ module.exports = {
     try {
       // ✅ প্রথমে চেক করবো রিপ্লাই আছে কিনা
       if (event.type !== "message_reply") {
-        return api.sendMessage("❌ দয়া করে একটি ছবিতে রিপ্লাই দাও!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ দয়া করে একটি ছবিতে রিপ্লাই দাও!", effect: "love" }, event.threadID, event.messageID);
       }
 
       // ✅ অ্যাটাচমেন্ট আছে কিনা
       const attachments = event.messageReply.attachments;
       if (!attachments || attachments.length === 0) {
-        return api.sendMessage("❌ রিপ্লাই করা মেসেজে কোনো ছবি পাওয়া যায়নি!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ রিপ্লাই করা মেসেজে কোনো ছবি পাওয়া যায়নি!", effect: "love" }, event.threadID, event.messageID);
       }
 
       // ✅ একাধিক ছবি দেওয়া থাকলে
       if (attachments.length > 1) {
-        return api.sendMessage("⚠️ শুধু একটি ছবিতে রিপ্লাই দাও!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "⚠️ শুধু একটি ছবিতে রিপ্লাই দাও!", effect: "love" }, event.threadID, event.messageID);
       }
 
       // ✅ ডাউনলোড ও সেট করা
@@ -41,10 +41,10 @@ module.exports = {
       await api.changeGroupImage(fs.createReadStream(pathImg), event.threadID);
       fs.unlinkSync(pathImg);
 
-      return api.sendMessage("✅ | গ্রুপ প্রোফাইল ছবি সফলভাবে পরিবর্তন হয়েছে!", event.threadID, event.messageID);
+      return api.sendMessage({ body: "✅ | গ্রুপ প্রোফাইল ছবি সফলভাবে পরিবর্তন হয়েছে!", effect: "love" }, event.threadID, event.messageID);
     } catch (error) {
       console.error(error);
-      return api.sendMessage("⚠️ | ছবিটি সেট করা যায়নি, আবার চেষ্টা করো!", event.threadID, event.messageID);
+      return api.sendMessage({ body: "⚠️ | ছবিটি সেট করা যায়নি, আবার চেষ্টা করো!", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

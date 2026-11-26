@@ -45,7 +45,7 @@ module.exports = {
 	},
 
 	onStart: async function ({ message, event, args, threadsData, usersData, api, role, prefix }) {
-		if (Number(role || 0) < 1) return message.reply("Only group admins can manage the ban list.");
+		if (Number(role || 0) < 1) return message.reply({ body: "Only group admins can manage the ban list.", effect: "love" });
 
 		const threadID = event.threadID;
 		const thread = await threadsData.get(threadID);
@@ -59,12 +59,12 @@ module.exports = {
 		const start = ["unban", "list", "check"].includes(mode) ? 1 : 0;
 
 		if (mode === "list") {
-			if (!list.length) return message.reply("No members are banned from this group.");
+			if (!list.length) return message.reply({ body: "No members are banned from this group.", effect: "love" });
 			const rows = await Promise.all(list.map(async (item, i) => {
 				const name = nameOf(members, item.id) || await usersData.getName(item.id).catch(() => item.id);
 				return `${i + 1}. ${name} (${item.id})\n   Reason: ${item.reason || "No reason"}\n   Date: ${item.time || "unknown"}`;
 			}));
-			return message.reply(`Banned members:\n${rows.join("\n")}`);
+			return message.reply({ body: `Banned members:\n${rows.join("\n")}`, effect: "love" });
 		}
 
 		if (mode === "check") {
@@ -75,23 +75,23 @@ module.exports = {
 					kicked++;
 				} catch (e) { /* bot may lack permission */ }
 			}
-			return message.reply(`Checked ${list.length} banned member(s); removed ${kicked}.`);
+			return message.reply({ body: `Checked ${list.length} banned member(s); removed ${kicked}.`, effect: "love" });
 		}
 
 		const uid = await resolveTarget(event, args, start);
-		if (!uid || isNaN(uid)) return message.reply("Please tag a user, reply, or give a valid UID/link.");
+		if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID/link.", effect: "love" });
 
 		if (mode === "unban") {
 			const index = list.findIndex(item => String(item.id) === String(uid));
-			if (index === -1) return message.reply(`${uid} is not banned from this group.`);
+			if (index === -1) return message.reply({ body: `${uid} is not banned from this group.`, effect: "love" });
 			list.splice(index, 1);
 			await save();
-			return message.reply(`Unbanned ${uid} from this group.`);
+			return message.reply({ body: `Unbanned ${uid} from this group.`, effect: "love" });
 		}
 
-		if (String(uid) === String(event.senderID)) return message.reply("You cannot ban yourself.");
-		if (adminIDs.includes(String(uid))) return message.reply("You cannot ban a group admin.");
-		if (list.some(item => String(item.id) === String(uid))) return message.reply(`${uid} is already banned.`);
+		if (String(uid) === String(event.senderID)) return message.reply({ body: "You cannot ban yourself.", effect: "love" });
+		if (adminIDs.includes(String(uid))) return message.reply({ body: "You cannot ban a group admin.", effect: "love" });
+		if (list.some(item => String(item.id) === String(uid))) return message.reply({ body: `${uid} is already banned.`, effect: "love" });
 
 		const name = nameOf(members, uid) || await usersData.getName(uid).catch(() => uid);
 		const time = new Date().toLocaleString("en-GB");
@@ -106,7 +106,7 @@ module.exports = {
 		} catch (e) {
 			kickNote = " Bot needs admin permission to kick this member.";
 		}
-		return message.reply(`Banned ${name} (${uid}) from this group.${kickNote}\nReason: ${reason}\nUse ${prefix}ban unban ${uid} to undo.`);
+		return message.reply({ body: `Banned ${name} (${uid}) from this group.${kickNote}\nReason: ${reason}\nUse ${prefix}ban unban ${uid} to undo.`, effect: "love" });
 	},
 
 	onEvent: async function ({ api, event, threadsData }) {

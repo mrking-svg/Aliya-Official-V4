@@ -108,9 +108,9 @@ module.exports.onStart = async ({ api, event }) => {
  });
 
  writer.on("error", () => {
- api.sendMessage("❌ Image download failed.", event.threadID, event.messageID);
+ api.sendMessage({ body: "❌ Image download failed.", effect: "love" }, event.threadID, event.messageID);
  });
  } catch {
- api.sendMessage("❌ Error occurred while getting image.", event.threadID, event.messageID);
+ api.sendMessage({ body: "❌ Error occurred while getting image.", effect: "love" }, event.threadID, event.messageID);
  }
 };

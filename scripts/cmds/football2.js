@@ -22,7 +22,7 @@ module.exports = {
   onStart: async function ({ api, event, usersData, args }) {
       const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam"; 
       if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage("You are not authorized to change the author name.\n", event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name.\n", effect: "love" }, event.threadID, event.messageID);
      }
     
     try {
@@ -34,7 +34,7 @@ module.exports = {
       const quiz = res.data?.data || res.data;
 
       if (!quiz || !quiz.question)
-        return api.sendMessage("❌ No quiz available for this category.", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ No quiz available for this category.", effect: "love" }, event.threadID, event.messageID);
 
       const { question, correctAnswer, options } = quiz;
       const { a, b, c, d } = options;
@@ -57,14 +57,14 @@ module.exports = {
       }, event.messageID);
     } catch (error) {
       console.error(error);
-      api.sendMessage("🥹error, contact 0xMr_King x ┃ Tanin Islam.", event.threadID, event.messageID);
+      api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, event.threadID, event.messageID);
     }
   },
 
   onReply: async function ({ event, api, Reply, usersData }) {
     const { correctAnswer, author, messageID } = Reply;
     if (event.senderID !== author)
-      return api.sendMessage("⚠️ This quiz isn’t yours baby 🐸", event.threadID, event.messageID);
+      return api.sendMessage({ body: "⚠️ This quiz isn’t yours baby 🐸", effect: "love" }, event.threadID, event.messageID);
 
     await api.unsendMessage(messageID);
 
@@ -80,9 +80,9 @@ module.exports = {
         data: userData.data
       });
       const rewardCoinsText = global.utils?.formatCompact ? global.utils.formatCompact(rewardCoins) : rewardCoins;
-      return api.sendMessage(`✅ | Correct answer baby\nYou earned +${rewardCoinsText} coins & +${rewardExp} exp!`, event.threadID, event.messageID);
+      return api.sendMessage({ body: `✅ | Correct answer baby\nYou earned +${rewardCoinsText} coins & +${rewardExp} exp!`, effect: "love" }, event.threadID, event.messageID);
     } else {
-      return api.sendMessage(`❌ | Wrong answer baby\nThe Correct answer was: ${correctAnswer}`, event.threadID, event.messageID);
+      return api.sendMessage({ body: `❌ | Wrong answer baby\nThe Correct answer was: ${correctAnswer}`, effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

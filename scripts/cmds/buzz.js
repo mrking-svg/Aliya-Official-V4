@@ -16,7 +16,7 @@ module.exports = {
     try {
       const mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []))[0];
       if (!mention) {
-        return message.reply("😅 যার জন্য মেসেজ যাবে তাকে আগে @ম্যানশন করো ভাই!");
+        return message.reply({ body: "😅 যার জন্য মেসেজ যাবে তাকে আগে @ম্যানশন করো ভাই!", effect: "love" });
       }
 
       const name = event.mentions[mention];
@@ -75,7 +75,7 @@ module.exports = {
         `আকাশ ভাই তোমার ভালোবাসায় পূর্ণ ${name} 💖`
       ];
 
-      message.reply(`😎 শুরু হচ্ছে "আকাশ ভাই স্টাইল স্টকিং" ${name}-এর জন্য...`);
+      message.reply({ body: `😎 শুরু হচ্ছে "আকাশ ভাই স্টাইল স্টকিং" ${name}-এর জন্য...`, effect: "love" });
 
       // প্রতিটি মেসেজ 3 সেকেন্ড পর পর পাঠানো হবে
       for (const msg of messages) {
@@ -83,10 +83,10 @@ module.exports = {
         message.reply({ body: msg, mentions: arraytag });
       }
 
-      message.reply(`💘 শেষ! আকাশ ভাই ${name}-এর প্রতি ভালোবাসার ডেলিভারি সম্পন্ন 😅`);
+      message.reply({ body: `💘 শেষ! আকাশ ভাই ${name}-এর প্রতি ভালোবাসার ডেলিভারি সম্পন্ন 😅`, effect: "love" });
     } catch (err) {
       console.error(err);
-      message.reply("❌ কিছু একটা সমস্যা হয়েছে ভাই, আবার চেষ্টা করো।");
+      message.reply({ body: "❌ কিছু একটা সমস্যা হয়েছে ভাই, আবার চেষ্টা করো।", effect: "love" });
     }
   }
 };

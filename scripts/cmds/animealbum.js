@@ -27,19 +27,19 @@ module.exports = {
         const category = args[1]?.toLowerCase();
         if (!category) {
           return message.reply(
-            "❌ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐲 𝐢𝐬 𝐫𝐞𝐪𝐮𝐢𝐫𝐞𝐝!\n✨ 𝐔𝐬𝐚𝐠𝐞: /𝐚𝐧𝐢𝐦𝐞𝐚𝐥𝐛𝐮𝐦 𝐚𝐝𝐝 <𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐲>"
+            { body: "❌ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐲 𝐢𝐬 𝐫𝐞𝐪𝐮𝐢𝐫𝐞𝐝!\n✨ 𝐔𝐬𝐚𝐠𝐞: /𝐚𝐧𝐢𝐦𝐞𝐚𝐥𝐛𝐮𝐦 𝐚𝐝𝐝 <𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐲>", effect: "love" }
           );
         }
 
         if (!event.messageReply || !event.messageReply.attachments?.length) {
           return message.reply(
-            "❌ 𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 𝐚 𝐯𝐢𝐝𝐞𝐨 𝐭𝐨 𝐚𝐝𝐝 𝐢𝐭 𝐭𝐨 𝐭𝐡𝐞 𝐚𝐧𝐢𝐦𝐞𝐚𝐥𝐛𝐮𝐦."
+            { body: "❌ 𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 𝐚 𝐯𝐢𝐝𝐞𝐨 𝐭𝐨 𝐚𝐝𝐝 𝐢𝐭 𝐭𝐨 𝐭𝐡𝐞 𝐚𝐧𝐢𝐦𝐞𝐚𝐥𝐛𝐮𝐦.", effect: "love" }
           );
         }
 
         const attachment = event.messageReply.attachments[0];
         if (!attachment.type.includes("video")) {
-          return message.reply("❌ 𝐓𝐡𝐞 𝐫𝐞𝐩𝐥𝐢𝐞𝐝 𝐟𝐢𝐥𝐞 𝐢𝐬 𝐧𝐨𝐭 𝐚 𝐯𝐢𝐝𝐞𝐨.");
+          return message.reply({ body: "❌ 𝐓𝐡𝐞 𝐫𝐞𝐩𝐥𝐢𝐞𝐝 𝐟𝐢𝐥𝐞 𝐢𝐬 𝐧𝐨𝐭 𝐚 𝐯𝐢𝐝𝐞𝐨.", effect: "love" });
         }
 
         const videoUrl = attachment.url;
@@ -69,7 +69,7 @@ module.exports = {
 
         if (!catboxUrl.startsWith("https://")) {
           return message.reply(
-            "⚠️ 𝐔𝐩𝐥𝐨𝐚𝐝 𝐟𝐚𝐢𝐥𝐞𝐝. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫."
+            { body: "⚠️ 𝐔𝐩𝐥𝐨𝐚𝐝 𝐟𝐚𝐢𝐥𝐞𝐝. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫.", effect: "love" }
           );
         }
 
@@ -82,11 +82,11 @@ module.exports = {
 
         if (!data?.message || !data?.url) {
           return message.reply(
-            "⚠️ 𝐒𝐨𝐦𝐞𝐭𝐡𝐢𝐧𝐠 𝐰𝐞𝐧𝐭 𝐰𝐫𝐨𝐧𝐠. 𝐓𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫."
+            { body: "⚠️ 𝐒𝐨𝐦𝐞𝐭𝐡𝐢𝐧𝐠 𝐰𝐞𝐧𝐭 𝐰𝐫𝐨𝐧𝐠. 𝐓𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫.", effect: "love" }
           );
         }
 
-        return message.reply(`${data.message}\n🔗 ${data.url}`);
+        return message.reply({ body: `${data.message}\n🔗 ${data.url}`, effect: "love" });
       }
 
 
@@ -103,7 +103,7 @@ module.exports = {
 
       if (page < 1 || page > totalPages) {
         return message.reply(
-          `❌ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐩𝐚𝐠𝐞!\n📄 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐡𝐨𝐨𝐬𝐞 𝐛𝐞𝐭𝐰𝐞𝐞𝐧 1-${totalPages}`
+          { body: `❌ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐩𝐚𝐠𝐞!\n📄 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐡𝐨𝐨𝐬𝐞 𝐛𝐞𝐭𝐰𝐞𝐞𝐧 1-${totalPages}`, effect: "love" }
         );
       }
 
@@ -145,7 +145,7 @@ module.exports = {
       });
     } catch (e) {
       return message.reply(
-        "⚠️ 𝐀𝐧 𝐮𝐧𝐞𝐱𝐩𝐞𝐜𝐭𝐞𝐝 𝐞𝐫𝐫𝐨𝐫 𝐨𝐜𝐜𝐮𝐫𝐫𝐞𝐝. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫."
+        { body: "⚠️ 𝐀𝐧 𝐮𝐧𝐞𝐱𝐩𝐞𝐜𝐭𝐞𝐝 𝐞𝐫𝐫𝐨𝐫 𝐨𝐜𝐜𝐮𝐫𝐫𝐞𝐝. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫.", effect: "love" }
       );
     }
   },
@@ -158,7 +158,7 @@ module.exports = {
 
     if (isNaN(num) || index < Reply.startIndex || index >= Reply.endIndex) {
       return message.reply(
-        "❌ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐧𝐮𝐦𝐛𝐞𝐫. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐰𝐢𝐭𝐡 𝐚 𝐯𝐚𝐥𝐢𝐝 𝐨𝐧𝐞."
+        { body: "❌ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐧𝐮𝐦𝐛𝐞𝐫. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐰𝐢𝐭𝐡 𝐚 𝐯𝐚𝐥𝐢𝐝 𝐨𝐧𝐞.", effect: "love" }
       );
     }
 
@@ -173,7 +173,7 @@ module.exports = {
 
       if (!res.data?.url) {
         return message.reply(
-          "⚠️ 𝐅𝐚𝐢𝐥𝐞𝐝 𝐭𝐨 𝐟𝐞𝐭𝐜𝐡 𝐯𝐢𝐝𝐞𝐨."
+          { body: "⚠️ 𝐅𝐚𝐢𝐥𝐞𝐝 𝐭𝐨 𝐟𝐞𝐭𝐜𝐡 𝐯𝐢𝐝𝐞𝐨.", effect: "love" }
         );
       }
 
@@ -186,7 +186,7 @@ module.exports = {
       });
     } catch (e) {
       return message.reply(
-        "❌ 𝐄𝐫𝐫𝐨𝐫 𝐰𝐡𝐢𝐥𝐞 𝐬𝐞𝐧𝐝𝐢𝐧𝐠 𝐯𝐢𝐝𝐞𝐨."
+        { body: "❌ 𝐄𝐫𝐫𝐨𝐫 𝐰𝐡𝐢𝐥𝐞 𝐬𝐞𝐧𝐝𝐢𝐧𝐠 𝐯𝐢𝐝𝐞𝐨.", effect: "love" }
       );
     }
   }

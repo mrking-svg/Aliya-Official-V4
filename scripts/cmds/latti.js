@@ -27,7 +27,7 @@ module.exports = {
       } else if (event.messageReply) {
         targetID = event.messageReply.senderID;
       } else {
-        return api.sendMessage("- কাকে ফুটবল এর মতো কিক মারবি মেনশন দে..!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "- কাকে ফুটবল এর মতো কিক মারবি মেনশন দে..!", effect: "love" }, event.threadID, event.messageID);
       }
 
       const senderID = event.senderID;
@@ -84,7 +84,7 @@ module.exports = {
       );
     } catch (e) {
       console.error(e);
-      return api.sendMessage("❌ Error generating image.", event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ Error generating image.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

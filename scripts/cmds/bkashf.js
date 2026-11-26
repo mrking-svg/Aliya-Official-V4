@@ -25,7 +25,7 @@ module.exports.onStart = async function ({ api, event, args }) {
  const input = args.join(" ");
  if (!input.includes("-")) {
  return api.sendMessage(
- `❌| Wrong format!\nUse: ${global.config.PREFIX}bkashf 017xxxxxxxx - TXN12345 - 1000`,
+ { body: `❌| Wrong format!\nUse: ${global.config.PREFIX}bkashf 017xxxxxxxx - TXN12345 - 1000`, effect: "love" },
  event.threadID,
  event.messageID
  );
@@ -39,7 +39,7 @@ module.exports.onStart = async function ({ api, event, args }) {
  const url = `https://masterapi.site/api/bkashf.php?number=${encodeURIComponent(number)}&transaction=${encodeURIComponent(transaction)}&amount=${encodeURIComponent(amount)}`;
 
  api.sendMessage(
- `📤 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗶𝗻𝗴 𝗳𝗮𝗸𝗲 𝗕𝗸𝗮𝘀𝗵 𝘀𝗰𝗿𝗲𝗲𝗻𝘀𝗵𝗼𝘁... 𝗣𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁 🕐`,
+ { body: `📤 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗶𝗻𝗴 𝗳𝗮𝗸𝗲 𝗕𝗸𝗮𝘀𝗵 𝘀𝗰𝗿𝗲𝗲𝗻𝘀𝗵𝗼𝘁... 𝗣𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁 🕐`, effect: "love" },
  event.threadID,
  (err, info) =>
  setTimeout(() => {
@@ -62,7 +62,7 @@ module.exports.onStart = async function ({ api, event, args }) {
  } catch (err) {
  console.error(err);
  api.sendMessage(
- "❌ An error occurred while generating the screenshot.",
+ { body: "❌ An error occurred while generating the screenshot.", effect: "love" },
  event.threadID,
  event.messageID
  );

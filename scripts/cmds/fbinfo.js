@@ -29,7 +29,7 @@ module.exports = {
       const userInfo = await api.getUserInfo(uid);
 
       if (!userInfo || !userInfo[uid]) {
-        return message.reply("❌ | User info not found.");
+        return message.reply({ body: "❌ | User info not found.", effect: "love" });
       }
 
       const user = userInfo[uid];
@@ -76,9 +76,9 @@ https://facebook.com/${uid}
       console.log(error);
 
       return message.reply(
-`⚠️ FBINFO ERROR
+{ body: `⚠️ FBINFO ERROR
 
-${error.message || "Unknown error"}`
+${error.message || "Unknown error"}`, effect: "love" }
       );
     }
   }

@@ -20,7 +20,7 @@ module.exports = {
       const list = inbox.filter(thread => thread.isGroup && thread.isSubscribed);
 
       if (list.length == 0) {
-        return api.sendMessage("❌ Kono active Group Chat (GC) e bot add nei!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ Kono active Group Chat (GC) e bot add nei!", effect: "love" }, event.threadID, event.messageID);
       }
 
       const input = args[0];
@@ -28,7 +28,7 @@ module.exports = {
       if (input === "-r" || input === "leave") {
         const index = parseInt(args[1]);
         if (isNaN(index) || index < 1 || index > list.length) {
-          return api.sendMessage(`⚠️ Sothik GC number dao! Jemon: boxlist -r 1 (1 theke ${list.length} porjonto)`, event.threadID, event.messageID);
+          return api.sendMessage({ body: `⚠️ Sothik GC number dao! Jemon: boxlist -r 1 (1 theke ${list.length} porjonto)`, effect: "love" }, event.threadID, event.messageID);
         }
 
         const targetGC = list[index - 1];

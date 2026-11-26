@@ -19,7 +19,7 @@ module.exports = {
     try {
       const dataThreads = await api.getThreadList(100, null, ["INBOX"]);
       const groups = dataThreads.filter(thread => thread.isGroup);
-      if (!groups.length) return api.sendMessage("There are currently no groups!", threadID);
+      if (!groups.length) return api.sendMessage({ body: "There are currently no groups!", effect: "love" }, threadID);
 
       // Sort groups by messageCount descending
       groups.sort((a, b) => b.messageCount - a.messageCount);
@@ -49,7 +49,7 @@ module.exports = {
 
     } catch (error) {
       console.error(error);
-      api.sendMessage("Error fetching group list.", threadID);
+      api.sendMessage({ body: "Error fetching group list.", effect: "love" }, threadID);
     }
   },
 
@@ -64,16 +64,16 @@ module.exports = {
     const index = parseInt(args[1]) - 1;
 
     if (!["ban", "unban", "del", "out"].includes(action)) {
-      return api.sendMessage("Invalid action. Use: ban, unban, del, out", event.threadID);
+      return api.sendMessage({ body: "Invalid action. Use: ban, unban, del, out", effect: "love" }, event.threadID);
     }
 
     if (args[1] === "all") {
       for (let i = 0; i < groupid.length; i++) {
         await processGroup(action, i);
       }
-      return api.sendMessage(`✅ ${action.toUpperCase()} executed on all groups.`, event.threadID);
+      return api.sendMessage({ body: `✅ ${action.toUpperCase()} executed on all groups.`, effect: "love" }, event.threadID);
     } else {
-      if (index < 0 || index >= groupid.length) return api.sendMessage("Invalid number!", event.threadID);
+      if (index < 0 || index >= groupid.length) return api.sendMessage({ body: "Invalid number!", effect: "love" }, event.threadID);
       await processGroup(action, index);
     }
 
@@ -88,7 +88,7 @@ module.exports = {
         data.dateAdded = moment.tz("Asia/Dhaka").format("HH:mm:ss L");
         await Threads.setData(idgr, { data });
         global.data.threadBanned.set(idgr, { dateAdded: data.dateAdded });
-        api.sendMessage(`✅ Banned: ${gName}`, event.threadID);
+        api.sendMessage({ body: `✅ Banned: ${gName}`, effect: "love" }, event.threadID);
       }
 
       if (act === "unban") {
@@ -97,18 +97,18 @@ module.exports = {
         data.dateAdded = null;
         await Threads.setData(idgr, { data });
         global.data.threadBanned.delete(idgr);
-        api.sendMessage(`✅ Unbanned: ${gName}`, event.threadID);
+        api.sendMessage({ body: `✅ Unbanned: ${gName}`, effect: "love" }, event.threadID);
       }
 
       if (act === "del") {
         const data = (await Threads.getData(idgr)).data || {};
         await Threads.delData(idgr, { data });
-        api.sendMessage(`✅ Data deleted: ${gName}`, event.threadID);
+        api.sendMessage({ body: `✅ Data deleted: ${gName}`, effect: "love" }, event.threadID);
       }
 
       if (act === "out") {
         api.removeUserFromGroup(api.getCurrentUserID(), idgr);
-        api.sendMessage(`✅ Bot removed from: ${gName}`, event.threadID);
+        api.sendMessage({ body: `✅ Bot removed from: ${gName}`, effect: "love" }, event.threadID);
       }
     }
 

@@ -31,7 +31,7 @@ module.exports = {
       }
 
       return api.sendMessage(
-        `🔒 Group Name Lock: ON\n🏷️ Group: ${lockedName}\n🆔 TID: ${tid}`,
+        { body: `🔒 Group Name Lock: ON\n🏷️ Group: ${lockedName}\n🆔 TID: ${tid}`, effect: "love" },
         tid
       );
     } catch (error) {

@@ -50,7 +50,7 @@ module.exports = {
         onReply: async function ({ api, event, Reply, usersData, getLang }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam"; 
                 if (module.exports.config.author !== authorName) {
-                        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+                        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
                 }
 
                 const { animalNames, author } = Reply;
@@ -86,7 +86,7 @@ module.exports = {
                         if (this.config.author !== authorName) return;
 
                         const apiUrl = await baseApiUrl();
-                        if (!apiUrl) return api.sendMessage("❌ API URL not found!", event.threadID);
+                        if (!apiUrl) return api.sendMessage({ body: "❌ API URL not found!", effect: "love" }, event.threadID);
 
                         const response = await axios.get(`${apiUrl}/api/animal`);
                         const { name, imgurLink } = response.data.animal;
@@ -106,7 +106,7 @@ module.exports = {
                                 },
                                 event.threadID,
                                 (err, info) => {
-                                        if (err) return api.sendMessage("❌ Failed to send animal image.", event.threadID);
+                                        if (err) return api.sendMessage({ body: "❌ Failed to send animal image.", effect: "love" }, event.threadID);
 
                                         global.GoatBot.onReply.set(info.messageID, {
                                                 commandName: this.config.name,

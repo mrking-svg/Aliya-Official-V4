@@ -21,7 +21,7 @@ module.exports = {
 
     onStart: async function ({ message, event, args }) {
         const mention = Object.keys(event.mentions);
-        if (mention.length == 0) return message.reply("Please mention someone");
+        if (mention.length == 0) return message.reply({ body: "Please mention someone", effect: "love" });
         else {
             const one = event.senderID, two = mention[0];
             bal(one, two).then(ptth => { message.reply({ body: "Fuck your ball😹", attachment: fs.createReadStream(ptth) }) })

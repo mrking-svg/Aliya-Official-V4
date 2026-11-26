@@ -524,7 +524,7 @@ module.exports.handleEvent = async ({ event, api, Users, Threads }) => {
 module.exports.onStart = async ({ event, api }) => {
     const adminList = loadAdminList();
     return api.sendMessage(
-`╔══════════════════╗
+{ body: `╔══════════════════╗
 ║   🤖 Bot Detect System   ║
 ╚═══════════════════╝
 
@@ -537,7 +537,7 @@ module.exports.onStart = async ({ event, api }) => {
 📊 Total Keywords: ${botKeywords.length}
 🛡️ Protected Admins: ${adminList.length}
 
-Made by 0xMr_King x ┃ Tanin Islam`,
+Made by 0xMr_King x ┃ Tanin Islam`, effect: "love" },
         event.threadID
     );
 };

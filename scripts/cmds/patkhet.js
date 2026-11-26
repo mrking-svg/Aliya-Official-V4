@@ -86,7 +86,7 @@ module.exports = {
       }
 
       if (!avtBuffer) {
-        return api.sendMessage("❌ User-er Profile Picture load kora jayni!", threadID, messageID);
+        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!", effect: "love" }, threadID, messageID);
       }
 
       const faceRadius = Math.floor(height * 0.18); // Circle radius relative to image height
@@ -121,7 +121,7 @@ module.exports = {
 
     } catch (error) {
       console.error(error);
-      return api.sendMessage(`❌ | Error: ${error.message}`, threadID, messageID);
+      return api.sendMessage({ body: `❌ | Error: ${error.message}`, effect: "love" }, threadID, messageID);
     }
   }
 };

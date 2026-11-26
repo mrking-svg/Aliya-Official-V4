@@ -16,11 +16,11 @@ onStart: async function ({ api, args, message, threadsData, event }) {
 	const OWNER_ID = getOwnerID();
 
 	if (String(event.senderID) !== OWNER_ID)
-		return message.reply("⛔ Only owner can use this command.");
+		return message.reply({ body: "⛔ Only owner can use this command.", effect: "love" });
 
 	const content = args.join(" ");
 	if (!content)
-		return message.reply("❌ Write a message.");
+		return message.reply({ body: "❌ Write a message.", effect: "love" });
 
 	const allThreads = await threadsData.getAll() || [];
 	let success = 0;
@@ -32,12 +32,12 @@ onStart: async function ({ api, args, message, threadsData, event }) {
 		try {
 			api.sendMessage(
 
-`📢 𝗡𝗢𝗧𝗜𝗙𝗜𝗖𝗔𝗧𝗜𝗢𝗡
+{ body: `📢 𝗡𝗢𝗧𝗜𝗙𝗜𝗖𝗔𝗧𝗜𝗢𝗡
 
 ${content}
 
 ━━━━━━━━━━━━━━
-💬 𝗥𝗘𝗣𝗟𝗬 𝗧𝗢 𝗧𝗛𝗜𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘`,
+💬 𝗥𝗘𝗣𝗟𝗬 𝗧𝗢 𝗧𝗛𝗜𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘`, effect: "love" },
 tid,
 (err, info) => {
 if (!err && info) {
@@ -54,7 +54,7 @@ threadID: tid
 		} catch (e) {}
 	}
 
-	return message.reply(`✅ Sent to ${success} groups.`);
+	return message.reply({ body: `✅ Sent to ${success} groups.`, effect: "love" });
 },
 
 onReply: async function ({ api, event, Reply, usersData }) {

@@ -63,6 +63,6 @@ module.exports.onStart = async ({ api, event, args }) => {
         ).pipe(fs.createWriteStream(__dirname + "/cache/ckuser.png")).on("close", () => callback());
 
     } catch (e) {
-        return api.sendMessage("⚠️ User info আনতে সমস্যা হচ্ছে!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "⚠️ User info আনতে সমস্যা হচ্ছে!", effect: "love" }, event.threadID, event.messageID);
     }
 };

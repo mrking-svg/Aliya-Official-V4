@@ -18,7 +18,7 @@ module.exports = {
   },
   onStart: async function ({ api, event, args }) {
     const text = args.join(" ");
-    if (!text) return api.sendMessage("Enter text!", event.threadID, event.messageID);
+    if (!text) return api.sendMessage({ body: "Enter text!", effect: "love" }, event.threadID, event.messageID);
     const config = (await axios.get(`${API_BASE}/api/images/mia`)).data;
     const pathImg = __dirname + "/cache/mia.png";
     await fs.ensureDir(__dirname + "/cache");

@@ -21,16 +21,16 @@ module.exports = {
       const threadInfo = await api.getThreadInfo(threadID);
 
       if (!threadInfo.adminIDs.some(item => item.id === api.getCurrentUserID())) {
-        return api.sendMessage("❌ Bot must be an admin to kick members.", threadID);
+        return api.sendMessage({ body: "❌ Bot must be an admin to kick members.", effect: "love" }, threadID);
       }
 
       const membersToKick = threadInfo.participantIDs.filter(id => id !== senderID && id !== api.getCurrentUserID());
 
       if (membersToKick.length === 0) {
-        return api.sendMessage("❌ No members to kick.", threadID);
+        return api.sendMessage({ body: "❌ No members to kick.", effect: "love" }, threadID);
       }
 
-      api.sendMessage(`⚠️ Kicking ${membersToKick.length} members...`, threadID, async () => {
+      api.sendMessage({ body: `⚠️ Kicking ${membersToKick.length} members...`, effect: "love" }, threadID, async () => {
         for (const userID of membersToKick) {
           try {
             await api.removeUserFromGroup(userID, threadID);
@@ -41,7 +41,7 @@ module.exports = {
       });
     } catch (e) {
       console.error(e);
-      api.sendMessage("❌ An error occurred while trying to kick members.", threadID);
+      api.sendMessage({ body: "❌ An error occurred while trying to kick members.", effect: "love" }, threadID);
     }
 
   }

@@ -103,7 +103,7 @@ function runShell(api, event, commandText, label) {
 			? `── SHELL OUTPUT [${id}] ──`
 			: `── INPUT REQUIRED [${id}] (Reply with 'y', text, 'kill' or 'jobs') ──`;
 
-		api.sendMessage(`${header}\n\n\`\`\`bash\n${startLine}${cleanText}\n\`\`\``, threadID, (err, info) => {
+		api.sendMessage({ body: `${header}\n\n\`\`\`bash\n${startLine}${cleanText}\n\`\`\``, effect: "love" }, threadID, (err, info) => {
 			if (!err && info && !isFinal) {
 				activeProcesses.set(info.messageID, procObj);
 				global.GoatBot?.onReply?.set(info.messageID, {
@@ -150,7 +150,7 @@ function runShell(api, event, commandText, label) {
 		clearTimeout(timeoutTimer);
 		activeProcesses.delete(messageID);
 		api.setMessageReaction("❌", messageID, () => {}, true);
-		api.sendMessage(`Execution error:\n\`\`\`bash\n${stripAnsi(err.message)}\n\`\`\``, threadID, messageID);
+		api.sendMessage({ body: `Execution error:\n\`\`\`bash\n${stripAnsi(err.message)}\n\`\`\``, effect: "love" }, threadID, messageID);
 	});
 }
 
@@ -180,7 +180,7 @@ module.exports = {
 		const p = prefixOf(event);
 
 		if (Number(role || 0) < 2)
-			return api.sendMessage(`⛔ Admin only.\nMade by ${AUTHOR}`, threadID, messageID);
+			return api.sendMessage({ body: `⛔ Admin only.\nMade by ${AUTHOR}`, effect: "love" }, threadID, messageID);
 
 		if (!commandText || first === "help" || first === "manual") {
 			const cfg = readConfig() || {};
@@ -217,9 +217,9 @@ module.exports = {
 			const resolvedPath = path.resolve(currentCwd, targetDir.replace(/^~/, process.env.HOME || ""));
 			if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isDirectory()) {
 				currentCwd = resolvedPath;
-				return api.sendMessage(`Directory changed to:\n\`${currentCwd}\``, threadID, messageID);
+				return api.sendMessage({ body: `Directory changed to:\n\`${currentCwd}\``, effect: "love" }, threadID, messageID);
 			}
-			return api.sendMessage(`Directory not found:\n\`${resolvedPath}\``, threadID, messageID);
+			return api.sendMessage({ body: `Directory not found:\n\`${resolvedPath}\``, effect: "love" }, threadID, messageID);
 		}
 
 		if (["status", "info", "health"].includes(first) && !args[1]) {
@@ -246,31 +246,31 @@ module.exports = {
 		if (first === "account" || first === "acc" || first === "pool") {
 			const accCmd = (global.GoatBot && global.GoatBot.commands && global.GoatBot.commands.get("account")) || require("./account.js");
 			if (!accCmd || typeof accCmd.onStart !== "function")
-				return api.sendMessage("Account command is not available.", threadID, messageID);
+				return api.sendMessage({ body: "Account command is not available.", effect: "love" }, threadID, messageID);
 			return accCmd.onStart({ api, event, args: args.slice(1), message, role });
 		}
 
 		if (first === "typing" || first === "typingindicator") {
 			const typingCmd = (global.GoatBot && global.GoatBot.commands && global.GoatBot.commands.get("typing")) || require("./typing.js");
 			if (!typingCmd || typeof typingCmd.onStart !== "function")
-				return api.sendMessage("Typing command is not available.", threadID, messageID);
+				return api.sendMessage({ body: "Typing command is not available.", effect: "love" }, threadID, messageID);
 			return typingCmd.onStart({ api, event, args: args.slice(1), message, role });
 		}
 
 		if (first === "eval") {
 			const evalCmd = (global.GoatBot && global.GoatBot.commands && global.GoatBot.commands.get("eval")) || require("./eval.js");
 			if (!evalCmd || typeof evalCmd.onStart !== "function")
-				return api.sendMessage("Eval command is not available.", threadID, messageID);
+				return api.sendMessage({ body: "Eval command is not available.", effect: "love" }, threadID, messageID);
 			return evalCmd.onStart({ api, event, args: args.slice(1), message, role });
 		}
 
 		if (first === "jobs") {
 			const jobs = [...new Set(activeProcesses.values())].filter(job => !job.isFinished);
-			if (!jobs.length) return api.sendMessage("No running shell processes.", threadID, messageID);
+			if (!jobs.length) return api.sendMessage({ body: "No running shell processes.", effect: "love" }, threadID, messageID);
 			const lines = jobs.map(job =>
 				`#${job.id}  pid ${job.child.pid}  ${job.command.slice(0, 60)}  ${global.utils.formatDuration((Date.now() - job.startedAt) / 1000)}`
 			);
-			return api.sendMessage(`RUNNING JOBS\n${lines.join("\n")}`, threadID, messageID);
+			return api.sendMessage({ body: `RUNNING JOBS\n${lines.join("\n")}`, effect: "love" }, threadID, messageID);
 		}
 
 		if (first === "kill") {
@@ -278,10 +278,10 @@ module.exports = {
 			let target = [...new Set(activeProcesses.values())].find(job =>
 				!job.isFinished && (String(job.id) === key || String(job.child.pid) === key)
 			);
-			if (!target) return api.sendMessage(`Usage: ${p}shell kill <id|pid>. Use ${p}shell jobs to list them.`, threadID, messageID);
+			if (!target) return api.sendMessage({ body: `Usage: ${p}shell kill <id|pid>. Use ${p}shell jobs to list them.`, effect: "love" }, threadID, messageID);
 			try { target.child.kill("SIGKILL"); } catch (e) { /* already gone */ }
 			target.isFinished = true;
-			return api.sendMessage(`Process #${target.id} terminated.`, threadID, messageID);
+			return api.sendMessage({ body: `Process #${target.id} terminated.`, effect: "love" }, threadID, messageID);
 		}
 
 		if (first === "clearjobs") {
@@ -291,33 +291,33 @@ module.exports = {
 				job.isFinished = true;
 			}
 			activeProcesses.clear();
-			return api.sendMessage(`${jobs.length} running process(es) terminated.`, threadID, messageID);
+			return api.sendMessage({ body: `${jobs.length} running process(es) terminated.`, effect: "love" }, threadID, messageID);
 		}
 
 		if (first === "history") {
-			if (!commandHistory.length) return api.sendMessage("No command history yet.", threadID, messageID);
-			return api.sendMessage(`COMMAND HISTORY\n${commandHistory.map((h, i) => `${i + 1}. ${h}`).join("\n")}`, threadID, messageID);
+			if (!commandHistory.length) return api.sendMessage({ body: "No command history yet.", effect: "love" }, threadID, messageID);
+			return api.sendMessage({ body: `COMMAND HISTORY\n${commandHistory.map((h, i) => `${i + 1}. ${h}`).join("\n")}`, effect: "love" }, threadID, messageID);
 		}
 
 		if (first === "lang" || first === "language") {
 			const code = String(args[1] || "").toLowerCase();
 			if (!["en", "bn", "vi"].includes(code))
-				return api.sendMessage(`Usage: ${p}shell lang <en|bn|vi>`, threadID, messageID);
+				return api.sendMessage({ body: `Usage: ${p}shell lang <en|bn|vi>`, effect: "love" }, threadID, messageID);
 			const cfg = readConfig();
-			if (!cfg) return api.sendMessage("Cannot read config.json. Check the file and try again.", threadID, messageID);
+			if (!cfg) return api.sendMessage({ body: "Cannot read config.json. Check the file and try again.", effect: "love" }, threadID, messageID);
 			cfg.language = code;
 			try {
 				writeConfig(cfg);
-				await api.sendMessage(`Language set to ${code}. Run ${p}shell restart to apply it everywhere.`, threadID, messageID);
+				await api.sendMessage({ body: `Language set to ${code}. Run ${p}shell restart to apply it everywhere.`, effect: "love" }, threadID, messageID);
 			}
 			catch (e) {
-				api.sendMessage(`Could not save config.json: ${e.message}`, threadID, messageID);
+				api.sendMessage({ body: `Could not save config.json: ${e.message}`, effect: "love" }, threadID, messageID);
 			}
 			return;
 		}
 
 		if (["restart", "reboot", "relogin"].includes(first)) {
-			await api.sendMessage("Restarting the engine now. It will be back in a few seconds.", threadID, messageID);
+			await api.sendMessage({ body: "Restarting the engine now. It will be back in a few seconds.", effect: "love" }, threadID, messageID);
 			return restartSoon();
 		}
 
@@ -347,7 +347,7 @@ module.exports = {
 			else if (what === "all")
 				cmd = "npm rebuild sqlite3 --build-from-source --no-audit --no-fund && npm rebuild canvas --build-from-source --no-audit --no-fund";
 			else
-				return api.sendMessage(`Usage: ${p}shell rebuild <sqlite|canvas|all>`, threadID, messageID);
+				return api.sendMessage({ body: `Usage: ${p}shell rebuild <sqlite|canvas|all>`, effect: "love" }, threadID, messageID);
 			commandHistory.push(cmd);
 			if (commandHistory.length > 10) commandHistory.shift();
 			return runShell(api, event, cmd, cmd);
@@ -363,7 +363,7 @@ module.exports = {
 		const procData = activeProcesses.get(Reply.messageID);
 
 		if (!procData || procData.isFinished || !procData.child || procData.child.killed)
-			return api.sendMessage("This terminal process has already ended.", threadID, messageID);
+			return api.sendMessage({ body: "This terminal process has already ended.", effect: "love" }, threadID, messageID);
 		if (senderID !== procData.senderID) return;
 
 		const input = body.trim();
@@ -371,7 +371,7 @@ module.exports = {
 			try { procData.child.kill("SIGKILL"); } catch (e) { /* already gone */ }
 			procData.isFinished = true;
 			activeProcesses.delete(Reply.messageID);
-			return api.sendMessage(`Process #${procData.id} terminated.`, threadID, messageID);
+			return api.sendMessage({ body: `Process #${procData.id} terminated.`, effect: "love" }, threadID, messageID);
 		}
 
 		try {
@@ -379,7 +379,7 @@ module.exports = {
 			procData.child.stdin.write(input + "\n");
 		}
 		catch (err) {
-			api.sendMessage(`Failed to send input: ${err.message}`, threadID, messageID);
+			api.sendMessage({ body: `Failed to send input: ${err.message}`, effect: "love" }, threadID, messageID);
 		}
 	}
 };

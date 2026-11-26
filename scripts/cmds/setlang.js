@@ -40,21 +40,21 @@ module.exports = {
 
 		if (globalMode) {
 			if (Number(role || 0) < 2)
-				return message.reply("Only bot admins can change the global language.");
+				return message.reply({ body: "Only bot admins can change the global language.", effect: "love" });
 			if (code && !languageExists(code))
-				return message.reply(`Language "${code}" is not installed.`);
+				return message.reply({ body: `Language "${code}" is not installed.`, effect: "love" });
 			global.GoatBot.config.language = code || "en";
 			try {
 				fs.writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 2) + "\n", "utf8");
 			}
 			catch (err) {
-				return message.reply(`Could not save config.json: ${err.message}`);
+				return message.reply({ body: `Could not save config.json: ${err.message}`, effect: "love" });
 			}
-			return message.reply(`Global language set to ${global.GoatBot.config.language}. A restart is recommended.`);
+			return message.reply({ body: `Global language set to ${global.GoatBot.config.language}. A restart is recommended.`, effect: "love" });
 		}
 
 		if (code && !languageExists(code))
-			return message.reply(`Language "${code}" is not installed.`);
+			return message.reply({ body: `Language "${code}" is not installed.`, effect: "love" });
 		await threadsData.set(event.threadID, code, "data.lang");
 		return message.reply(code ? `Language for this group set to ${code}.` : "This group now follows the global language.");
 	}

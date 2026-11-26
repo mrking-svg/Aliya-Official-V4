@@ -18,7 +18,7 @@ module.exports = {
 
  if (!event.messageReply) {
  return api.sendMessage(
- "❌ | Karor msg er reply dao.",
+ { body: "❌ | Karor msg er reply dao.", effect: "love" },
  event.threadID,
  event.messageID
  );
@@ -28,7 +28,7 @@ module.exports = {
 
  if (isNaN(amount) || amount < 1 || amount > 100) {
  return api.sendMessage(
- "❌ | 1-100 er moddhe number dao.",
+ { body: "❌ | 1-100 er moddhe number dao.", effect: "love" },
  event.threadID,
  event.messageID
  );
@@ -55,7 +55,7 @@ module.exports = {
  console.log(e);
 
  api.sendMessage(
- "❌ | Error hoise.",
+ { body: "❌ | Error hoise.", effect: "love" },
  event.threadID,
  event.messageID
  );

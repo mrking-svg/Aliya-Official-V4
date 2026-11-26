@@ -663,13 +663,13 @@ module.exports = {
 
 		if (["web", "url", "http", "site", "website"].includes(mode)) {
 			const url = cleanArg(args.slice(1).join(" "));
-			if (!url) return message.reply(`Usage: ${prefix}apitest web "https://example.com"`);
+			if (!url) return message.reply({ body: `Usage: ${prefix}apitest web "https://example.com"`, effect: "love" });
 			return sendReport(message, await testWeb(url));
 		}
 
 		if (["cmds", "cmd", "command", "commands"].includes(mode)) {
 			const requested = cleanArg(args[1]);
-			if (!requested) return message.reply(`Usage: ${prefix}apitest cmds "command name" [args...]`);
+			if (!requested) return message.reply({ body: `Usage: ${prefix}apitest cmds "command name" [args...]`, effect: "love" });
 			const found = findCommand(requested);
 			if (!found) {
 				const suggestions = suggestCommands(requested);

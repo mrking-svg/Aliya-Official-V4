@@ -9,7 +9,7 @@ module.exports = {
     api.setMessageReaction("🕜", event.messageID, () => {}, true);
     const senderID = event.senderID;
     let targetID = event.messageReply?.senderID || Object.keys(event.mentions || {})[0];
-    if (!targetID) return message.reply("❌ মেনশন বা রিপ্লাই দাও");
+    if (!targetID) return message.reply({ body: "❌ মেনশন বা রিপ্লাই দাও", effect: "love" });
     const name1 = await usersData.getName(senderID).catch(() => "You");
     const name2 = await usersData.getName(targetID).catch(() => "Friend");
     const config = (await axios.get(`${API_BASE}/api/images/kidnap`)).data;

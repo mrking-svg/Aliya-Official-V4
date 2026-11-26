@@ -16,15 +16,15 @@ module.exports = {
     let loadMsg;
     try {
       const img = event.messageReply?.attachments?.[0]?.url || args[0];
-      if (!img) return api.sendMessage("❌ Please reply to an image or provide a URL.", event.threadID, event.messageID);
-      loadMsg = await api.sendMessage("😺 Removing Background...\n⏳ Please Wait...", event.threadID);
+      if (!img) return api.sendMessage({ body: "❌ Please reply to an image or provide a URL.", effect: "love" }, event.threadID, event.messageID);
+      loadMsg = await api.sendMessage({ body: "😺 Removing Background...\n⏳ Please Wait...", effect: "love" }, event.threadID);
       const res = await axios.get(`https://azadx69x.is-a.dev/api/rbg?url=${encodeURIComponent(img)}`, { responseType: "stream" });
       await api.sendMessage({ body: "✅ Background Removed!", attachment: res.data }, event.threadID, event.messageID);
       if (loadMsg) api.unsendMessage(loadMsg.messageID);
     } catch (e) {
       console.error(e);
       if (loadMsg) api.unsendMessage(loadMsg.messageID);
-      api.sendMessage("❌ Image Process Failed!", event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ Image Process Failed!", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

@@ -88,12 +88,12 @@ module.exports = {
 
       writer.on("error", (err) => {
         console.error(err);
-        api.sendMessage("❌ ভিডিও পাঠাতে সমস্যা হয়েছে!", event.threadID);
+        api.sendMessage({ body: "❌ ভিডিও পাঠাতে সমস্যা হয়েছে!", effect: "love" }, event.threadID);
       });
 
     } catch (error) {
       console.error(error);
-      api.sendMessage("❌ কিছু একটা সমস্যা হয়েছে ভিডিও আনতে।", event.threadID);
+      api.sendMessage({ body: "❌ কিছু একটা সমস্যা হয়েছে ভিডিও আনতে।", effect: "love" }, event.threadID);
     }
   }
 };

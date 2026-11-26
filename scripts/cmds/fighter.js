@@ -111,7 +111,7 @@ module.exports = {
 
       if (!avtBuffer) {
         api.setMessageReaction("❌", messageID, (err) => {}, true);
-        return api.sendMessage("❌ User-er Profile Picture load kora jayni!", threadID, messageID);
+        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!", effect: "love" }, threadID, messageID);
       }
 
       // Precise Face Position (Centered inside the watermelon helmet cut)
@@ -149,7 +149,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       api.setMessageReaction("❌", messageID, (err) => {}, true);
-      return api.sendMessage(`❌ | Error generating fighter meme: ${error.message}`, threadID, messageID);
+      return api.sendMessage({ body: `❌ | Error generating fighter meme: ${error.message}`, effect: "love" }, threadID, messageID);
     }
   }
 };

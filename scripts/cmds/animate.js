@@ -30,7 +30,7 @@ module.exports.config = {
 module.exports.onStart = async ({ api, event, args }) => {
     try {
         const prompt = args.join(" ").trim();
-        if (!prompt) return api.sendMessage("⚠️ Prompt likh: animate a cat riding bike", event.threadID, event.messageID);
+        if (!prompt) return api.sendMessage({ body: "⚠️ Prompt likh: animate a cat riding bike", effect: "love" }, event.threadID, event.messageID);
 
         if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR);
 
@@ -42,7 +42,7 @@ module.exports.onStart = async ({ api, event, args }) => {
 
         if (!data.success || !data.video_urls || data.video_urls.length === 0) {
             api.setMessageReaction("❌", event.messageID, () => {}, true);
-            return api.sendMessage("⚠️ API kono video return kore nai!", event.threadID);
+            return api.sendMessage({ body: "⚠️ API kono video return kore nai!", effect: "love" }, event.threadID);
         }
 
         const videoUrl = data.video_urls[0];
@@ -65,7 +65,7 @@ module.exports.onStart = async ({ api, event, args }) => {
         });
 
     } catch (err) {
-        api.sendMessage("❌ Failed to generate video!\nServer busy or error.", event.threadID);
+        api.sendMessage({ body: "❌ Failed to generate video!\nServer busy or error.", effect: "love" }, event.threadID);
         console.log(err);
     }
 };

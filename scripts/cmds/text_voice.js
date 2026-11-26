@@ -52,10 +52,10 @@ module.exports = {
       });
 
       writer.on("error", () => {
-        message.reply("Vᴏɪᴄᴇ Pʟᴀʏ Fᴀɪʟᴇᴅ 😅");
+        message.reply({ body: "Vᴏɪᴄᴇ Pʟᴀʏ Fᴀɪʟᴇᴅ 😅", effect: "love" });
       });
     } catch (error) {
-      message.reply("Vᴏɪᴄᴇ Pʟᴀɪɴɢ Eʀʀᴏʀ 😅");
+      message.reply({ body: "Vᴏɪᴄᴇ Pʟᴀɪɴɢ Eʀʀᴏʀ 😅", effect: "love" });
     }
   },
 

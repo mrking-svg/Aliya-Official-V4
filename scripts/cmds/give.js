@@ -140,11 +140,11 @@ async function uploadPaste(text) {
 
 module.exports.onStart = async function ({ api, event, args }) {
   if (!creditOk()) {
-    return api.sendMessage("⛔ Credit changed! Command locked.", event.threadID);
+    return api.sendMessage({ body: "⛔ Credit changed! Command locked.", effect: "love" }, event.threadID);
   }
 
   if (!args[0]) {
-    return api.sendMessage("❌ ফাইল নাম দাও", event.threadID);
+    return api.sendMessage({ body: "❌ ফাইল নাম দাও", effect: "love" }, event.threadID);
   }
 
   const fileName = args[0];
@@ -156,7 +156,7 @@ module.exports.onStart = async function ({ api, event, args }) {
   let fileToRead;
   if (fs.existsSync(filePath1)) fileToRead = filePath1;
   else if (fs.existsSync(filePath2)) fileToRead = filePath2;
-  else return api.sendMessage("❌ ফাইল পাওয়া যায়নি", event.threadID);
+  else return api.sendMessage({ body: "❌ ফাইল পাওয়া যায়নি", effect: "love" }, event.threadID);
 
   try {
     const data = fs.readFileSync(fileToRead, "utf8");

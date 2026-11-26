@@ -18,14 +18,14 @@ module.exports.onStart = async function({ api, event, args }) {
   const question = args.join(' ').trim();
 
   if (!question) {
-    return api.sendMessage("⚠️ Please provide your question.", threadID, messageID);
+    return api.sendMessage({ body: "⚠️ Please provide your question.", effect: "love" }, threadID, messageID);
   }
 
   try {
     const response = await axios.get(`${API_SERVER_URL}${encodeURIComponent(question)}`);
 
     if (response.data.error) {
-      return api.sendMessage(`❌ Error: ${response.data.error}`, threadID, messageID);
+      return api.sendMessage({ body: `❌ Error: ${response.data.error}`, effect: "love" }, threadID, messageID);
     }
 
     const geminiAnswer = response.data.response;
@@ -33,10 +33,10 @@ module.exports.onStart = async function({ api, event, args }) {
     if (geminiAnswer) {
       return api.sendMessage(geminiAnswer, threadID, messageID);
     } else {
-      return api.sendMessage("[⚜️]➜ Something went wrong. Please try again.", threadID, messageID);
+      return api.sendMessage({ body: "[⚜️]➜ Something went wrong. Please try again.", effect: "love" }, threadID, messageID);
     }
   } catch (error) {
     console.error('Meta API Error:', error.response ? error.response.data : error.message);
-    return api.sendMessage("[⚜️]➜ Failed to get a response from Meta AI.", threadID, messageID);
+    return api.sendMessage({ body: "[⚜️]➜ Failed to get a response from Meta AI.", effect: "love" }, threadID, messageID);
   }
 };

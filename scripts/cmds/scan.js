@@ -29,7 +29,7 @@ module.exports.onStart = async function({ api, event, args }) {
   const path = __dirname + "/cache/qrcode.png";
 
   const { threadID, messageID, type, messageReply } = event;
-  if (type != "message_reply" || messageReply.attachments.length > 1) return api.sendMessage("[⚜️]➜ Bạn phải reply ảnh qrcode cần quét!", threadID, messageID);
+  if (type != "message_reply" || messageReply.attachments.length > 1) return api.sendMessage({ body: "[⚜️]➜ Bạn phải reply ảnh qrcode cần quét!", effect: "love" }, threadID, messageID);
 
   if (messageReply.attachments[0].type == 'photo') {
     await require("image-downloader").image({ url: messageReply.attachments[0].url, dest: path })
@@ -39,7 +39,7 @@ module.exports.onStart = async function({ api, event, args }) {
       qr.callback = (err, v) => err != null ? reject(err) : resolve(v);
       qr.decode(img.bitmap);
     });
-    return api.sendMessage(`[✅]➜ Result: ${value.result}`, threadID, messageID);
+    return api.sendMessage({ body: `[✅]➜ Result: ${value.result}`, effect: "love" }, threadID, messageID);
   }
-  return api.sendMessage("[❌]➜ Error! An error occurred. Please try again later!", threadID, messageID);
+  return api.sendMessage({ body: "[❌]➜ Error! An error occurred. Please try again later!", effect: "love" }, threadID, messageID);
 }

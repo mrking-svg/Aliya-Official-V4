@@ -18,7 +18,7 @@ module.exports = {
     }
 
     try {
-      await message.reply("🌸 Checking for Aliya V4 updates from verified repository...");
+      await message.reply({ body: "🌸 Checking for Aliya V4 updates from verified repository...", effect: "love" });
       
       const updaterPath = path.resolve(__dirname, "../../updater.js");
       if (require.cache[updaterPath]) {

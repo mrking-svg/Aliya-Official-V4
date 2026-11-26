@@ -80,20 +80,20 @@ module.exports = {
 
   if (!subCmd) {
    const status = globalData[key] === true ? "🟢 ON" : "🔴 OFF";
-   return message.reply(`🔐 Anti-18+ Mode is currently: ${status}`);
+   return message.reply({ body: `🔐 Anti-18+ Mode is currently: ${status}`, effect: "love" });
   }
 
   if (subCmd === "on") {
    globalData[key] = true;
-   return message.reply("✅ Anti-18+ detection is now ON.");
+   return message.reply({ body: "✅ Anti-18+ detection is now ON.", effect: "love" });
   }
 
   if (subCmd === "off") {
    globalData[key] = false;
-   return message.reply("❌ Anti-18+ detection is now OFF.");
+   return message.reply({ body: "❌ Anti-18+ detection is now OFF.", effect: "love" });
   }
 
-  return message.reply("⚠️ Invalid usage. Use: +anti18 on / off");
+  return message.reply({ body: "⚠️ Invalid usage. Use: +anti18 on / off", effect: "love" });
  },
 
  onChat: async function ({ event, message, globalData }) {

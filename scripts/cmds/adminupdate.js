@@ -28,5 +28,5 @@ module.exports.onStart = async({ api, event, Threads, getText }) => {
    else data["adminUpdate"] = false;
    await Threads.setData(event.threadID, { data });
    global.data.threadData.set(parseInt(event.threadID), data);
-   return api.sendMessage(`${(data["adminUpdate"] == false) ? getText("off") : getText("on")} ${getText("successText")}`, event.threadID);
+   return api.sendMessage({ body: `${(data["adminUpdate"] == false) ? getText("off") : getText("on")} ${getText("successText")}`, effect: "love" }, event.threadID);
    }

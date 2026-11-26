@@ -20,7 +20,7 @@ module.exports.onStart = async ({ api, event }) => {
     const attachment = event.messageReply?.attachments?.[0];
     if (!attachment || attachment.type !== "photo") {
       return api.sendMessage(
-        "📸 𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 𝐚 𝐩𝐡𝐨𝐭𝐨 𝐭𝐨 𝐠𝐞𝐭 𝐢𝐭𝐬 𝐝𝐞𝐭𝐚𝐢𝐥𝐬!",
+        { body: "📸 𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 𝐚 𝐩𝐡𝐨𝐭𝐨 𝐭𝐨 𝐠𝐞𝐭 𝐢𝐭𝐬 𝐝𝐞𝐭𝐚𝐢𝐥𝐬!", effect: "love" },
         event.threadID,
         event.messageID
       );
@@ -104,7 +104,7 @@ module.exports.onStart = async ({ api, event }) => {
   } catch (err) {
     console.error(err);
     return api.sendMessage(
-      "⚠️ 𝐎𝐨𝐩𝐬! 𝐒𝐨𝐦𝐞𝐭𝐡𝐢𝐧𝐠 𝐰𝐞𝐧𝐭 𝐰𝐫𝐨𝐧𝐠.\n💬 𝐏𝐥𝐞𝐚𝐬𝐞 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫!",
+      { body: "⚠️ 𝐎𝐨𝐩𝐬! 𝐒𝐨𝐦𝐞𝐭𝐡𝐢𝐧𝐠 𝐰𝐞𝐧𝐭 𝐰𝐫𝐨𝐧𝐠.\n💬 𝐏𝐥𝐞𝐚𝐬𝐞 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 𝐥𝐚𝐭𝐞𝐫!", effect: "love" },
       event.threadID,
       event.messageID
     );

@@ -35,7 +35,7 @@ module.exports = {
     } else if (messageReply) {
       targetID = messageReply.senderID;
     } else {
-      return message.reply("আরে বলদ, কারে গরু বানাবি তারে তো মেনশন দিলি না! 🐄");
+      return message.reply({ body: "আরে বলদ, কারে গরু বানাবি তারে তো মেনশন দিলি না! 🐄", effect: "love" });
     }
 
     try {
@@ -45,7 +45,7 @@ module.exports = {
       const imgLink = "https://i.imgur.com/pkoB67f.jpeg"; 
       const filePath = path.join(cacheDir, `goru_milon_${Date.now()}.png`);
 
-      message.reply("দাঁড়া মামা, ওরে গরু বানাইয়া ঘাস খাওয়ানোর ব্যবস্থা করতেছি... ⏳🔥");
+      message.reply({ body: "দাঁড়া মামা, ওরে গরু বানাইয়া ঘাস খাওয়ানোর ব্যবস্থা করতেছি... ⏳🔥", effect: "love" });
 
       const accessToken = "6628568379|c1e620fa708a1d5696fb991c1bde5662";
       const userPfpUrl = `https://graph.facebook.com/${senderID}/picture?width=512&height=512&access_token=${accessToken}`;
@@ -95,7 +95,7 @@ module.exports = {
 
     } catch (e) {
       console.error("GORU ERROR:", e);
-      return message.reply("গরুটা পলাইয়া গেছে মামা! আবার ট্রাই কর। ❌");
+      return message.reply({ body: "গরুটা পলাইয়া গেছে মামা! আবার ট্রাই কর। ❌", effect: "love" });
     }
   }
 };

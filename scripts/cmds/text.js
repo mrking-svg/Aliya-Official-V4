@@ -34,11 +34,11 @@ module.exports.onStart = async function({ api, event, args }) {
  if (cmd === "off") {
  statusData.enabled = false;
  fs.writeFileSync(statusPath, JSON.stringify(statusData, null, 2));
- return api.sendMessage("Text কমান্ডটি এখন বন্ধ করা হয়েছে❌", event.threadID, event.messageID);
+ return api.sendMessage({ body: "Text কমান্ডটি এখন বন্ধ করা হয়েছে❌", effect: "love" }, event.threadID, event.messageID);
  }
 
  if (!statusData.enabled) {
- return api.sendMessage("এই কমান্ডটি বন্ধ রয়েছে🚫", event.threadID, event.messageID);
+ return api.sendMessage({ body: "এই কমান্ডটি বন্ধ রয়েছে🚫", effect: "love" }, event.threadID, event.messageID);
  }
 
  
@@ -46,11 +46,11 @@ module.exports.onStart = async function({ api, event, args }) {
  const text = args.slice(1).join(" ");
 
  if (isNaN(count) || count < 1) {
- return api.sendMessage("কতবার পাঠাতে হবে তা ঠিকমতো দিন✅\nউদাহরণ: /text 5 Sahu", event.threadID, event.messageID);
+ return api.sendMessage({ body: "কতবার পাঠাতে হবে তা ঠিকমতো দিন✅\nউদাহরণ: /text 5 Sahu", effect: "love" }, event.threadID, event.messageID);
  }
 
  if (!text) {
- return api.sendMessage("পাঠানোর জন্য কোনো টেক্সট পাওয়া যায়নি..!❎", event.threadID, event.messageID);
+ return api.sendMessage({ body: "পাঠানোর জন্য কোনো টেক্সট পাওয়া যায়নি..!❎", effect: "love" }, event.threadID, event.messageID);
  }
 
  

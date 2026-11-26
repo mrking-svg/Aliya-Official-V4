@@ -83,7 +83,7 @@ module.exports.onStart = async function ({ event, api, args }) {
   const fs = global.nodemodule["fs-extra"];
   const { threadID, messageID, senderID } = event;
   const mention = Object.keys(event.mentions);
-  if (!mention[0]) return api.sendMessage("ভালোবাসার মানুষ টি কে টেগ করুন-!!💏🙈", threadID, messageID);
+  if (!mention[0]) return api.sendMessage({ body: "ভালোবাসার মানুষ টি কে টেগ করুন-!!💏🙈", effect: "love" }, threadID, messageID);
   else {
       const one = senderID, two = mention[0];
       return makeImage({ one, two }).then(path => api.sendMessage({ body: ">🐰✨𝗧𝗵𝗶𝘀 𝗮𝗯𝗼𝘂𝘁 𝗟𝗶𝗻𝗲!-💜💭❤️\n–আপনি আমার সেই প্রিয় মানুষ:-)💜🍒\n__যাকে দেখলে আমার মুখে \n আচমকা হাসি ফুটে উঠে !!🙂🌸", attachment: fs.createReadStream(path) }, threadID, () => fs.unlinkSync(path), messageID));

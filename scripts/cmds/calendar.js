@@ -37,7 +37,7 @@ module.exports = {
     } catch (err) {
       console.error("Calendar command error:", err.message);
       api.sendMessage(
-        "❌ Failed to fetch calendar image from API.",
+        { body: "❌ Failed to fetch calendar image from API.", effect: "love" },
         event.threadID,
         event.messageID
       );

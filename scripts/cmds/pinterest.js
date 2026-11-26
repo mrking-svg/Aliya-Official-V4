@@ -19,7 +19,7 @@ module.exports = {
 
   onStart: async function ({ api, event, args }) {
     const query = args.join(" ");
-    if (!query) return api.sendMessage("❗ Please provide a search keyword.\nExample: pinterest Naruto", event.threadID, event.messageID);
+    if (!query) return api.sendMessage({ body: "❗ Please provide a search keyword.\nExample: pinterest Naruto", effect: "love" }, event.threadID, event.messageID);
 
     try {
       const count = 5;
@@ -28,7 +28,7 @@ module.exports = {
 
       const imageList = res.data?.data;
       if (!Array.isArray(imageList) || imageList.length === 0) {
-        return api.sendMessage("❌ No results found!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ No results found!", effect: "love" }, event.threadID, event.messageID);
       }
 
       const attachments = [];
@@ -51,7 +51,7 @@ module.exports = {
 
     } catch (err) {
       console.error(err);
-      api.sendMessage("🚫 Error fetching from Pinterest API.", event.threadID, event.messageID);
+      api.sendMessage({ body: "🚫 Error fetching from Pinterest API.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

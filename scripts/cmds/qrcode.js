@@ -24,7 +24,7 @@ module.exports = {
 
     if (!action)
       return api.sendMessage(
-        "🌀 Usage:\n• qrcode make <text>\n• qrcode scan <image_url or reply image>",
+        { body: "🌀 Usage:\n• qrcode make <text>\n• qrcode scan <image_url or reply image>", effect: "love" },
         threadID,
         messageID
       );
@@ -33,7 +33,7 @@ module.exports = {
     if (action === "make") {
       const text = args.slice(1).join(" ");
       if (!text)
-        return api.sendMessage("❌ Please provide text to generate QR.", threadID, messageID);
+        return api.sendMessage({ body: "❌ Please provide text to generate QR.", effect: "love" }, threadID, messageID);
 
       try {
         const url = `https://xsaim8x-xxx-api.onrender.com/api/qrmake?text=${encodeURIComponent(text)}`;
@@ -52,7 +52,7 @@ module.exports = {
         );
       } catch (err) {
         console.error(err);
-        api.sendMessage("❌ Failed to generate QR code.", threadID, messageID);
+        api.sendMessage({ body: "❌ Failed to generate QR code.", effect: "love" }, threadID, messageID);
       }
     }
 
@@ -64,26 +64,26 @@ module.exports = {
       }
 
       if (!imageUrl)
-        return api.sendMessage("📸 Please provide an image URL or reply to an image with QR.", threadID, messageID);
+        return api.sendMessage({ body: "📸 Please provide an image URL or reply to an image with QR.", effect: "love" }, threadID, messageID);
 
       const url = `https://xsaim8x-xxx-api.onrender.com/api/qrscan?url=${encodeURIComponent(imageUrl)}`;
 
       try {
         const res = await axios.get(url);
         if (res.data?.decoded)
-          return api.sendMessage(`🔍 QR Scan Result:\n${res.data.decoded}`, threadID, messageID);
+          return api.sendMessage({ body: `🔍 QR Scan Result:\n${res.data.decoded}`, effect: "love" }, threadID, messageID);
         else
-          return api.sendMessage("⚠️ No valid QR code found.", threadID, messageID);
+          return api.sendMessage({ body: "⚠️ No valid QR code found.", effect: "love" }, threadID, messageID);
       } catch (err) {
         console.error(err);
-        api.sendMessage("❌ Failed to scan QR code.", threadID, messageID);
+        api.sendMessage({ body: "❌ Failed to scan QR code.", effect: "love" }, threadID, messageID);
       }
     }
 
     // === INVALID OPTION ===
     else {
       api.sendMessage(
-        "❌ Invalid option.\nUse:\n• qrcode make <text>\n• qrcode scan <image_url or reply image>",
+        { body: "❌ Invalid option.\nUse:\n• qrcode make <text>\n• qrcode scan <image_url or reply image>", effect: "love" },
         threadID,
         messageID
       );

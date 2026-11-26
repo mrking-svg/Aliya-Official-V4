@@ -255,7 +255,7 @@ module.exports.handleReply = async function ({ api, event, handleReply, Threads 
     const list = handleReply.cmds;
 
     if (isNaN(idx) || idx < 0 || idx >= list.length)
-      return api.sendMessage(`❌ ${mono("Invalid number")}`, event.threadID);
+      return api.sendMessage({ body: `❌ ${mono("Invalid number")}`, effect: "love" }, event.threadID);
 
     const name = list[idx];
 
@@ -281,20 +281,20 @@ module.exports.handleReply = async function ({ api, event, handleReply, Threads 
     const name = handleReply.cmdName;
 
     if (!["yes", "y", "no", "n"].includes(ans))
-      return api.sendMessage(`👉 ${mono("Type yes or no")}`, event.threadID);
+      return api.sendMessage({ body: `👉 ${mono("Type yes or no")}`, effect: "love" }, event.threadID);
 
     if (ans.startsWith("n"))
-      return api.sendMessage(`❌ ${mono("Cancelled")}`, event.threadID);
+      return api.sendMessage({ body: `❌ ${mono("Cancelled")}`, effect: "love" }, event.threadID);
 
     const safeName = path.basename(name, ".js");
 
     if (safeName === "menu")
-      return api.sendMessage(`❌ ${mono("Cannot delete menu")}`, event.threadID);
+      return api.sendMessage({ body: `❌ ${mono("Cannot delete menu")}`, effect: "love" }, event.threadID);
 
     const filePath = path.join(COMMANDS_DIR, `${safeName}.js`);
 
     if (!fs.existsSync(filePath))
-      return api.sendMessage(`❌ ${mono("File not found")}:\n${filePath}`, event.threadID);
+      return api.sendMessage({ body: `❌ ${mono("File not found")}:\n${filePath}`, effect: "love" }, event.threadID);
 
     try {
       // BACKUP
@@ -307,7 +307,7 @@ module.exports.handleReply = async function ({ api, event, handleReply, Threads 
       // VERIFY
       if (fs.existsSync(filePath))
         return api.sendMessage(
-          `❌ ${mono("Not deleted (permission problem)")}`,
+          { body: `❌ ${mono("Not deleted (permission problem)")}`, effect: "love" },
           event.threadID
         );
 
@@ -332,11 +332,11 @@ module.exports.handleReply = async function ({ api, event, handleReply, Threads 
       });
 
       return api.sendMessage(
-        `✅ ${mono("Deleted")} ${safeName}.js • 💾 ${mono("Backup saved")}`,
+        { body: `✅ ${mono("Deleted")} ${safeName}.js • 💾 ${mono("Backup saved")}`, effect: "love" },
         event.threadID
       );
     } catch (e) {
-      return api.sendMessage(`❌ ${mono("Error")}: ${e.message}`, event.threadID);
+      return api.sendMessage({ body: `❌ ${mono("Error")}: ${e.message}`, effect: "love" }, event.threadID);
     }
   }
 };

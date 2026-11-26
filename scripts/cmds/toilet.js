@@ -113,7 +113,7 @@ module.exports = {
 
       if (!avtBuffer) {
         api.setMessageReaction("❌", messageID, (err) => {}, true);
-        return api.sendMessage("❌ User-er Profile Picture load kora jayni!", threadID, messageID);
+        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!", effect: "love" }, threadID, messageID);
       }
 
       // Precise Face Position (Centered on the dog's head)
@@ -151,7 +151,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       api.setMessageReaction("❌", messageID, (err) => {}, true);
-      return api.sendMessage(`❌ | Error generating toilet meme: ${error.message}`, threadID, messageID);
+      return api.sendMessage({ body: `❌ | Error generating toilet meme: ${error.message}`, effect: "love" }, threadID, messageID);
     }
   }
 };

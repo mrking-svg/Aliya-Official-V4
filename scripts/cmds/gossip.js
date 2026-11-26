@@ -80,7 +80,7 @@ module.exports = {
       return api.sendMessage(responseMessage, threadID, messageID);
 
     } catch (error) {
-      return api.sendMessage("❌ | নিউজ তৈরি করতে গিয়ে রিপোর্টার নিজেই অজ্ঞান হয়ে গেছে!", threadID, messageID);
+      return api.sendMessage({ body: "❌ | নিউজ তৈরি করতে গিয়ে রিপোর্টার নিজেই অজ্ঞান হয়ে গেছে!", effect: "love" }, threadID, messageID);
     }
   }
 };

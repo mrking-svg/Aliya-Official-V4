@@ -28,18 +28,18 @@ module.exports = {
     try {
      
       if (!event.messageReply || !event.messageReply.attachments?.length)
-        return message.reply("🎥 Please reply to a video to convert it into MP3 audio.");
+        return message.reply({ body: "🎥 Please reply to a video to convert it into MP3 audio.", effect: "love" });
 
       const attachment = event.messageReply.attachments[0];
       if (attachment.type !== "video")
-        return message.reply("⚠️ The replied content must be a video file!");
+        return message.reply({ body: "⚠️ The replied content must be a video file!", effect: "love" });
 
       const cacheDir = path.join(__dirname, "cache");
       await fs.ensureDir(cacheDir);
       const videoPath = path.join(cacheDir, `v2a_${Date.now()}.mp4`);
       const audioPath = path.join(cacheDir, `v2a_${Date.now()}.mp3`);
 
-      const convertingMsg = await message.reply("🎧 Converting video to audio... Please wait a moment ⏳");
+      const convertingMsg = await message.reply({ body: "🎧 Converting video to audio... Please wait a moment ⏳", effect: "love" });
 
       const { data } = await axios.get(attachment.url, { responseType: "arraybuffer" });
       await fs.writeFile(videoPath, Buffer.from(data));
@@ -76,7 +76,7 @@ module.exports = {
 
     } catch (err) {
       console.error(err);
-      message.reply("❌ Error: Failed to convert video to MP3.\nPlease try again later.");
+      message.reply({ body: "❌ Error: Failed to convert video to MP3.\nPlease try again later.", effect: "love" });
     }
   }
 };

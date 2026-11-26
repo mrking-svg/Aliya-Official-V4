@@ -89,7 +89,7 @@ module.exports = {
         glow
       };
 
-      const waitMsg = await message.reply("🛠️ | Generating group image, please wait...");
+      const waitMsg = await message.reply({ body: "🛠️ | Generating group image, please wait...", effect: "love" });
       api.setMessageReaction("⏳", event.messageID, () => {}, true);
 
       const response = await axios.post(`${await baseApiUrl()}/gcimg`, payload, { responseType: "stream" });
@@ -104,7 +104,7 @@ module.exports = {
 
     } catch (err) {
       console.error("[gcimg] Error:", err);
-      return message.reply(`❌ | An error occurred: ${err.message}`);
+      return message.reply({ body: `❌ | An error occurred: ${err.message}`, effect: "love" });
     }
   }
 };

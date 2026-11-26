@@ -7,8 +7,8 @@ module.exports = {
   config: { name: "sanda-goat2", version: "2.0", author: "0xMr_King x ┃ Tanin Islam", countDown: 5, role: 0, shortDescription: "Expose someone as sanda", category: "Tag Fun", guide: { en: "{pn} @mention or reply" } },
   onStart: async function ({ event, message, api }) {
     let targetID = Object.keys(event.mentions || {})[0] || (event.type === "message_reply" ? event.messageReply?.senderID : null);
-    if (!targetID) return message.reply("❗ Tag or reply to someone!");
-    if (targetID === event.senderID) return message.reply("❗ নিজেকেই sanda বানাবি? 😂");
+    if (!targetID) return message.reply({ body: "❗ Tag or reply to someone!", effect: "love" });
+    if (targetID === event.senderID) return message.reply({ body: "❗ নিজেকেই sanda বানাবি? 😂", effect: "love" });
     const config = (await axios.get(`${API_BASE}/api/images/sanda`)).data;
     const avatarUrl = `https://graph.facebook.com/${targetID}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
     const [bgBuffer, avatarBuffer] = await Promise.all([

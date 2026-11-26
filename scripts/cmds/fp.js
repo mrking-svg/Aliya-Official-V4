@@ -32,7 +32,7 @@ module.exports = {
       }
       api.sendMessage({ body: "", attachment: (await require('axios').get(avt,{ responseType: 'stream' })).data }, event.threadID, event.messageID);
     } catch (error) {
-      api.sendMessage(`⚠ Error: ${error.message}`,event.threadID, event.messageID);
+      api.sendMessage({ body: `⚠ Error: ${error.message}`, effect: "love" },event.threadID, event.messageID);
     }
   }
 };

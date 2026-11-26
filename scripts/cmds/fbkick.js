@@ -33,13 +33,13 @@ module.exports.onStart = async function ({ api, event }) {
 
   // 🔒 ক্রেডিট লক
   if (!creditOk()) {
-    return api.sendMessage("⛔ ক্রেডিট বদলানো হয়েছে! কমান্ড বন্ধ।", threadID, messageID);
+    return api.sendMessage({ body: "⛔ ক্রেডিট বদলানো হয়েছে! কমান্ড বন্ধ।", effect: "love" }, threadID, messageID);
   }
 
   // শুধু কনফিগারেশনের বট অ্যাডমিন
   const adminBot = ((global.config && global.config.adminBot) || []).map(String);
   if (!adminBot.includes(String(senderID))) {
-    return api.sendMessage("❌ শুধু বট অ্যাডমিন ব্যবহার করতে পারবে।", threadID, messageID);
+    return api.sendMessage({ body: "❌ শুধু বট অ্যাডমিন ব্যবহার করতে পারবে।", effect: "love" }, threadID, messageID);
   }
 
   try {
@@ -56,14 +56,14 @@ module.exports.onStart = async function ({ api, event }) {
     // 🤖 বট গ্রুপ অ্যাডমিন কিনা
     if (!botIsAdmin) {
       return api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
    ⚠️ 𝗕𝗢𝗧 𝗡𝗢𝗧 𝗔𝗗𝗠𝗜𝗡
 ╚════════════════════╝
 
 🤖 বট গ্রুপ অ্যাডমিন: ❌ নেই
 আগে বটকে গ্রুপ অ্যাডমিন করুন।
 
-━━━━━━━━━━━━━━━━━━`,
+━━━━━━━━━━━━━━━━━━`, effect: "love" },
         threadID,
         messageID
       );
@@ -89,14 +89,14 @@ module.exports.onStart = async function ({ api, event }) {
 
     if (targets.length === 0) {
       return api.sendMessage(
-        "🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n✅ কোনো সাসপেন্ড/ডিসেবল আইডি পাওয়া যায়নি।",
+        { body: "🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n✅ কোনো সাসপেন্ড/ডিসেবল আইডি পাওয়া যায়নি।", effect: "love" },
         threadID,
         messageID
       );
     }
 
     await api.sendMessage(
-      `🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n🔍 ${targets.length} টি আইডি পাওয়া গেছে, কিক হচ্ছে...`,
+      { body: `🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n🔍 ${targets.length} টি আইডি পাওয়া গেছে, কিক হচ্ছে...`, effect: "love" },
       threadID
     );
 
@@ -116,7 +116,7 @@ module.exports.onStart = async function ({ api, event }) {
     }
 
     return api.sendMessage(
-`╔════════════════════╗
+{ body: `╔════════════════════╗
    ✅ 𝗙𝗕 𝗞𝗜𝗖𝗞 𝗗𝗢𝗡𝗘
 ╚════════════════════╝
 
@@ -125,11 +125,11 @@ module.exports.onStart = async function ({ api, event }) {
 ⚠️ ব্যর্থ: ${failed} টি
 
 ━━━━━━━━━━━━━━━━━━
-👑 0xMr_King x ┃ Tanin Islam`,
+👑 0xMr_King x ┃ Tanin Islam`, effect: "love" },
       threadID
     );
   } catch (e) {
     console.log("fbkick error:", e);
-    return api.sendMessage("❌ কিছু সমস্যা হয়েছে।", threadID, messageID);
+    return api.sendMessage({ body: "❌ কিছু সমস্যা হয়েছে।", effect: "love" }, threadID, messageID);
   }
 };

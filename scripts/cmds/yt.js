@@ -31,7 +31,7 @@ module.exports = {
   onStart: async function ({ message, args, api, event }) {
     try {
       const query = args.join(" ");
-      if (!query) return message.reply("⚠️ Please provide a search query! Example: `/yt Phonk`");
+      if (!query) return message.reply({ body: "⚠️ Please provide a search query! Example: `/yt Phonk`", effect: "love" });
 
       react(api, event, "⌛️");
 
@@ -41,7 +41,7 @@ module.exports = {
       if (!Array.isArray(results) || results.length === 0) {
         console.error("[yt] no results:", JSON.stringify(res?.data)?.slice(0, 300));
         react(api, event, "❌️");
-        return message.reply("❌ No results found on YouTube!");
+        return message.reply({ body: "❌ No results found on YouTube!", effect: "love" });
       }
 
       react(api, event, "✅️");
@@ -73,7 +73,7 @@ module.exports = {
     } catch (err) {
       console.error("[yt] search failed:", why(err), err?.message);
       react(api, event, "❌️");
-      return message.reply(`❌ Error occurred while searching YouTube, please try again! (${why(err)})`);
+      return message.reply({ body: `❌ Error occurred while searching YouTube, please try again! (${why(err)})`, effect: "love" });
     }
   },
 
@@ -83,17 +83,17 @@ module.exports = {
     try {
       const data = Reply || reply;
       if (!data || !Array.isArray(data.results)) {
-        return message.reply("⚠️ Ei search result ta expire hoye geche, abar /yt dao!");
+        return message.reply({ body: "⚠️ Ei search result ta expire hoye geche, abar /yt dao!", effect: "love" });
       }
       const { author, results } = data;
-      if (event.senderID !== author) return message.reply("⚠️ You cannot use this search result!");
+      if (event.senderID !== author) return message.reply({ body: "⚠️ You cannot use this search result!", effect: "love" });
 
       const args = String(event.body || "").trim().split(/\s+/);
       const action = args[0]?.toLowerCase();
       const index = parseInt(args[1]) - 1;
 
       if (!["video", "audio"].includes(action) || isNaN(index) || !results[index]) {
-        return message.reply("⚠️ Invalid format! Use: `audio 1` or `video 1`");
+        return message.reply({ body: "⚠️ Invalid format! Use: `audio 1` or `video 1`", effect: "love" });
       }
 
       const selectedItem = results[index];
@@ -119,7 +119,7 @@ module.exports = {
 
       if (!downloadUrl) {
         react(api, event, "❌️");
-        return message.reply("❌ Download link not found for this file!");
+        return message.reply({ body: "❌ Download link not found for this file!", effect: "love" });
       }
 
       const buffer = (await axios.get(downloadUrl, {

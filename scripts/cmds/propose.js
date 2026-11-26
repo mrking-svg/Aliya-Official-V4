@@ -21,7 +21,7 @@ module.exports = {
         let mentionID = type === "message_reply" ? messageReply.senderID : 
                          Object.keys(mentions).length > 0 ? Object.keys(mentions)[0] : args[0];
 
-        if (!mentionID) return api.sendMessage("Please mention someone or reply to a message! 💍", threadID, messageID);
+        if (!mentionID) return api.sendMessage({ body: "Please mention someone or reply to a message! 💍", effect: "love" }, threadID, messageID);
 
         try {
             const [senderInfo, mentionInfo] = await Promise.all([
@@ -75,7 +75,7 @@ module.exports = {
             }, threadID, () => fs.unlinkSync(cachePath), messageID);
 
         } catch (e) {
-            return api.sendMessage("An error occurred. Please try again.", threadID, messageID);
+            return api.sendMessage({ body: "An error occurred. Please try again.", effect: "love" }, threadID, messageID);
         }
     }
 };

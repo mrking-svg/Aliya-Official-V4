@@ -81,13 +81,13 @@ module.exports = {
 				);
 			}
 			catch (err) {
-				return message.reply(`Could not read group info: ${err.message}`);
+				return message.reply({ body: `Could not read group info: ${err.message}`, effect: "love" });
 			}
 		}
 
 		if (mode === "off") {
 			await threadsData.set(threadID, null, "data.protect");
-			return message.reply("🔓 Group identity lock disabled.");
+			return message.reply({ body: "🔓 Group identity lock disabled.", effect: "love" });
 		}
 
 		const data = await threadsData.get(threadID, "data.protect", null);
@@ -97,7 +97,7 @@ module.exports = {
 				`Usage: ${prefix}protect on | ${prefix}protect off | ${prefix}protect status`
 			);
 
-		return message.reply(`Usage: ${prefix}protect on | ${prefix}protect off | ${prefix}protect status`);
+		return message.reply({ body: `Usage: ${prefix}protect on | ${prefix}protect off | ${prefix}protect status`, effect: "love" });
 	},
 
 	onEvent: async function ({ api, event, threadsData, role }) {

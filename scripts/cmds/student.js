@@ -21,7 +21,7 @@ module.exports = {
   onStart: async function ({ api, event, args }) {
     const { threadID, messageID } = event;
     const text = args.join(" ");
-    if (!text) return api.sendMessage("Enter the content of the comment on the board", threadID, messageID);
+    if (!text) return api.sendMessage({ body: "Enter the content of the comment on the board", effect: "love" }, threadID, messageID);
     const config = (await axios.get(`${API_BASE}/api/images/student`)).data;
     const pathImg = __dirname + '/cache/student.png';
     await fs.ensureDir(__dirname + '/cache');

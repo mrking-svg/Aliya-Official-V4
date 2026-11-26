@@ -33,11 +33,11 @@ module.exports = {
 
       if (!value) throw new Error("Response value পাওয়া যায়নি");
 
-      message.reply(`${prefix}${value}"`);
+      message.reply({ body: `${prefix}${value}"`, effect: "love" });
 
     } catch (e) {
       console.error("Advice error:", e.message);
-      message.reply("𝗔𝗱𝘃𝗶𝗰𝗲 𝗳𝗿𝗼𝗺 𝗛𝗥 𝗜𝗗 𝗢𝗬: -");
+      message.reply({ body: "𝗔𝗱𝘃𝗶𝗰𝗲 𝗳𝗿𝗼𝗺 𝗛𝗥 𝗜𝗗 𝗢𝗬: -", effect: "love" });
     }
   }
 };

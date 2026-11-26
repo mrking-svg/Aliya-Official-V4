@@ -23,7 +23,7 @@ module.exports = {
     try {
       if (!args[0]) {
         return api.sendMessage(
-          `❌ Please provide an anime title.\nExample: /aniwall Naruto - 10`,
+          { body: `❌ Please provide an anime title.\nExample: /aniwall Naruto - 10`, effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -45,7 +45,7 @@ module.exports = {
 
       if (data.length === 0) {
         return api.sendMessage(
-          `❌ No wallpapers found for "${input}".`,
+          { body: `❌ No wallpapers found for "${input}".`, effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -80,7 +80,7 @@ module.exports = {
     } catch (err) {
       console.error("❌ AnimeWallpaper Command Error:", err);
       return api.sendMessage(
-        `⚠️ Error: ${err.message}`,
+        { body: `⚠️ Error: ${err.message}`, effect: "love" },
         event.threadID,
         event.messageID
       );

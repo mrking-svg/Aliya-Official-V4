@@ -19,14 +19,14 @@ module.exports = {
   onStart: async function ({ api, event, args }) {
     try {
       const page = parseInt(args[0]) || 1;
-      if (page < 1) return api.sendMessage("❌ Invalid page number.", event.threadID, event.messageID);
+      if (page < 1) return api.sendMessage({ body: "❌ Invalid page number.", effect: "love" }, event.threadID, event.messageID);
 
       const apiUrl = `https://kaiz-apis.gleeze.com/api/nude-cosplay?page=${page}&limit=1&imageLimit=3&apikey=${apikey}`;
       const res = await axios.get(apiUrl);
       const result = res.data?.results?.[0];
 
       if (!result || !result.imageUrls || result.imageUrls.length === 0) {
-        return api.sendMessage("❌ No results found on this page.", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ No results found on this page.", effect: "love" }, event.threadID, event.messageID);
       }
 
       const imgPaths = [];
@@ -64,7 +64,7 @@ module.exports = {
 
     } catch (error) {
       console.error("nc error:", error);
-      return api.sendMessage("❌ Something went wrong.", event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ Something went wrong.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

@@ -95,7 +95,7 @@ module.exports.onStart = async ({ event, api, Users }) => {
     const wait = COOLDOWN_MS - (now - last);
     if (wait > 0) {
       return api.sendMessage(
-        `⏳ ${Math.ceil(wait / 1000)} সেকেন্ড পরে আবার চেষ্টা কর।`,
+        { body: `⏳ ${Math.ceil(wait / 1000)} সেকেন্ড পরে আবার চেষ্টা কর।`, effect: "love" },
         threadID,
         messageID
       );

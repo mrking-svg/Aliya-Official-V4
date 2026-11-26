@@ -20,19 +20,19 @@ module.exports = {
 
             if (event.type === "message_reply") {
                 const attachment = event.messageReply.attachments?.[0];
-                if (!attachment) return message.reply("❌ | Please reply to an image.");
+                if (!attachment) return message.reply({ body: "❌ | Please reply to an image.", effect: "love" });
                 if (!attachment.url || attachment.type !== "photo") {
-                    return message.reply("❌ | Only image replies are allowed. Videos or other files are not supported.");
+                    return message.reply({ body: "❌ | Only image replies are allowed. Videos or other files are not supported.", effect: "love" });
                 }
                 imageUrl = attachment.url;
             } else if (args[0]?.startsWith("http")) {
                 imageUrl = args[0];
             } else {
-                return message.reply("❌ | Please reply to an image or provide an image URL.");
+                return message.reply({ body: "❌ | Please reply to an image or provide an image URL.", effect: "love" });
             }
 
             api.setMessageReaction("🖤", event.messageID, () => {}, true);
-            const waitMsg = await message.reply("Converting to grayscale... <🖤");
+            const waitMsg = await message.reply({ body: "Converting to grayscale... <🖤", effect: "love" });
 
             const GITHUB_RAW = "https://raw.githubusercontent.com/Saim-x69x/sakura/main/ApiUrl.json";
             const rawRes = await axios.get(GITHUB_RAW);
@@ -57,7 +57,7 @@ module.exports = {
 
         } catch (error) {
             console.error(error);
-            message.reply("❌ | Failed to convert image to grayscale. Please try again later.");
+            message.reply({ body: "❌ | Failed to convert image to grayscale. Please try again later.", effect: "love" });
         }
     }
 };

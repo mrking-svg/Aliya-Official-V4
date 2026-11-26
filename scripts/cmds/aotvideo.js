@@ -15,7 +15,7 @@ module.exports = {
   onStart: async function ({ api, event }) {
     try {
       const processingMessage = await api.sendMessage(
-        "⏳ Please wait few seconds...",
+        { body: "⏳ Please wait few seconds...", effect: "love" },
         event.threadID,
         event.messageID
       );
@@ -29,7 +29,7 @@ module.exports = {
       if (!res.data || !res.data.url) {
         await api.unsendMessage(processingMessage.messageID);
         return api.sendMessage(
-          "❌ Oops! Something went wrong, please try again later.",
+          { body: "❌ Oops! Something went wrong, please try again later.", effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -48,7 +48,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       await api.sendMessage(
-        "❌ Oops! Something went wrong, please try again later.",
+        { body: "❌ Oops! Something went wrong, please try again later.", effect: "love" },
         event.threadID,
         event.messageID
       );

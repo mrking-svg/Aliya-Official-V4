@@ -17,7 +17,7 @@ module.exports = {
   onStart: async function({ api, event, args }) {
     const query = args.join(" ");
     if (!query) {
-      return api.sendMessage("❌ Kripya kono keyword ba search query din!", event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ Kripya kono keyword ba search query din!", effect: "love" }, event.threadID, event.messageID);
     }
 
     api.setMessageReaction("⌛️", event.messageID, () => {}, true);
@@ -62,7 +62,7 @@ module.exports = {
     } catch (error) {
       console.error("Anisr Error:", error.message);
       api.setMessageReaction("❌️", event.messageID, () => {}, true);
-      api.sendMessage("❌ Kono somossa hoyeche, abar chesta korun!", event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ Kono somossa hoyeche, abar chesta korun!", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

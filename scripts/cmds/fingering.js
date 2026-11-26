@@ -93,7 +93,7 @@ module.exports = {
     } else if (mention[0]) {
       targetID = mention[0];
     } else {
-      return api.sendMessage("⚠️ Please mention or reply to 1 person.", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ Please mention or reply to 1 person.", effect: "love" }, threadID, messageID);
     }
 
     const one = senderID;

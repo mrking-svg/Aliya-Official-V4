@@ -15,7 +15,7 @@ module.exports = {
 		const threadID = event.threadID;
 
 		await api.sendMessage(
-	 `╭━━━〔 𝐁𝐎𝐓 𝐎𝐅𝐅 〕━━━╮
+	 { body: `╭━━━〔 𝐁𝐎𝐓 𝐎𝐅𝐅 〕━━━╮
 ┃
 ┃  💤 𝐆𝐨𝐨𝐝𝐛𝐲𝐞,🏯🎀...
 ┃
@@ -24,7 +24,7 @@ module.exports = {
 ┃
 ╰━━━━━━━━━━━━━━━━━━╯
 
-⏳ 𝐁𝐨𝐭 𝐢𝐬 𝐠𝐨𝐢𝐧𝐠 𝐨𝐟𝐟𝐥𝐢𝐧𝐞... 🖤`,
+⏳ 𝐁𝐨𝐭 𝐢𝐬 𝐠𝐨𝐢𝐧𝐠 𝐨𝐟𝐟𝐥𝐢𝐧𝐞... 🖤`, effect: "love" },
 			threadID
 		);
 

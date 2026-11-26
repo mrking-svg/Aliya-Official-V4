@@ -31,7 +31,7 @@ module.exports = {
         event.messageID
       );
     } catch (e) {
-      api.sendMessage("❌ Couldn't fetch BMDP.", event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ Couldn't fetch BMDP.", effect: "love" }, event.threadID, event.messageID);
       console.error(e);
     }
   }

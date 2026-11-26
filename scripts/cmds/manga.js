@@ -17,7 +17,7 @@ module.exports = {
 
   onStart: async function ({ api, event, args }) {
     const query = args.join(" ");
-    if (!query) return api.sendMessage("🔍 | Please provide a manga name.", event.threadID);
+    if (!query) return api.sendMessage({ body: "🔍 | Please provide a manga name.", effect: "love" }, event.threadID);
 
     const anilistQuery = `
       query ($search: String) {
@@ -72,7 +72,7 @@ module.exports = {
 
     } catch (e) {
       console.error(e);
-      api.sendMessage("❌ | Couldn't fetch manga info. Try again or check the name.", event.threadID);
+      api.sendMessage({ body: "❌ | Couldn't fetch manga info. Try again or check the name.", effect: "love" }, event.threadID);
     }
   }
 };

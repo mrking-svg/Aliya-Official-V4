@@ -72,7 +72,7 @@ module.exports = {
     const balance = await getBalance(senderID);
     if (balance < 30) {
       return api.sendMessage(
-        `❌ Insufficient Balance\n💳 Balance: ${formatBalance(balance)}`,
+        { body: `❌ Insufficient Balance\n💳 Balance: ${formatBalance(balance)}`, effect: "love" },
         threadID,
         messageID
       );
@@ -81,13 +81,13 @@ module.exports = {
     const math = generateMath();
 
     api.sendMessage(
-`✦ Mᴀᴛʜ Gᴀᴍᴇ ✦
+{ body: `✦ Mᴀᴛʜ Gᴀᴍᴇ ✦
 
 Solve this:
 
 ${math.question} = ?
 
-✍️ Reply with the answer`,
+✍️ Reply with the answer`, effect: "love" },
       threadID,
       (err, info) => {
         if (err) return;
@@ -129,7 +129,7 @@ ${math.question} = ?
       if (newBal === null) newBal = currentBalance;
 
       return api.sendMessage(
-        `✅ Correct Answer!\n🎉 +200 $\n💳 Balance: ${formatBalance(newBal)}`,
+        { body: `✅ Correct Answer!\n🎉 +200 $\n💳 Balance: ${formatBalance(newBal)}`, effect: "love" },
         threadID
       );
     } else {
@@ -139,7 +139,7 @@ ${math.question} = ?
       if (newBal === null) newBal = currentBalance;
 
       return api.sendMessage(
-        `❌ Wrong Answer!\nCorrect: ${Reply.answer}\n−50 $\n💳 Balance: ${formatBalance(newBal)}`,
+        { body: `❌ Wrong Answer!\nCorrect: ${Reply.answer}\n−50 $\n💳 Balance: ${formatBalance(newBal)}`, effect: "love" },
         threadID
       );
     }

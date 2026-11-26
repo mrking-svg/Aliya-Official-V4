@@ -41,7 +41,7 @@ module.exports = {
         if (args[0] === "-e") {
           const evFile = args[1];
           if (!evFile) {
-            return api.sendMessage("⚠ | Please provide a filename after -e.", event.threadID, event.messageID);
+            return api.sendMessage({ body: "⚠ | Please provide a filename after -e.", effect: "love" }, event.threadID, event.messageID);
           }
           fileName = evFile.endsWith(".js") ? evFile : `${evFile}.js`;
           filePath = path.resolve(__dirname, '../../scripts/events', fileName);
@@ -64,14 +64,14 @@ module.exports = {
 
           if (similar.length > 0) {
             return api.sendMessage(
-              `❌ File not found. Did you mean:\n${similar.join('\n')}`,
+              { body: `❌ File not found. Did you mean:\n${similar.join('\n')}`, effect: "love" },
               event.threadID,
               event.messageID
             );
           }
 
           return api.sendMessage(
-            `❌ File "${fileName}" not found in ${args[0] === "-e" ? "events" : "cmds"} folder.`,
+            { body: `❌ File "${fileName}" not found in ${args[0] === "-e" ? "events" : "cmds"} folder.`, effect: "love" },
             event.threadID,
             event.messageID
           );
@@ -81,7 +81,7 @@ module.exports = {
         if (!fileName.endsWith(".js")) fileName = `${fileName}.js`;
       } 
       else {
-        return api.sendMessage("⚠ | Please reply with code OR provide a file name.", event.threadID, event.messageID);
+        return api.sendMessage({ body: "⚠ | Please reply with code OR provide a file name.", effect: "love" }, event.threadID, event.messageID);
       }
 
       const encoded = encodeURIComponent(code);
@@ -102,7 +102,7 @@ module.exports = {
     } catch (err) {
       console.error("❌ Gist Error:", err.message || err);
       return api.sendMessage(
-        "⚠️ Failed to create gist. Maybe server issue.\n💬 Contact author for help: https://m.me/ye.bi.nobi.tai.244493",
+        { body: "⚠️ Failed to create gist. Maybe server issue.\n💬 Contact author for help: https://m.me/ye.bi.nobi.tai.244493", effect: "love" },
         event.threadID,
         event.messageID
       );

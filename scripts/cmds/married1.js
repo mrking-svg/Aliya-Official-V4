@@ -34,7 +34,7 @@ module.exports.onStart = async function ({ event, api }) {
   }
 
   if (!targetID) {
-    return api.sendMessage("Please reply or mention someone......", threadID, messageID);
+    return api.sendMessage({ body: "Please reply or mention someone......", effect: "love" }, threadID, messageID);
   }
 
   try {
@@ -76,6 +76,6 @@ module.exports.onStart = async function ({ event, api }) {
     );
 
   } catch {
-    return api.sendMessage("API Error — Made by 0xMr_King x ┃ Tanin Islam", threadID, messageID);
+    return api.sendMessage({ body: "API Error — Made by 0xMr_King x ┃ Tanin Islam", effect: "love" }, threadID, messageID);
   }
 };

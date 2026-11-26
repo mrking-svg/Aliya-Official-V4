@@ -13,17 +13,17 @@ module.exports = {
 
   onStart: async function ({ api, event }) {
     const ownerID = getOwnerID();
-    if (!ownerID) return api.sendMessage("❌ Owner UID config-e nei.", event.threadID);
+    if (!ownerID) return api.sendMessage({ body: "❌ Owner UID config-e nei.", effect: "love" }, event.threadID);
 
     try {
       await api.addUserToGroup(ownerID, event.threadID);
       api.sendMessage(
-        "✅ Bot Owner ke group e add kora holo.",
+        { body: "✅ Bot Owner ke group e add kora holo.", effect: "love" },
         event.threadID
       );
     } catch (e) {
       api.sendMessage(
-        "❌ Owner ke add kora jay nai. Bot admin na hole add korte parbe na.",
+        { body: "❌ Owner ke add kora jay nai. Bot admin na hole add korte parbe na.", effect: "love" },
         event.threadID
       );
     }

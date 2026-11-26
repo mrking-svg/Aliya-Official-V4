@@ -24,7 +24,7 @@ module.exports = {
     }
 
     if (!targetID) {
-      return message.reply("Please tag or reply to someone to create a mistake meme!");
+      return message.reply({ body: "Please tag or reply to someone to create a mistake meme!", effect: "love" });
     }
 
     const API_URL = `https://xsaim8x-xxx-api.onrender.com/api/mistake?uid=${targetID}`;
@@ -49,7 +49,7 @@ module.exports = {
       await fs.unlink(outputPath);
     } catch (err) {
       console.error("❌ Mistake Command Error:", err);
-      message.reply("⚠️ An error occurred. Please try again later.");
+      message.reply({ body: "⚠️ An error occurred. Please try again later.", effect: "love" });
     }
   },
 };

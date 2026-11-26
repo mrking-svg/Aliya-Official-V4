@@ -17,7 +17,7 @@ module.exports = {
   onStart: async function({ api, event, args }) {
     const query = args.join(" ");
     if (!query)
-      return api.sendMessage("🔍 | Please provide an anime name!", event.threadID, event.messageID);
+      return api.sendMessage({ body: "🔍 | Please provide an anime name!", effect: "love" }, event.threadID, event.messageID);
 
     api.setMessageReaction("⌛️", event.messageID, () => {}, true);
 
@@ -26,7 +26,7 @@ module.exports = {
 
       if (!res.data?.status || !res.data.random?.noWatermark) {
         api.setMessageReaction("❌️", event.messageID, () => {}, true);
-        return api.sendMessage(`❌ | No results found for "${query}"`, event.threadID, event.messageID);
+        return api.sendMessage({ body: `❌ | No results found for "${query}"`, effect: "love" }, event.threadID, event.messageID);
       }
 
       const videoUrl = res.data.random.noWatermark;
@@ -54,12 +54,12 @@ module.exports = {
       writer.on("error", err => {
         console.error(err);
         api.setMessageReaction("❌️", event.messageID, () => {}, true);
-        api.sendMessage("❌ | Failed to send video!", event.threadID, event.messageID);
+        api.sendMessage({ body: "❌ | Failed to send video!", effect: "love" }, event.threadID, event.messageID);
       });
     } catch (err) {
       console.error(err);
       api.setMessageReaction("❌️", event.messageID, () => {}, true);
-      api.sendMessage("⚠️ | Something went wrong, please try again later.", event.threadID, event.messageID);
+      api.sendMessage({ body: "⚠️ | Something went wrong, please try again later.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

@@ -20,7 +20,7 @@ module.exports = {
       const input = args.join(" ").trim();
       if (!input)
         return api.sendMessage(
-          `❌ Please provide a search query.\nExample: /googleimg Sakura Haruka - 10`,
+          { body: `❌ Please provide a search query.\nExample: /googleimg Sakura Haruka - 10`, effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -45,7 +45,7 @@ module.exports = {
 
       if (data.length === 0)
         return api.sendMessage(
-          `❌ No images found for "${query}". Try a different search.`,
+          { body: `❌ No images found for "${query}". Try a different search.`, effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -73,7 +73,7 @@ module.exports = {
 
       if (validImages.length === 0)
         return api.sendMessage(
-          `❌ Couldn't find any valid images for "${query}".`,
+          { body: `❌ Couldn't find any valid images for "${query}".`, effect: "love" },
           event.threadID,
           event.messageID
         );
@@ -89,7 +89,7 @@ module.exports = {
     } catch (error) {
       console.error("GoogleImg Error:", error.message);
       return api.sendMessage(
-        "❌ Something went wrong. Please try again later.",
+        { body: "❌ Something went wrong. Please try again later.", effect: "love" },
         event.threadID,
         event.messageID
       );

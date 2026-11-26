@@ -19,7 +19,7 @@ module.exports = {
 
     if (!url) {
       return api.sendMessage(
-        "⚠️ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴅɪʀᴇᴄᴛ ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ.\n\nE xᴀᴍᴘʟᴇ:\n/download https://example.com/video.mp4",
+        { body: "⚠️ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴅɪʀᴇᴄᴛ ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ.\n\nE xᴀᴍᴘʟᴇ:\n/download https://example.com/video.mp4", effect: "love" },
         event.threadID,
         event.messageID
       );
@@ -35,7 +35,7 @@ module.exports = {
 
     if (!supported.includes(ext)) {
       return api.sendMessage(
-        "❌ Uɴsᴜᴘᴘᴏʀᴛᴇᴅ ғɪʟᴇ ᴛʏᴘᴇ!\n\nSᴜᴘᴘᴏʀᴛᴇᴅ:\nmp4, mp3, jpg, png, gif, pdf, docx, txt, zip",
+        { body: "❌ Uɴsᴜᴘᴘᴏʀᴛᴇᴅ ғɪʟᴇ ᴛʏᴘᴇ!\n\nSᴜᴘᴘᴏʀᴛᴇᴅ:\nmp4, mp3, jpg, png, gif, pdf, docx, txt, zip", effect: "love" },
         event.threadID,
         event.messageID
       );
@@ -46,7 +46,7 @@ module.exports = {
     try {
       // Loading message (Aʙᴄ Fᴏɴᴛ)
       const loadingMsg = await api.sendMessage(
-        "⏳ Dᴏᴡɴʟᴏᴀᴅɪɴɢ • Jᴜsᴛ A Mᴏᴍᴇɴᴛ...",
+        { body: "⏳ Dᴏᴡɴʟᴏᴀᴅɪɴɢ • Jᴜsᴛ A Mᴏᴍᴇɴᴛ...", effect: "love" },
         event.threadID
       );
 
@@ -72,7 +72,7 @@ module.exports = {
     } catch (err) {
       console.error(err);
       api.sendMessage(
-        "❌ Dᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ! Tʜᴇ ʟɪɴᴋ ᴍᴀʏ ɴᴏᴛ ʙᴇ ᴅɪʀᴇᴄᴛ.",
+        { body: "❌ Dᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ! Tʜᴇ ʟɪɴᴋ ᴍᴀʏ ɴᴏᴛ ʙᴇ ᴅɪʀᴇᴄᴛ.", effect: "love" },
         event.threadID
       );
     }

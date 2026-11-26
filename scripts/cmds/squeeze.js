@@ -28,7 +28,7 @@ module.exports = {
         mentionID = Object.keys(event.mentions)[0];
         tagName = event.mentions[mentionID].replace("@", "");
       } else {
-        return api.sendMessage("❌ Please reply to someone or tag them!", event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ Please reply to someone or tag them!", effect: "love" }, event.threadID, event.messageID);
       }
 
       // Fetch gif list from api.json
@@ -53,11 +53,11 @@ module.exports = {
       });
 
       writer.on("error", () => {
-        api.sendMessage("❌ Failed to download GIF.", event.threadID, event.messageID);
+        api.sendMessage({ body: "❌ Failed to download GIF.", effect: "love" }, event.threadID, event.messageID);
       });
 
     } catch (err) {
-      api.sendMessage("❌ An unexpected error occurred.", event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ An unexpected error occurred.", effect: "love" }, event.threadID, event.messageID);
     }
   }
 };

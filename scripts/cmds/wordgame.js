@@ -28,7 +28,7 @@ module.exports = {
       const randomWord = response.data.word;
       const shuffledWord = shuffleWord(randomWord);
 
-      message.reply(`𝐆𝐮𝐞𝐬𝐬 𝐭𝐡𝐞 𝐰𝐨𝐫𝐝: "${shuffledWord}" ?`, (err, info) => {
+      message.reply({ body: `𝐆𝐮𝐞𝐬𝐬 𝐭𝐡𝐞 𝐰𝐨𝐫𝐝: "${shuffledWord}" ?`, effect: "love" }, (err, info) => {
         if (!err) {
           global.GoatBot.onReply.set(info.messageID, {
             commandName,
@@ -39,7 +39,7 @@ module.exports = {
         }
       });
     } catch (err) {
-      message.reply("Failed to fetch a word from the API.");
+      message.reply({ body: "Failed to fetch a word from the API.", effect: "love" });
     }
   },
 
@@ -47,7 +47,7 @@ module.exports = {
     const { author, answer, messageID } = Reply;
 
     if (event.senderID !== author)
-      return message.reply("Not your turn baka 🐸🦎");
+      return message.reply({ body: "Not your turn baka 🐸🦎", effect: "love" });
 
     if (formatText(event.body) === formatText(answer)) {
       const reward = 100;
@@ -56,10 +56,10 @@ module.exports = {
       message.unsend(messageID);
 
       const rewardText = global.utils?.formatCompact ? global.utils.formatCompact(reward) : reward;
-      message.reply(`✅ | Correct baby.\nYou won $${rewardText}`);
+      message.reply({ body: `✅ | Correct baby.\nYou won $${rewardText}`, effect: "love" });
     } else {
       message.unsend(messageID);
-      message.reply(`❌ | Wrong Answer baby\nThe Correct answer was: ${answer}`);
+      message.reply({ body: `❌ | Wrong Answer baby\nThe Correct answer was: ${answer}`, effect: "love" });
     }
   }
 };

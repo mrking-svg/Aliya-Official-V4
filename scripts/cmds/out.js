@@ -19,7 +19,7 @@ module.exports = {
     try {
 
       await api.sendMessage(
-        "😢 𝘖𝘬𝘢𝘺, 𝘐'𝘮 𝘭𝘦𝘢𝘷𝘪𝘯𝘨 𝘵𝘩𝘪𝘴 𝘨𝘳𝘰𝘶𝘱...\n💌 𝘛𝘢𝘬𝘦 𝘤𝘢𝘳𝘦 𝘦𝘷𝘦𝘳𝘺𝘰𝘯𝘦 💖",
+        { body: "😢 𝘖𝘬𝘢𝘺, 𝘐'𝘮 𝘭𝘦𝘢𝘷𝘪𝘯𝘨 𝘵𝘩𝘪𝘴 𝘨𝘳𝘰𝘶𝘱...\n💌 𝘛𝘢𝘬𝘦 𝘤𝘢𝘳𝘦 𝘦𝘷𝘦𝘳𝘺𝘰𝘯𝘦 💖", effect: "love" },
         event.threadID
       );
 
@@ -28,7 +28,7 @@ module.exports = {
       }, 500);
     } catch (err) {
       console.error(err);
-      api.sendMessage("❌ Failed to leave the group.", event.threadID);
+      api.sendMessage({ body: "❌ Failed to leave the group.", effect: "love" }, event.threadID);
     }
   }
 };

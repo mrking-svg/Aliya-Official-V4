@@ -181,5 +181,5 @@ module.exports.handleEvent = async function ({ api }) {
 // ===== COMMAND =====
 module.exports.onStart = async function ({ api, event }) {
   startLoop(api);
-  return api.sendMessage("✅ Birthday system running...", event.threadID);
+  return api.sendMessage({ body: "✅ Birthday system running...", effect: "love" }, event.threadID);
 };

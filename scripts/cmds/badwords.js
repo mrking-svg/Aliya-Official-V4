@@ -75,18 +75,18 @@ module.exports = {
 			);
 
 		if (["on", "off"].includes(mode)) {
-			if (Number(role || 0) < 1) return message.reply("Only group admins can change this setting.");
+			if (Number(role || 0) < 1) return message.reply({ body: "Only group admins can change this setting.", effect: "love" });
 			data.enable = mode === "on";
 			await save();
-			return message.reply(`Banned-word filter is now ${mode === "on" ? "ON" : "OFF"}.`);
+			return message.reply({ body: `Banned-word filter is now ${mode === "on" ? "ON" : "OFF"}.`, effect: "love" });
 		}
 
 		if (Number(role || 0) < 1)
-			return message.reply("Only group admins can manage banned words.");
+			return message.reply({ body: "Only group admins can manage banned words.", effect: "love" });
 
 		if (["add", "delete", "del", "-d"].includes(mode)) {
 			const words = parseWords(args.slice(1).join(" "));
-			if (!words.length) return message.reply("Please provide at least one word.");
+			if (!words.length) return message.reply({ body: "Please provide at least one word.", effect: "love" });
 			const adding = mode === "add";
 			const changed = [];
 			for (const word of words) {
@@ -108,22 +108,22 @@ module.exports = {
 		}
 
 		if (mode === "list") {
-			if (!data.words.length) return message.reply("The banned-word list is empty.");
+			if (!data.words.length) return message.reply({ body: "The banned-word list is empty.", effect: "love" });
 			const hide = String(args[1] || "").toLowerCase() === "hide";
 			const shown = data.words.map(w => hide ? `${w[0]}***` : w);
-			return message.reply(`Banned words:\n${shown.join(", ")}`);
+			return message.reply({ body: `Banned words:\n${shown.join(", ")}`, effect: "love" });
 		}
 
 		if (mode === "unwarn") {
 			const uid = targetFrom(event, args);
-			if (!uid || isNaN(uid)) return message.reply("Please tag a user, reply, or give a valid UID.");
-			if (!(uid in data.violations)) return message.reply(`${uid} has no banned-word violation.`);
+			if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID.", effect: "love" });
+			if (!(uid in data.violations)) return message.reply({ body: `${uid} has no banned-word violation.`, effect: "love" });
 			delete data.violations[uid];
 			await save();
-			return message.reply(`Cleared banned-word violations for ${uid}.`);
+			return message.reply({ body: `Cleared banned-word violations for ${uid}.`, effect: "love" });
 		}
 
-		return message.reply(`Unknown option "${mode}". Use ${prefix}badwords for the command list.`);
+		return message.reply({ body: `Unknown option "${mode}". Use ${prefix}badwords for the command list.`, effect: "love" });
 	},
 
 	onChat: async function ({ api, event, threadsData, role }) {
@@ -158,10 +158,10 @@ module.exports = {
 
 		try {
 			await api.removeUserFromGroup(event.senderID, event.threadID);
-			api.sendMessage(`🚫 ${uid} was removed after a second banned-word violation.\nMade by ${AUTHOR}`, event.threadID);
+			api.sendMessage({ body: `🚫 ${uid} was removed after a second banned-word violation.\nMade by ${AUTHOR}`, effect: "love" }, event.threadID);
 		}
 		catch (err) {
-			api.sendMessage("Bot needs admin permission to remove repeat offenders.", event.threadID);
+			api.sendMessage({ body: "Bot needs admin permission to remove repeat offenders.", effect: "love" }, event.threadID);
 		}
 	}
 };

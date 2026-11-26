@@ -38,7 +38,7 @@ module.exports.onStart = async function ({ api, event, args }) {
     else commands = allCommands.filter(item => item.cmd.toLowerCase().includes(query));
   }
   if (commands.length === 0)
-    return api.sendMessage("No local Aliya commands found for this search.", event.threadID, event.messageID);
+    return api.sendMessage({ body: "No local Aliya commands found for this search.", effect: "love" }, event.threadID, event.messageID);
   const totalPages = Math.ceil(commands.length / ITEMS_PER_PAGE);
   if (page < 1 || page > totalPages)
     return api.sendMessage("Invalid page number. Choose 1-" + totalPages + ".", event.threadID, event.messageID);
@@ -65,7 +65,7 @@ module.exports.onStart = async function ({ api, event, args }) {
 
 module.exports.onReply = async function ({ api, event, Reply }) {
   if (!Reply || Reply.author !== event.senderID)
-    return api.sendMessage("This command reply is not for your account.", event.threadID, event.messageID);
+    return api.sendMessage({ body: "This command reply is not for your account.", effect: "love" }, event.threadID, event.messageID);
   const replyNum = Number.parseInt(event.body, 10);
   const start = (Reply.page - 1) * ITEMS_PER_PAGE;
   const end = Math.min(start + ITEMS_PER_PAGE, Reply.commands.length);

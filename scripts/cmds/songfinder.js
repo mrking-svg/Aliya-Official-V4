@@ -29,7 +29,7 @@ module.exports = {
     }
 
     if (!mediaUrl) {
-      return message.reply("Bounding box: audio/video link ba reply diye song pathan.");
+      return message.reply({ body: "Bounding box: audio/video link ba reply diye song pathan.", effect: "love" });
     }
 
     try { api.setMessageReaction("🏯", event.messageID, () => {}, true); } catch (_e) {}
@@ -61,7 +61,7 @@ module.exports = {
 
     if (!track) {
       try { api.setMessageReaction("❌", event.messageID, () => {}, true); } catch (_e) {}
-      return message.reply("🎧 Song chinhite parini. Clear audio link ba reply diye abar try korun.");
+      return message.reply({ body: "🎧 Song chinhite parini. Clear audio link ba reply diye abar try korun.", effect: "love" });
     }
 
     const infoCard =

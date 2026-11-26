@@ -76,56 +76,56 @@ module.exports.onStart = async function({ api, event, args, Currencies, Users })
 
     // Big/Small game
     if (choose === 'big' || choose === 'small') {
-        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
-        if (moneyUser < wager) return api.sendMessage(`You don't have enough balance (${compact(wager)}$) to play`, threadID, messageID);
+        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage({ body: "Your bet amount is invalid or below $50!", effect: "love" }, threadID, messageID);
+        if (moneyUser < wager) return api.sendMessage({ body: `You don't have enough balance (${compact(wager)}$) to play`, effect: "love" }, threadID, messageID);
         if (choose === randomBS) {
             await Currencies.increaseMoney(senderID, Math.floor(wager * 2));
-            return api.sendMessage(`You won! Bot rolled ${randomBS} (${defNumberBS}) and you received ${compact(wager * 2)}`, threadID, messageID);
+            return api.sendMessage({ body: `You won! Bot rolled ${randomBS} (${defNumberBS}) and you received ${compact(wager * 2)}`, effect: "love" }, threadID, messageID);
         } else {
             await Currencies.decreaseMoney(senderID, Math.floor(wager));
-            return api.sendMessage(`You lost. Bot rolled ${randomBS} (${defNumberBS}) and you lost ${compact(wager)}`, threadID, messageID);
+            return api.sendMessage({ body: `You lost. Bot rolled ${randomBS} (${defNumberBS}) and you lost ${compact(wager)}`, effect: "love" }, threadID, messageID);
         }
     }
 
     // Even/Odd game
     if (choose === 'even' || choose === 'odd') {
-        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
-        if (moneyUser < wager) return api.sendMessage(`You don't have enough balance (${compact(wager)}$) to play`, threadID, messageID);
+        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage({ body: "Your bet amount is invalid or below $50!", effect: "love" }, threadID, messageID);
+        if (moneyUser < wager) return api.sendMessage({ body: `You don't have enough balance (${compact(wager)}$) to play`, effect: "love" }, threadID, messageID);
         if (choose === randomEO) {
             await Currencies.increaseMoney(senderID, Math.floor(wager * 2));
-            return api.sendMessage(`You won! Bot rolled ${randomEO} (${defNumberEO}) and you received ${compact(wager * 2)}`, threadID, messageID);
+            return api.sendMessage({ body: `You won! Bot rolled ${randomEO} (${defNumberEO}) and you received ${compact(wager * 2)}`, effect: "love" }, threadID, messageID);
         } else {
             await Currencies.decreaseMoney(senderID, Math.floor(wager));
-            return api.sendMessage(`You lost. Bot rolled ${randomEO} (${defNumberEO}) and you lost ${compact(wager)}`, threadID, messageID);
+            return api.sendMessage({ body: `You lost. Bot rolled ${randomEO} (${defNumberEO}) and you lost ${compact(wager)}`, effect: "love" }, threadID, messageID);
         }
     }
 
     // Lottery game
     if (choose === 'lottery') {
-        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage("Your bet amount is invalid or below $50!", threadID, messageID);
-        if (moneyUser < wager) return api.sendMessage(`You don't have enough balance (${compact(wager)}$) to play`, threadID, messageID);
-        api.sendMessage(`Please wait a few minutes for the lottery result...`, threadID, async (err, info) => {
+        if (!Number.isFinite(wager) || wager < 50) return api.sendMessage({ body: "Your bet amount is invalid or below $50!", effect: "love" }, threadID, messageID);
+        if (moneyUser < wager) return api.sendMessage({ body: `You don't have enough balance (${compact(wager)}$) to play`, effect: "love" }, threadID, messageID);
+        api.sendMessage({ body: `Please wait a few minutes for the lottery result...`, effect: "love" }, threadID, async (err, info) => {
             await new Promise(resolve => setTimeout(resolve, 120 * 1000));
             api.unsendMessage(info.messageID);
             if (kqua == x) {
                 await Currencies.increaseMoney(senderID, Math.floor(wager * 2));
-                return api.sendMessage(`You won! Your chosen number ${args[1]} matched. Lottery result is ${x}. You received ${compact(wager * 2)}`, threadID, messageID);
+                return api.sendMessage({ body: `You won! Your chosen number ${args[1]} matched. Lottery result is ${x}. You received ${compact(wager * 2)}`, effect: "love" }, threadID, messageID);
             } else {
                 await Currencies.decreaseMoney(senderID, Math.floor(wager));
-                return api.sendMessage(`You lost. Your chosen number ${args[1]} did not match. Lottery result is ${x}. You lost ${compact(wager)}`, threadID, messageID);
+                return api.sendMessage({ body: `You lost. Your chosen number ${args[1]} did not match. Lottery result is ${x}. You lost ${compact(wager)}`, effect: "love" }, threadID, messageID);
             }
         });
     }
 
     // Difference game
     if (choose === 'difference') {
-        if (!Number.isFinite(Number(kqua))) return api.sendMessage("Invalid number", threadID, messageID);
+        if (!Number.isFinite(Number(kqua))) return api.sendMessage({ body: "Invalid number", effect: "love" }, threadID, messageID);
         if (Number(kqua) == difference) {
             await Currencies.increaseMoney(senderID, Math.floor(diffBet * 2));
-            return api.sendMessage(`You won. Your choice: ${compact(kqua)}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou received ${compact(diffBet * 2)}`, threadID, messageID);
+            return api.sendMessage({ body: `You won. Your choice: ${compact(kqua)}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou received ${compact(diffBet * 2)}`, effect: "love" }, threadID, messageID);
         } else {
             await Currencies.decreaseMoney(senderID, Math.floor(diffBet));
-            return api.sendMessage(`You lost. Your choice: ${compact(kqua)}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou lost ${compact(diffBet)}`, threadID, messageID);
+            return api.sendMessage({ body: `You lost. Your choice: ${compact(kqua)}\nBot numbers: ${z}, ${y}\nDifference: ${difference}\nYou lost ${compact(diffBet)}`, effect: "love" }, threadID, messageID);
         }
     }
 
@@ -153,38 +153,38 @@ module.exports.onStart = async function({ api, event, args, Currencies, Users })
         for (let i = 0; i < 3; i++) number[i] = Math.floor(Math.random() * slotItems.length);
         if (number[0] === number[1] && number[1] === number[2]) win = true;
         else if (number[0] === number[1] || number[0] === number[2] || number[1] === number[2]) win = true;
-        api.sendMessage(`╭──────────╮\n🎰 » ${slotItems[number[0]]} | ${slotItems[number[1]]} | ${slotItems[number[2]]} 🎰╰──────────╯\n${win ? "🎉 Congratulations! You won!" : "😢 You lost!"}`, threadID, messageID);
+        api.sendMessage({ body: `╭──────────╮\n🎰 » ${slotItems[number[0]]} | ${slotItems[number[1]]} | ${slotItems[number[2]]} 🎰╰──────────╯\n${win ? "🎉 Congratulations! You won!" : "😢 You lost!"}`, effect: "love" }, threadID, messageID);
     }
 };
 
 module.exports.handleReply = async function({ args, event, Users, api, handleReply, Currencies }) {
     const { threadID, messageID } = event;
     const { author } = handleReply;
-    if (event.senderID != author) return api.sendMessage("You cannot respond to this menu.", threadID, messageID);
+    if (event.senderID != author) return api.sendMessage({ body: "You cannot respond to this menu.", effect: "love" }, threadID, messageID);
 
     switch (handleReply.type) {
         case "choosee": {
             switch (event.body) {
                 case "1": {
-                    return api.sendMessage(`Please enter command: ${global.config.PREFIX}casino [big or small] [amount]`, threadID, messageID);
+                    return api.sendMessage({ body: `Please enter command: ${global.config.PREFIX}casino [big or small] [amount]`, effect: "love" }, threadID, messageID);
                 }
                 case "2": {
-                    return api.sendMessage(`Please enter command: ${global.config.PREFIX}casino [even or odd] [amount]`, threadID, messageID);
+                    return api.sendMessage({ body: `Please enter command: ${global.config.PREFIX}casino [even or odd] [amount]`, effect: "love" }, threadID, messageID);
                 }
                 case "3": {
-                    return api.sendMessage(`Please enter command: ${global.config.PREFIX}casino lottery [your number] [amount]`, threadID, messageID);
+                    return api.sendMessage({ body: `Please enter command: ${global.config.PREFIX}casino lottery [your number] [amount]`, effect: "love" }, threadID, messageID);
                 }
                 case "4": {
-                    return api.sendMessage(`Please enter command: ${global.config.PREFIX}casino difference [your number] [amount]`, threadID, messageID);
+                    return api.sendMessage({ body: `Please enter command: ${global.config.PREFIX}casino difference [your number] [amount]`, effect: "love" }, threadID, messageID);
                 }
                 case "5": {
-                    return api.sendMessage(`Please enter command: ${global.config.PREFIX}casino slot [amount]`, threadID, messageID);
+                    return api.sendMessage({ body: `Please enter command: ${global.config.PREFIX}casino slot [amount]`, effect: "love" }, threadID, messageID);
                 }
                 case "6": {
-                    return api.sendMessage(`Please enter command: ${global.config.PREFIX}casino rps ["scissors", "rock", "paper"]`, threadID, messageID);
+                    return api.sendMessage({ body: `Please enter command: ${global.config.PREFIX}casino rps ["scissors", "rock", "paper"]`, effect: "love" }, threadID, messageID);
                 }
                 default: {
-                    return api.sendMessage("Invalid option selected.", threadID, messageID);
+                    return api.sendMessage({ body: "Invalid option selected.", effect: "love" }, threadID, messageID);
                 }
             }
         }

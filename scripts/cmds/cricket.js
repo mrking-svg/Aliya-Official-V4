@@ -241,12 +241,12 @@ module.exports.onStart = async function ({ api, event, args }) {
     try {
       const lines = await fetchRssLines();
       if (!lines.length) {
-        return api.sendMessage("😕 এই মুহূর্তে কোনো ম্যাচের তথ্য পাওয়া যায়নি।", threadID, messageID);
+        return api.sendMessage({ body: "😕 এই মুহূর্তে কোনো ম্যাচের তথ্য পাওয়া যায়নি।", effect: "love" }, threadID, messageID);
       }
       const list = lines.slice(0, 12);
       const shown = list.map((l, i) => `${i + 1}. ${l.title}`).join("\n");
       return api.sendMessage(
-        `🏏 ক্রিকেট স্কোর (ব্যাকআপ সোর্স)\n━━━━━━━━━━━━━━\n${shown}\n━━━━━━━━━━━━━━\n💬 বিস্তারিতের জন্য নম্বর লিখে রিপ্লাই দিন`,
+        { body: `🏏 ক্রিকেট স্কোর (ব্যাকআপ সোর্স)\n━━━━━━━━━━━━━━\n${shown}\n━━━━━━━━━━━━━━\n💬 বিস্তারিতের জন্য নম্বর লিখে রিপ্লাই দিন`, effect: "love" },
         threadID,
         (err, info) => {
           if (err || !info) return;
@@ -266,7 +266,7 @@ module.exports.onStart = async function ({ api, event, args }) {
     } catch (e2) {
       console.log("[cricket] RSS fallback failed:", errReason(e2));
       return api.sendMessage(
-        `❌ স্কোর আনা যায়নি।\n🔎 কারণ: মূল সোর্স = ${errReason(primaryErr)}, ব্যাকআপ = ${errReason(e2)}\n(এই কোডগুলো আমাকে পাঠালে ঠিক করে দিতে পারব)`,
+        { body: `❌ স্কোর আনা যায়নি।\n🔎 কারণ: মূল সোর্স = ${errReason(primaryErr)}, ব্যাকআপ = ${errReason(e2)}\n(এই কোডগুলো আমাকে পাঠালে ঠিক করে দিতে পারব)`, effect: "love" },
         threadID,
         messageID
       );
@@ -274,7 +274,7 @@ module.exports.onStart = async function ({ api, event, args }) {
   }
 
   if (!matches.length) {
-    return api.sendMessage("😕 এই মুহূর্তে কোনো ম্যাচের তথ্য পাওয়া যায়নি।", threadID, messageID);
+    return api.sendMessage({ body: "😕 এই মুহূর্তে কোনো ম্যাচের তথ্য পাওয়া যায়নি।", effect: "love" }, threadID, messageID);
   }
 
   let list;
@@ -285,7 +285,7 @@ module.exports.onStart = async function ({ api, event, args }) {
   if (!list.length) {
     const label = mode === "recent" ? "সম্প্রতি শেষ হওয়া" : "চলমান";
     return api.sendMessage(
-      `😴 এখন কোনো ${label} ম্যাচ নেই।\n\n💡 অন্য অপশন:\n➤ cricket recent  (শেষ হওয়া ম্যাচ)\n➤ cricket all  (সব ম্যাচ)`,
+      { body: `😴 এখন কোনো ${label} ম্যাচ নেই।\n\n💡 অন্য অপশন:\n➤ cricket recent  (শেষ হওয়া ম্যাচ)\n➤ cricket all  (সব ম্যাচ)`, effect: "love" },
       threadID,
       messageID
     );
@@ -333,13 +333,13 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
   if (handleReply.rss) {
     const it = handleReply.rss[num - 1];
     if (!it) {
-      return api.sendMessage(`⚠️ ১ থেকে ${handleReply.rss.length}-এর মধ্যে একটা নম্বর দিন।`, threadID, messageID);
+      return api.sendMessage({ body: `⚠️ ১ থেকে ${handleReply.rss.length}-এর মধ্যে একটা নম্বর দিন।`, effect: "love" }, threadID, messageID);
     }
     return api.sendMessage(rssDetail(it), threadID, messageID);
   }
   const m = handleReply.matches[num - 1];
   if (!m) {
-    return api.sendMessage(`⚠️ ১ থেকে ${handleReply.matches.length}-এর মধ্যে একটা নম্বর দিন।`, threadID, messageID);
+    return api.sendMessage({ body: `⚠️ ১ থেকে ${handleReply.matches.length}-এর মধ্যে একটা নম্বর দিন।`, effect: "love" }, threadID, messageID);
   }
   return api.sendMessage(detailText(m), threadID, messageID);
 };

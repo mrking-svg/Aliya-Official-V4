@@ -21,13 +21,13 @@ module.exports = {
 
   onStart: async function ({ api, usersData, event, args }) {
     const obfuscated = "0xMr_King x ┃ Tanin Islam"; if (module.exports.config.author !== obfuscated) {
-    return api.sendMessage("You are not authorized to change the author name.", event.threadID);
+    return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID);
   }
 
     const senderID = event.senderID;const type = (args[0] || "").toLowerCase();
     if (type === "list") {
     return api.sendMessage(
-        `#boy use:
+        { body: `#boy use:
          • my gf
          • my girl
          • my queen
@@ -35,17 +35,17 @@ module.exports = {
         #girl use:
         • my bf
         • my boy
-        • my king`,
+        • my king`, effect: "love" },
         event.threadID,
         event.messageID
       );
     }
 
     if (!["boy", "girl", "bf", "gf", "king", "queen"].includes(type)) {
-      return api.sendMessage("Use: my boy/girl/queen/king/bf/gf @tag | reply | uid\nUse: my list", event.threadID, event.messageID ); }
+      return api.sendMessage({ body: "Use: my boy/girl/queen/king/bf/gf @tag | reply | uid\nUse: my list", effect: "love" }, event.threadID, event.messageID ); }
       const mention = Object.keys(event.mentions)[0];
       let target = mention || (event.messageReply && event.messageReply.senderID) || (args[1] && /^\d+$/.test(args[1]) ? args[1] : null);if (!target)
-      return api.sendMessage("Tag, reply, or give UID.", event.threadID, event.messageID);
+      return api.sendMessage({ body: "Tag, reply, or give UID.", effect: "love" }, event.threadID, event.messageID);
 
     const captionText = {
       boy: "𝐓𝐇𝐀𝐓'𝐒 𝐌𝐘 𝐁𝐎𝐘 🖤",

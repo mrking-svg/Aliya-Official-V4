@@ -41,7 +41,7 @@ module.exports = {
     } else if (Object.keys(mentions).length > 0) {
       targetID = Object.keys(mentions)[0];
     } else {
-      return api.sendMessage("⚠️ কাউরে তো মেনশন করবি বা তার মেসেজে রিপ্লাই দিবি! কারে গু বানাবি?", threadID, messageID);
+      return api.sendMessage({ body: "⚠️ কাউরে তো মেনশন করবি বা তার মেসেজে রিপ্লাই দিবি! কারে গু বানাবি?", effect: "love" }, threadID, messageID);
     }
 
     try {
@@ -105,7 +105,7 @@ module.exports = {
 
     } catch (error) {
       console.error(error);
-      return api.sendMessage("❌ কুত্তা হাগু করতে গিয়ে প্যান্ট নষ্ট করে ফেলছে! (সার্ভার এরর)", threadID, messageID);
+      return api.sendMessage({ body: "❌ কুত্তা হাগু করতে গিয়ে প্যান্ট নষ্ট করে ফেলছে! (সার্ভার এরর)", effect: "love" }, threadID, messageID);
     }
   }
 };

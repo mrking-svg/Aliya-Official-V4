@@ -48,28 +48,28 @@ module.exports = {
 			if (String(args[1] || "").toLowerCase() === "-g") {
 				const stored = await globalData.get("setalias", "data", []);
 				const list = Array.isArray(stored) ? stored : [];
-				if (!list.length) return message.reply("No global aliases are configured.");
-				return message.reply(`Global aliases:\n${list.map(item => `• ${item.commandName}: ${(item.aliases || []).join(", ")}`).join("\n")}`);
+				if (!list.length) return message.reply({ body: "No global aliases are configured.", effect: "love" });
+				return message.reply({ body: `Global aliases:\n${list.map(item => `• ${item.commandName}: ${(item.aliases || []).join(", ")}`).join("\n")}`, effect: "love" });
 			}
-			if (!Object.keys(local).length) return message.reply("This group has no custom aliases.");
-			return message.reply(`Group aliases:\n${formatList(local)}`);
+			if (!Object.keys(local).length) return message.reply({ body: "This group has no custom aliases.", effect: "love" });
+			return message.reply({ body: `Group aliases:\n${formatList(local)}`, effect: "love" });
 		}
 
 		if (!["add", "remove", "rm", "delete", "-d"].includes(mode))
-			return message.reply(`Unknown option "${mode}". Use ${prefix}setalias for the command list.`);
+			return message.reply({ body: `Unknown option "${mode}". Use ${prefix}setalias for the command list.`, effect: "love" });
 
 		const alias = String(args[1] || "").toLowerCase();
 		const commandName = String(args[2] || "").toLowerCase();
 		const globalMode = String(args[3] || "").toLowerCase() === "-g";
-		if (!alias || !commandName) return message.reply(`Usage: ${prefix}setalias ${mode} <alias> <command>`);
+		if (!alias || !commandName) return message.reply({ body: `Usage: ${prefix}setalias ${mode} <alias> <command>`, effect: "love" });
 
 		const adding = mode === "add";
 		const adminLevel = Number(role || 0) >= 2;
 
 		if (globalMode) {
-			if (!adminLevel) return message.reply("Only bot admins can change global aliases.");
+			if (!adminLevel) return message.reply({ body: "Only bot admins can change global aliases.", effect: "love" });
 			if (adding && (commandExists(alias) || aliasExists(alias)))
-				return message.reply(`Alias "${alias}" is already used by a command or alias.`);
+				return message.reply({ body: `Alias "${alias}" is already used by a command or alias.`, effect: "love" });
 
 			const stored = await globalData.get("setalias", "data", []);
 			const list = Array.isArray(stored) ? stored : [];
@@ -86,14 +86,14 @@ module.exports = {
 			await globalData.set("setalias", list, "data");
 			if (adding) global.GoatBot.aliases.set(alias, commandName);
 			else global.GoatBot.aliases.delete(alias);
-			return message.reply(`${adding ? "Added" : "Removed"} global alias "${alias}" ${adding ? "for" : "from"} "${commandName}".`);
+			return message.reply({ body: `${adding ? "Added" : "Removed"} global alias "${alias}" ${adding ? "for" : "from"} "${commandName}".`, effect: "love" });
 		}
 
 		if (adding && commandExists(alias))
-			return message.reply(`Alias "${alias}" is already a command name.`);
+			return message.reply({ body: `Alias "${alias}" is already a command name.`, effect: "love" });
 		for (const name of Object.keys(local))
 			if ((local[name] || []).includes(alias))
-				return message.reply(`Alias "${alias}" is already used in this group.`);
+				return message.reply({ body: `Alias "${alias}" is already used in this group.`, effect: "love" });
 
 		const list = Array.isArray(local[commandName]) ? local[commandName] : [];
 		const index = list.indexOf(alias);
@@ -103,6 +103,6 @@ module.exports = {
 		else delete local[commandName];
 
 		await threadsData.set(event.threadID, local, "data.aliases");
-		return message.reply(`${adding ? "Added" : "Removed"} group alias "${alias}" ${adding ? "for" : "from"} "${commandName}".`);
+		return message.reply({ body: `${adding ? "Added" : "Removed"} group alias "${alias}" ${adding ? "for" : "from"} "${commandName}".`, effect: "love" });
 	}
 };
