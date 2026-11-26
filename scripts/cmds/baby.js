@@ -22,19 +22,26 @@ const OWNER_DENY = "You are Not the main Owner,Main Owner is Mr.king.";
 const OWNER_TRIGGER_RX = /^(owner|boss|admin|main owner|mr\.?king|jiraya|ji raya|0xmrking)$/i;
 
 const teachTimers = new Map();
+const teachSessions = new Map();
 const sentMeta = new Map();
+
+const sessionKey = (threadID, senderID) => `${threadID}:${senderID}`;
+const formatReward = (n) => {
+  const v = Number(n) || 0;
+  return v >= 1000 && v % 1000 === 0 ? `${v / 1000}K` : formatCount(v);
+};
 
 module.exports.config = {
   name: "baby",
   aliases: ["bby", "bbu", "jan", "janu", "wifey", "aliya"],
-  version: "27.0",
+  version: "27.2",
   author: "0xMr_King x ┃ Tanin Islam",
   countDown: 0,
   role: 0,
   description: "Smartest response bot API integrated with fast performance",
   category: "chat",
   guide: {
-    en: "{pn} [message] | {pn} teach [trigger] - [reply] , [reply] | {pn} teach on | {pn} find [trigger] | {pn} edit [new reply]"
+    en: "{pn} [message] | {pn} teach [trigger] - [reply] , [reply] | {pn} teach on | {pn} teach off | {pn} find [trigger] | {pn} edit [new reply]"
   }
 };
 
@@ -123,6 +130,61 @@ const creditTeach = async (usersData, senderID, count) => {
   const user = await usersData.get(senderID);
   await usersData.set(senderID, { money: (Number(user.money) || 0) + TEACH_REWARD * count });
 };
+
+function stopTeachSession(key, api, unsend = false) {
+  const session = teachSessions.get(key);
+  if (!session) return false;
+  if (session.timer) clearTimeout(session.timer);
+  if (session.messageID) {
+    teachTimers.delete(session.messageID);
+    if (global.GoatBot && global.GoatBot.onReply) global.GoatBot.onReply.delete(session.messageID);
+    if (unsend && api) {
+      try { const p = api.unsendMessage(session.messageID); if (p && p.catch) p.catch(() => {}); } catch (_) {}
+    }
+  }
+  teachSessions.delete(key);
+  return true;
+}
+
+async function sendTeachPrompt(api, event, session) {
+  let prompt = "";
+  let trigger = session.trigger || "baby";
+  try {
+    const randomTeach = await botRequest("get", "random");
+    if (randomTeach && randomTeach.message) {
+      prompt = String(randomTeach.message);
+      trigger = String(randomTeach.trigger || trigger);
+    }
+  } catch (_) {}
+  if (!prompt) prompt = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
+  session.trigger = trigger;
+
+  return new Promise(resolve => {
+    api.sendMessage(makeBold(prompt), event.threadID, (err, info) => {
+      if (err || !info) return resolve(null);
+      session.messageID = info.messageID;
+      if (global.GoatBot && global.GoatBot.onReply) {
+        global.GoatBot.onReply.set(info.messageID, {
+          commandName: module.exports.config.name,
+          type: "teachOn",
+          messageID: info.messageID,
+          author: event.senderID,
+          sessionKey: session.key,
+          trigger
+        });
+      }
+      if (session.timer) clearTimeout(session.timer);
+      session.timer = setTimeout(() => {
+        teachTimers.delete(info.messageID);
+        if (global.GoatBot && global.GoatBot.onReply) global.GoatBot.onReply.delete(info.messageID);
+        teachSessions.delete(session.key);
+        try { const p = api.unsendMessage(info.messageID); if (p && p.catch) p.catch(() => {}); } catch (_) {}
+      }, TEACH_WAIT_MS);
+      teachTimers.set(info.messageID, session.timer);
+      resolve(info);
+    }, event.messageID);
+  });
+}
 
 const sendBaby = (api, event, text, data = {}) => api.sendMessage(
   makeBold(text),
@@ -213,34 +275,18 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
       }
     }
 
-    if (msg === "teach on") {
-      let prompt = "";
-      let promptTrigger = "baby";
-      try {
-        const randomTeach = await botRequest("get", "random");
-        if (randomTeach && randomTeach.message) {
-          prompt = String(randomTeach.message);
-          promptTrigger = String(randomTeach.trigger || "baby");
-        }
-      } catch (e) {}
-      if (!prompt) prompt = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
+    if (msg === "teach off" || msg === "teachoff") {
+      const stopped = stopTeachSession(sessionKey(event.threadID, event.senderID), api);
+      return api.sendMessage(makeBold(stopped ? "Teach off 🐇" : "No active teach session."), event.threadID, event.messageID);
+    }
 
-      return api.sendMessage(makeBold(prompt), event.threadID, (err, info) => {
-        if (err || !info) return;
-        global.GoatBot.onReply.set(info.messageID, {
-          commandName: module.exports.config.name,
-          type: "teachOn",
-          messageID: info.messageID,
-          author: event.senderID,
-          trigger: promptTrigger
-        });
-        const timer = setTimeout(() => {
-          teachTimers.delete(info.messageID);
-          global.GoatBot.onReply.delete(info.messageID);
-          api.unsendMessage(info.messageID).catch(() => {});
-        }, TEACH_WAIT_MS);
-        teachTimers.set(info.messageID, timer);
-      }, event.messageID);
+    if (msg === "teach on" || msg === "teachon") {
+      const key = sessionKey(event.threadID, event.senderID);
+      stopTeachSession(key, api, true);
+      const session = { key, trigger: "baby", messageID: null, timer: null };
+      teachSessions.set(key, session);
+      await sendTeachPrompt(api, event, session);
+      return;
     }
 
     if (/^teach\b/i.test(msg)) {
@@ -254,7 +300,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
       try {
         await botRequest("post", "teach", { trigger, responses });
         await creditTeach(usersData, event.senderID, responses.length);
-        return api.sendMessage(makeBold(`Saved ${responses.length} teach${responses.length > 1 ? "es" : ""}. +${formatCount(TEACH_REWARD * responses.length)} balance 🐇`), event.threadID, event.messageID);
+        return api.sendMessage(makeBold(`Saved ${responses.length} teach${responses.length > 1 ? "es" : ""}. +${formatReward(TEACH_REWARD * responses.length)} balance 🐇`), event.threadID, event.messageID);
       } catch (e) {
         const err = e.response && e.response.data && e.response.data.error;
         return api.sendMessage(makeBold(err || "❌ Could not save that teach."), event.threadID, event.messageID);
@@ -310,22 +356,40 @@ module.exports.onReply = async ({ api, event, args, usersData, Reply }) => {
 
     if (Reply && Reply.type === "teachOn") {
       if (String(Reply.author) !== String(event.senderID)) return;
+      const key = Reply.sessionKey || sessionKey(event.threadID, event.senderID);
+      const session = teachSessions.get(key);
+      if (!session || session.messageID !== Reply.messageID) return;
+
       const timer = teachTimers.get(Reply.messageID);
       if (timer) {
         clearTimeout(timer);
         teachTimers.delete(Reply.messageID);
       }
+
       const text = body || (event.attachments || []).map(a => a.type || "").join(" ").trim();
-      if (!text) return;
-      try {
-        await botRequest("post", "teach", { trigger: Reply.trigger, responses: [text] });
-        await creditTeach(usersData, event.senderID, 1);
+      if (/^(teach\s+off|off)$/i.test(text)) {
         if (typeof Reply.delete === "function") Reply.delete();
-        return api.sendMessage(makeBold(`Saved teach. +${formatCount(TEACH_REWARD)} balance 🐇`), event.threadID, event.messageID);
-      } catch (e) {
-        const err = e.response && e.response.data && e.response.data.error;
-        return api.sendMessage(makeBold(err || "❌ Could not save that teach."), event.threadID, event.messageID);
+        stopTeachSession(key, api);
+        return api.sendMessage(makeBold("Teach off 🐇"), event.threadID, event.messageID);
       }
+      if (!text) {
+        return sendTeachPrompt(api, event, session);
+      }
+
+      let saved = true;
+      try {
+        await botRequest("post", "teach", { trigger: Reply.trigger || session.trigger, responses: [text] });
+        await creditTeach(usersData, event.senderID, 1);
+      } catch (_) {
+        saved = false;
+      }
+      if (typeof Reply.delete === "function") Reply.delete();
+      await api.sendMessage(
+        makeBold(saved ? `Saved teach. +${formatReward(TEACH_REWARD)} balance 🐇` : "❌ Could not save that teach."),
+        event.threadID,
+        event.messageID
+      );
+      return sendTeachPrompt(api, event, session);
     }
 
     if (event.attachments && event.attachments[0] && event.attachments[0].type === "sticker") {
