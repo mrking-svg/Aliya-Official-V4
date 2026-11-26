@@ -26,7 +26,8 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
 		// Group approval gate: the bot still joins every group and posts its
 		// connected message, but commands/chat only work after approval.
 		try {
-			if (!approval.allow(event, api)) return;
+			const allowed = await approval.allowWithData(event, api, threadsData, globalData);
+			if (!allowed) return;
 		} catch (err) {
 			// A gate error must never take the bot offline.
 		}

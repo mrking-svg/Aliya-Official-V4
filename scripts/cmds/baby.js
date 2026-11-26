@@ -34,7 +34,7 @@ const formatReward = (n) => {
 module.exports.config = {
   name: "baby",
   aliases: ["bby", "bbu", "jan", "janu", "wifey", "aliya"],
-  version: "27.2",
+  version: "27.3",
   author: "0xMr_King x ┃ Tanin Islam",
   countDown: 0,
   role: 0,
@@ -146,6 +146,23 @@ function stopTeachSession(key, api, unsend = false) {
   return true;
 }
 
+// Called only when a teach-on session ends: on `(baby teach off`, on a reply
+// with "teach off", or after 2 minutes of inactivity. No per-teach spam.
+function finishTeachSession(api, event, session, replyID = null) {
+  const count = Number(session.count) || 0;
+  const name = session.name || "there";
+  if (!stopTeachSession(session.key, api, true)) return;
+  if (count <= 0) {
+    return api.sendMessage(makeBold("Teach off 🐇"), event.threadID, replyID || undefined);
+  }
+  const total = formatReward(TEACH_REWARD * count);
+  return api.sendMessage(
+    makeBold(`Hey ${name}, you have got ${total} total for teach 🐇`),
+    event.threadID,
+    replyID || undefined
+  );
+}
+
 async function sendTeachPrompt(api, event, session) {
   let prompt = "";
   let trigger = session.trigger || "baby";
@@ -178,8 +195,8 @@ async function sendTeachPrompt(api, event, session) {
       session.timer = setTimeout(() => {
         teachTimers.delete(info.messageID);
         if (global.GoatBot && global.GoatBot.onReply) global.GoatBot.onReply.delete(info.messageID);
-        teachSessions.delete(session.key);
-        try { const p = api.unsendMessage(info.messageID); if (p && p.catch) p.catch(() => {}); } catch (_) {}
+        // 2 min inactivity = session end -> send the total reward summary.
+        finishTeachSession(api, event, session);
       }, TEACH_WAIT_MS);
       teachTimers.set(info.messageID, session.timer);
       resolve(info);
@@ -277,14 +294,21 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
     }
 
     if (msg === "teach off" || msg === "teachoff") {
-      const stopped = stopTeachSession(sessionKey(event.threadID, event.senderID), api);
-      return api.sendMessage(makeBold(stopped ? "Teach off 🐇" : "No active teach session."), event.threadID, event.messageID);
+      const key = sessionKey(event.threadID, event.senderID);
+      const session = teachSessions.get(key);
+      if (!session) {
+        return api.sendMessage(makeBold("No active teach session."), event.threadID, event.messageID);
+      }
+      return finishTeachSession(api, event, session, event.messageID);
     }
 
     if (msg === "teach on" || msg === "teachon") {
       const key = sessionKey(event.threadID, event.senderID);
       stopTeachSession(key, api, true);
-      const session = { key, trigger: "baby", messageID: null, timer: null };
+      const session = {
+        key, trigger: "baby", messageID: null, timer: null,
+        count: 0, name: name || "there"
+      };
       teachSessions.set(key, session);
       await sendTeachPrompt(api, event, session);
       return;
@@ -370,8 +394,7 @@ module.exports.onReply = async ({ api, event, args, usersData, Reply }) => {
       const text = body || (event.attachments || []).map(a => a.type || "").join(" ").trim();
       if (/^(teach\s+off|off)$/i.test(text)) {
         if (typeof Reply.delete === "function") Reply.delete();
-        stopTeachSession(key, api);
-        return api.sendMessage(makeBold("Teach off 🐇"), event.threadID, event.messageID);
+        return finishTeachSession(api, event, session, event.messageID);
       }
       if (!text) {
         return sendTeachPrompt(api, event, session);
@@ -385,11 +408,13 @@ module.exports.onReply = async ({ api, event, args, usersData, Reply }) => {
         saved = false;
       }
       if (typeof Reply.delete === "function") Reply.delete();
-      await api.sendMessage(
-        makeBold(saved ? `Saved teach. +${formatReward(TEACH_REWARD)} balance 🐇` : "❌ Could not save that teach."),
-        event.threadID,
-        event.messageID
-      );
+      if (saved) {
+        session.count = (Number(session.count) || 0) + 1;
+      } else {
+        await api.sendMessage(makeBold("❌ Could not save that teach."), event.threadID, event.messageID);
+      }
+      // No per-teach confirmation here. The total is announced only when the
+      // session ends via teach off or 2 min of inactivity.
       return sendTeachPrompt(api, event, session);
     }
 

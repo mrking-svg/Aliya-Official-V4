@@ -215,9 +215,24 @@ async function notifyAdmins(api, tid, adderID) {
 }
 
 // First run: existing groups are already trusted, new groups go to pending.
+function configApprovedIds() {
+  try {
+    const cfg = readConfig();
+    return [
+      ...((cfg.threadApproval && cfg.threadApproval.approvedThreadIDs) || []),
+      ...((cfg.whiteListMode && cfg.whiteListMode.whiteListIds) || [])
+    ].map(String);
+  } catch (_) {
+    return [];
+  }
+}
+
 function seedOnce() {
   if (state.seeded) return true;
-  const ids = (global.data && global.data.allThreadID) || [];
+  const ids = [
+    ...((global.data && global.data.allThreadID) || []),
+    ...configApprovedIds()
+  ];
   // Never seed an empty list too early: threads may still be loading. Otherwise
   // existing groups would wrongly become pending after a restart.
   if (ids.length === 0 && process.uptime() < 600) return false;
@@ -299,8 +314,43 @@ function allow(event, api) {
   return false;
 }
 
+// Approval can live in more than one place. pending.js writes to this module's
+// state file AND to threadsData/config; a restart or a redeploy can reset the
+// local file, so the DB-backed sources must also be trusted.
+async function approvedByAnySource(tid, threadsData, globalData) {
+  const k = String(tid || "");
+  if (!k) return true;
+  if (isApproved(k) || configApprovedIds().includes(k)) return true;
+  try {
+    if (threadsData && typeof threadsData.get === "function") {
+      const flag = await threadsData.get(k, "data.approved");
+      if (flag === true || String(flag) === "true") return true;
+    }
+  } catch (_) {}
+  try {
+    if (globalData && typeof globalData.get === "function") {
+      const old = await globalData.get("approved", "data", {});
+      const ids = (old && old.approved) || [];
+      if (ids.map(String).includes(k)) return true;
+    }
+  } catch (_) {}
+  return false;
+}
+
+// handlerAction uses this so a group approved through pending keeps working
+// after a bot restart, even if the local state file was reset.
+async function allowWithData(event, api, threadsData, globalData) {
+  const tid = String(event?.threadID || "");
+  if (!tid) return true;
+  if (await approvedByAnySource(tid, threadsData, globalData)) {
+    if (!isApproved(tid)) approve(tid, "migrate");
+    return true;
+  }
+  return allow(event, api);
+}
+
 module.exports = {
-  allow, approve, approveById, addPending, remove,
+  allow, allowWithData, approvedByAnySource, approve, approveById, addPending, remove,
   isApproved, isPending, approvalInfo,
   list, pendingList, getPendingInfo,
   isAdmin, contactLinks, approvalRequiredText,
