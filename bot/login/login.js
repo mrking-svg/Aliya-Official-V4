@@ -46,6 +46,13 @@ function compareVersion(version1, version2) {
 const { writeFileSync, readFileSync, existsSync, watch } = require("fs-extra");
 const handlerWhenListenHasError = require("./handlerWhenListenHasError.js");
 const checkLiveCookie = require("./checkLiveCookie.js");
+
+// A temporary cookie/MQTT failure must never rotate the account. Only a real
+// Facebook checkpoint / suspension / disabled account is allowed to do that.
+function isSuspendedSession(error) {
+	const text = String((error && (error.message || error.error)) || error || "").toLowerCase();
+	return /checkpoint|suspended|disabled account|account.*disabled|blocked account|\/block\//i.test(text);
+}
 const { callbackListenTime, storage5Message } = global.GoatBot;
 const isDuplicateMessage = require("./messageDedupe.js").createMessageDedupe(storage5Message, { size: 50 });
 const { log, logColor, getPrefix, createOraDots, jsonStringifyColor, getText, convertTime, colors, randomString } = global.utils;
@@ -730,6 +737,11 @@ async function startBot(loginWithEmail) {
 			if (error) {
 				log.err("LOGIN FACEBOOK", getText('login', 'loginError'), error);
 				global.statusAccountBot = 'can\'t login';
+				// Only a real checkpoint/suspension is allowed to switch accounts.
+				if (isSuspendedSession(error)) {
+					log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Switching accounts.");
+					return process.exit(5);
+				}
 				if (facebookAccount.email && facebookAccount.password) {
 					return startBot(true);
 				}
@@ -1023,6 +1035,11 @@ async function startBot(loginWithEmail) {
 			// —————————————————— CALLBACK LISTEN —————————————————— //
 			async function callBackListen(error, event) {
 				if (error) {
+					// Checkpoint/suspension is the only reason to rotate accounts.
+					if (isSuspendedSession(error)) {
+						log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Switching accounts.");
+						return process.exit(5);
+					}
 					global.responseUptimeCurrent = responseUptimeError;
 					if (error != "Connection closed." && error != "Connection closed by user.") markMqttDown();
 					if (
@@ -1219,7 +1236,9 @@ async function startBot(loginWithEmail) {
 			try { if (typeof api.setOptions == "function") api.setOptions({ emitReady: true }); } catch (e) { /* ignore */ }
 			global.GoatBot.Listening = api.listenMqtt(createCallBackListen());
 			global.GoatBot.callBackListen = callBackListen;
-			mqttWatchdog.arm(MQTT_FIRST_TIMEOUT_MS, "Facebook MQTT did not answer within " + Math.round(MQTT_FIRST_TIMEOUT_MS / 1000) + "s (cookie dead, checkpoint, or blocked).", true);
+			// A slow or interrupted first connect is not proof of a dead account.
+			// Restart this same account instead of rotating to another one.
+			mqttWatchdog.arm(MQTT_FIRST_TIMEOUT_MS, "Facebook MQTT did not answer within " + Math.round(MQTT_FIRST_TIMEOUT_MS / 1000) + "s. Restarting this same account.", false);
 			// ——————————————————— UPTIME ——————————————————— //
 			if (global.GoatBot.config.serverUptime.enable == true && !global.GoatBot.config.dashBoard?.enable && !global.serverUptimeRunning) {
 				const http = require('http');

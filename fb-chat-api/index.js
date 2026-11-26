@@ -114,10 +114,10 @@ function buildAPI(globalOptions, html, jar, diagnostics = {}) {
                 }
             } catch { }
             if (fb_dtsg) {
-                console.log("Đã tìm thấy fb_dtsg");
+                console.log("[Aliya Official] Facebook session token found.");
             }
         } catch (e) {
-            console.log("Lỗi khi tìm fb_dtsg:", e);
+            console.log("[Aliya Official] Could not read the Facebook session token:", e);
         }
     }
     extractFromHTML();
@@ -129,12 +129,12 @@ function buildAPI(globalOptions, html, jar, diagnostics = {}) {
         const expiredHint = diagnostics.appStateHadUserCookie
             ? " Facebook deleted c_user/xs in the login response, so the cookies in account.txt are expired or invalid. Replace account.txt with a fresh appState/cookie array."
             : " Check the cookies in account.txt / appState.";
-        const err = new Error("Không tìm thấy cookie cho người dùng, vui lòng kiểm tra lại thông tin đăng nhập." + expiredHint);
+        const err = new Error("[Aliya Official] No user cookie was found in the saved Facebook session. Check account.txt and log in again." + expiredHint);
         log.error('login', err.message);
         throw err;
     }
     if (html.includes("/checkpoint/block/?next")) {
-        const err = new Error("Appstate die, vui lòng thay cái mới!");
+        const err = new Error("[Aliya Official] Facebook checkpoint/blocked: this saved session is no longer valid. Please provide a fresh account.txt appState.");
         log.error('login', err.message);
         throw err;
     }
@@ -148,7 +148,7 @@ function buildAPI(globalOptions, html, jar, diagnostics = {}) {
     try {
         const endpointMatch = html.match(/"endpoint":"([^"]+)"/);
         if (endpointMatch.input.includes("601051028565049")) {
-          console.log(`lỗi login vì dính tài khoản tự động`);
+          console.log("[Aliya Official] Facebook flagged this account as automated. Using the safer login path.");
           ditconmemay = true;
         }
         if (endpointMatch) {
@@ -159,7 +159,7 @@ function buildAPI(globalOptions, html, jar, diagnostics = {}) {
     } catch (e) {
         console.log('Using default MQTT endpoint');
     }
-    log.info('login', 'Fix fca by DongDev x Satoru, published By Team Calyx');
+    log.info('login', 'Aliya Official - Made By Mr.king');
     var ctx = {
         userID: userID,
         jar: jar,
@@ -416,7 +416,7 @@ function loginHelper(appState, email, password, globalOptions, callback, prCallb
 
     mainPromise
         .then(async () => {
-            log.info('Đăng nhập thành công');
+            log.info('Aliya Official', 'Login successful');
             callback(null, api);
         })
         .catch(e => {
