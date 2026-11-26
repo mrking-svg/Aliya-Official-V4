@@ -47,6 +47,7 @@ const { writeFileSync, readFileSync, existsSync, watch } = require("fs-extra");
 const handlerWhenListenHasError = require("./handlerWhenListenHasError.js");
 const checkLiveCookie = require("./checkLiveCookie.js");
 const { callbackListenTime, storage5Message } = global.GoatBot;
+const isDuplicateMessage = require("./messageDedupe.js").createMessageDedupe(storage5Message, { size: 50 });
 const { log, logColor, getPrefix, createOraDots, jsonStringifyColor, getText, convertTime, colors, randomString } = global.utils;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -1162,15 +1163,14 @@ async function startBot(loginWithEmail) {
 					return;
 
 				// check if listenMqtt loop
-				if (event.messageID && event.type == "message") {
-					if (storage5Message.includes(event.messageID))
-						Object.keys(callbackListenTime).slice(0, -1).forEach(key => {
-							callbackListenTime[key] = () => { };
-						});
-					else
-						storage5Message.push(event.messageID);
-					if (storage5Message.length > 5)
-						storage5Message.shift();
+				// A duplicate messageID means another listener already handled it.
+				// Skip it here; otherwise the command runs once and the duplicate
+				// only produces the global "wait N seconds" spam-guard reply.
+				if (isDuplicateMessage(event)) {
+					Object.keys(callbackListenTime).slice(0, -1).forEach(key => {
+						callbackListenTime[key] = () => { };
+					});
+					return;
 				}
 
 				if (configLog.disableAll === false && configLog[event.type] !== false) {
