@@ -38,18 +38,15 @@ module.exports.config = {
   }
 };
 
-const SIGNATURE = "\n\n𝐌𝐚𝐝𝐞 𝐰𝐢𝐭𝐡 🤍 𝐛𝐲 0xMr_King x ┃ Tanin Islam";
-
 const makeBold = (text) => {
   if (!text) return "";
-  const styled = String(text).split("").map(char => {
+  return String(text).split("").map(char => {
     const code = char.codePointAt(0);
     if (code >= 65 && code <= 90) return String.fromCodePoint(0x1D400 + code - 65);
     if (code >= 97 && code <= 122) return String.fromCodePoint(0x1D41A + code - 97);
     if (code >= 48 && code <= 57) return String.fromCodePoint(0x1D7CE + code - 48);
     return char;
   }).join("");
-  return styled + SIGNATURE;
 };
 
 const formatCount = (num) => {
