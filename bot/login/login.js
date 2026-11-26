@@ -1049,27 +1049,27 @@ async function startBot(loginWithEmail) {
 			const { restartListenMqtt } = global.GoatBot.config;
 			let intervalCheckLiveCookieAndRelogin = false;
 			// —————— REAL READY CHECK (READY is sent only after Facebook MQTT really answers) —————— //
-			// Give cloud hosts (Render/Railway) enough time for a slow MQTT handshake.
-			// READY is now emitted on MQTT connect, so this is only a safety net.
-			const MQTT_FIRST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_FIRST_TIMEOUT_MS) || 300000;
-			// A drop after READY is a transient listener problem, not a dead account.
-			// If it never recovers, restart this engine (exit 7) instead of asking the
-			// supervisor to switch accounts (exit 5).
-			const MQTT_LOST_TIMEOUT_MS = Number(process.env.ALIYA_MQTT_LOST_TIMEOUT_MS) || 15 * 60 * 1000;
+			// A quiet MQTT stream is normal. The old 5-minute watchdog exited the
+			// process whenever no callback arrived, which killed healthy bots.
+			// Only a real checkpoint/suspension may switch accounts (handled below).
+			let mqttReadyOnce = false;
 			const mqttWatchdog = require("./mqttWatchdog.js").createMqttWatchdog({
 				log,
-				onFatal: () => process.exit(5),
-				onSoft: () => process.exit(7)
+				onFatal: () => log.err("MQTT", "Startup watchdog ignored (no account switch)."),
+				onSoft: () => log.warn("MQTT", "Listener watchdog ignored (no restart).")
 			});
 			function markMqttReady() {
-				if (mqttWatchdog.markReady()) {
+				if (!mqttReadyOnce) {
+					mqttReadyOnce = true;
 					log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
 					if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
 				}
+				mqttWatchdog.markReady();
 			}
 			function markMqttDown() {
-				mqttWatchdog.markDown(MQTT_LOST_TIMEOUT_MS,
-					"Listener has been down for " + Math.round(MQTT_LOST_TIMEOUT_MS / 1000) + "s.");
+				// Temporary listener drops must NOT restart or rotate the bot.
+				// Facebook reconnects on its own in most cases.
+				log.warn("MQTT", "Listener temporarily down; waiting for Facebook to recover.");
 			}
 			// —————————————————— CALLBACK LISTEN —————————————————— //
 			async function callBackListen(error, event) {
@@ -1275,9 +1275,8 @@ async function startBot(loginWithEmail) {
 			try { if (typeof api.setOptions == "function") api.setOptions({ emitReady: true }); } catch (e) { /* ignore */ }
 			global.GoatBot.Listening = api.listenMqtt(createCallBackListen());
 			global.GoatBot.callBackListen = callBackListen;
-			// A slow or interrupted first connect is not proof of a dead account.
-			// Restart this same account instead of rotating to another one.
-			mqttWatchdog.arm(MQTT_FIRST_TIMEOUT_MS, "Facebook MQTT did not answer within " + Math.round(MQTT_FIRST_TIMEOUT_MS / 1000) + "s. Restarting this same account.", false);
+			// No startup timer here. A slow/quiet MQTT connect must never kill a
+			// healthy bot; the handle-uptime supervisor already watches the process.
 			// ——————————————————— UPTIME ——————————————————— //
 			if (global.GoatBot.config.serverUptime.enable == true && !global.GoatBot.config.dashBoard?.enable && !global.serverUptimeRunning) {
 				const http = require('http');
