@@ -5,7 +5,19 @@ var utils = require("../utils");
 var mqtt = require('mqtt');
 var websocket = require('websocket-stream');
 var HttpsProxyAgent = require('https-proxy-agent');
+const dns = require('dns');
 const EventEmitter = require('events');
+// Some hosts (Render included) have no usable IPv6 route. Facebook's DNS
+// returns AAAA first there, so the socket dies with ENETUNREACH before it ever
+// tries IPv4. Rotate through the real MQTT edges on later bot-owned retries.
+const MQTT_HOSTS = ['edge-chat.facebook.com', 'edge-mqtt.facebook.com', 'edge-mqtt-fallback.facebook.com'];
+function ipv4OnlyLookup(hostname, opts, callback) {
+  if (typeof opts === 'function') {
+    callback = opts;
+    opts = {};
+  }
+  dns.lookup(hostname, Object.assign({}, opts, { family: 4, all: false }), callback);
+}
 var identity = () => {};
 var form = {};
 var getSeqID = () => {};
@@ -63,14 +75,15 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     php_override: ""
   };
   const cookies = ctx.jar.getCookies('https://www.facebook.com').join('; ');
-  let host;
-  if (ctx.mqttEndpoint) {
-    host = `${ctx.mqttEndpoint}&sid=${sessionID}`;
-  } else if (ctx.region) {
-    host = `wss://edge-chat.facebook.com/chat?region=${ctx.region.toLowerCase()}&sid=${sessionID}`;
-  } else {
-    host = `wss://edge-chat.facebook.com/chat?sid=${sessionID}`;
-  }
+  const attempt = Number(ctx.__aliyaMqttAttempt || 0);
+  ctx.__aliyaMqttAttempt = attempt + 1;
+  const edgeHost = MQTT_HOSTS[attempt % MQTT_HOSTS.length];
+  // ctx.mqttEndpoint is always present in index.js, so rotate inside it too.
+  // Otherwise every retry would hit the same unreachable AAAA address.
+  const endpoint = new URL(ctx.mqttEndpoint || `wss://${edgeHost}/chat`);
+  endpoint.hostname = edgeHost;
+  endpoint.searchParams.set('sid', String(sessionID));
+  const host = endpoint.toString();
   const options = {
     clientId: 'mqttwsclient',
     protocolId: 'MQIsdp',
@@ -88,6 +101,10 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       origin: 'https://www.facebook.com',
       protocolVersion: 13,
       binaryType: 'arraybuffer',
+      // Render's IPv6 route to Facebook is unreachable. Force IPv4 at DNS
+      // level as well as via family, so Node never tries the AAAA record.
+      family: 4,
+      lookup: ipv4OnlyLookup,
     },
     keepalive: 10,
     reschedulePings: true,

@@ -62,7 +62,7 @@ NODE_PATH=~/Bot1/node_modules node pending-selftest.js
 NODE_PATH=~/Bot1/node_modules node baby-selftest.js
 ```
 
-Both suites passed after all edits. No local bot process was started or stopped.
+All four suites (`pending`, `baby`, `tester`, `teach-safety`) passed after every edit. No local bot process was started or stopped during the self-tests.
 
 ## Speed / logout fixes verified before push
 
@@ -79,11 +79,19 @@ Both suites passed after all edits. No local bot process was started or stopped.
   - 2 min inactivity, one final `+2K` summary, silent per-teach loop and serif-bold style are unchanged.
 - New external selftests (outside the repo): `tester-selftest.js` and `teach-safety-selftest.js`, both passing along with `pending`/`baby`.
 
+## Render MQTT network fix
+
+- `fb-chat-api/src/listenMqtt.js`
+  - Facebook DNS returns an AAAA record first on Render, and Render has no usable IPv6 route to the MQTT edge: `connect ENETUNREACH 2a03:2880:...:443 - Local (:::0)`.
+  - `wsOptions` now sets `family: 4` and an IPv4-only `dns.lookup` wrapper, so Node never attempts the unreachable AAAA address.
+  - `ctx.mqttEndpoint` is always present in `fb-chat-api/index.js`, so the hostname inside it is rotated on each bot-owned retry through `edge-chat`, `edge-mqtt` and `edge-mqtt-fallback`, preserving the Facebook `region` and replacing `sid`.
+  - MQTT.js auto-reconnect remains `0`; all retries stay under the existing 2→4→…→15 min bot-owned backoff. No `ws3.relogin()` was reintroduced.
+
 ## Local PM2 verification (new state)
 
-- `node /usr/lib/node_modules/pm2/bin/pm2 start ecosystem.config.js` (`botfresh`, pid 9297).
-- `Successful login`, `MQTT: Facebook listener is connected`, `READY`, MongoDB connected, 575 commands loaded.
-- Zero `Server unavailable`, `blocked login`, `retry #` or `relogin` lines.
+- `node /usr/lib/node_modules/pm2/bin/pm2 start ecosystem.config.js` (`botfresh`); process deleted again before push.
+- Latest run: `Successful login`, `MQTT: Facebook listener is connected`, `READY`, MongoDB connected, 575 commands loaded.
+- Zero `ENETUNREACH`, `ETIMEDOUT`, `LISTEN_MQTT: Callback error`, `Server unavailable`, `blocked login`, `retry #` or `relogin` lines.
 - `account.txt` mtime unchanged during startup — no periodic state rewrite.
 
 ## Deploying
