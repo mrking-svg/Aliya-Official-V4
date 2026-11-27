@@ -40,7 +40,7 @@
 //   ALIYA_RSS_LIMIT_MB       bot restarts itself above this RSS (default 85%)
 //   ALIYA_WOLF_AFTER         quick crashes in a row before Wolf.js (default 4)
 //   ALIYA_WOLF_RETRY_MS      how long Wolf.js runs before trying Aliya.js again (default 900000)
-//   ALIYA_OFFLINE_DELAYS_S   retry delays when all accounts failed (default 30,60,120,300,600,900)
+//   ALIYA_OFFLINE_DELAYS_S   retry delays when all accounts failed (default 1800,3600,7200,21600)
 //   ALIYA_HEARTBEAT_TIMEOUT_MS  freeze limit (default 120000)
 //   ALIYA_SELF_URL           public URL used for the keep-awake ping (auto-detected on Render/Railway/Replit)
 //   ALIYA_SELF_PING=0        disable the keep-awake ping
@@ -91,10 +91,10 @@ const WOLF_AFTER = Math.max(1, envMs("ALIYA_WOLF_AFTER", 4));
 const WOLF_RETRY_MS = envMs("ALIYA_WOLF_RETRY_MS", 15 * 60 * 1000);
 const ACCOUNT_POLL_MS = envMs("ALIYA_ACCOUNT_POLL_MS", 5000);
 const FREEZE_CHECK_MS = Math.max(200, envMs("ALIYA_FREEZE_CHECK_MS", 15000));
-// A rejected cookie must not be retried every 30s: each attempt is another
-// Facebook login that can extend a temporary restriction. Wait longer, and
-// retry instantly only when the owner pastes a new account.txt.
-const OFFLINE_DELAYS_MS = (process.env.ALIYA_OFFLINE_DELAYS_S || "300,600,900,1800")
+// A rejected/blocked session must not be retried every few minutes: each
+// attempt is another Facebook login that can extend the restriction. Wait
+// hours, and retry instantly only when the owner pastes a new account.txt.
+const OFFLINE_DELAYS_MS = (process.env.ALIYA_OFFLINE_DELAYS_S || "1800,3600,7200,21600")
 	.split(",").map(s => Number(s.trim()) * 1000).filter(n => Number.isFinite(n) && n >= 0);
 if (!OFFLINE_DELAYS_MS.length) OFFLINE_DELAYS_MS.push(60000);
 

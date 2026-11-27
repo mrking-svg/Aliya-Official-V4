@@ -54,6 +54,12 @@ function isSuspendedSession(error) {
 	const text = String((error && (error.message || error.error)) || error || "").toLowerCase();
 	return /checkpoint|suspended|disabled account|account.*disabled|blocked account|\/block\//i.test(text);
 }
+// "Facebook blocked login" means the session/account is already flagged. Any
+// further reconnects only dig the hole deeper, so we stop immediately.
+function isFacebookBlocked(error) {
+	const text = String((error && (error.error || error.message)) || error || "").toLowerCase();
+	return /blocked login|facebook blocked login|temporarily blocked|account.*blocked/i.test(text);
+}
 const { callbackListenTime, storage5Message } = global.GoatBot;
 const isDuplicateMessage = require("./messageDedupe.js").createMessageDedupe(storage5Message, { size: 50 });
 const { log, logColor, getPrefix, createOraDots, jsonStringifyColor, getText, convertTime, colors, randomString } = global.utils;
@@ -1093,9 +1099,14 @@ async function startBot(loginWithEmail) {
 			}
 			// Reconnect with backoff. Hammering the MQTT endpoint every 15s keeps
 			// Facebook's rate limiter hot and the bot never recovers.
-			function scheduleListenerRetry(reason) {
+			function scheduleListenerRetry(reason, hard = false) {
 				if (global.__aliyaListenerRetryTimer) return;
-				const delay = Math.min(10000 * Math.pow(2, listenerRetryAttempt), 300000);
+				// A CONNACK "Server unavailable" / "Connection refused" is
+				// Facebook refusing the session. Retrying it every few seconds
+				// turns a temporary refusal into a real account block.
+				const base = hard ? 900000 : 60000; // 15 min / 1 min
+				const cap = hard ? 7200000 : 900000; // 2 h / 15 min
+				const delay = Math.min(base * Math.pow(2, listenerRetryAttempt), cap);
 				listenerRetryAttempt++;
 				log.warn("LISTEN_MQTT", `Listener retry #${listenerRetryAttempt} in ${Math.round(delay / 1000)}s (${reason}).`);
 				global.__aliyaListenerRetryTimer = setTimeout(() => {
@@ -1115,8 +1126,14 @@ async function startBot(loginWithEmail) {
 			}
 			function markMqttReady() {
 				cancelListenerRetry();
-				// Only a connection that survives a full minute resets the
-				// backoff. Otherwise connect-then-drop loops stay at 10s.
+				if (mqttReadyOnce) return;
+				mqttReadyOnce = true;
+				log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
+				if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
+			}
+			// Only REAL traffic (not a bare "ready" event) may clear the backoff.
+			// A connect-then-drop loop used to reset the timer and hammer Facebook.
+			function markMqttTraffic() {
 				if (global.__aliyaReadyResetTimer) clearTimeout(global.__aliyaReadyResetTimer);
 				global.__aliyaReadyResetTimer = setTimeout(() => {
 					global.__aliyaReadyResetTimer = null;
@@ -1124,10 +1141,6 @@ async function startBot(loginWithEmail) {
 				}, 60000);
 				if (typeof global.__aliyaReadyResetTimer.unref === "function")
 					global.__aliyaReadyResetTimer.unref();
-				if (mqttReadyOnce) return;
-				mqttReadyOnce = true;
-				log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
-				if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
 			}
 			function markMqttDown() {
 				// Temporary listener drops must NOT restart or rotate the bot.
@@ -1137,6 +1150,12 @@ async function startBot(loginWithEmail) {
 			// —————————————————— CALLBACK LISTEN —————————————————— //
 			async function callBackListen(error, event) {
 				if (error) {
+					// A hard Facebook block must stop ALL reconnects immediately.
+					// Every extra attempt can extend the restriction.
+					if (isFacebookBlocked(error)) {
+						log.err("LOGIN FACEBOOK", "Facebook blocked the session. Stopping retries to protect the account.");
+						return process.exit(3);
+					}
 					// Checkpoint/suspension is the only reason to rotate accounts.
 					if (isSuspendedSession(error)) {
 						log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Switching accounts.");
@@ -1174,7 +1193,11 @@ async function startBot(loginWithEmail) {
 							const keyListen = Object.keys(callbackListenTime).pop();
 							if (callbackListenTime[keyListen])
 								callbackListenTime[keyListen] = () => { };
-							scheduleListenerRetry(authLost ? "auth" : "transport");
+							const serverRefused = /server unavailable|connection refused/i.test(listenErrorText);
+							scheduleListenerRetry(
+								serverRefused ? "server-unavailable" : (authLost ? "auth" : "transport"),
+								serverRefused
+							);
 						}
 						return;
 					}
@@ -1190,6 +1213,7 @@ async function startBot(loginWithEmail) {
 				global.statusAccountBot = 'good';
 				markMqttReady();
 				if (event && event.type == "ready") return;
+				markMqttTraffic();
 				const configLog = global.GoatBot.config.logEvents;
 				if (isSendNotiErrorMessage == true)
 					isSendNotiErrorMessage = false;
