@@ -33,7 +33,18 @@ const audioExt = ["3gp", "aa", "aac", "aax", "act", "aiff", "alac", "amr",
 ];
 
 
+// The dashboard is started once per process. Old code called listen() again
+// on every bot relogin, which threw ERR_SERVER_ALREADY_LISTEN and left the bot
+// half-started. Cache the first init and hand the same promise to later callers.
+let __dashboardInitPromise = null;
+
 module.exports = async (api) => {
+        if (__dashboardInitPromise) return __dashboardInitPromise;
+        __dashboardInitPromise = startDashboard(api);
+        return __dashboardInitPromise;
+};
+
+async function startDashboard(api) {
         if (!api)
                 await require("./connectDB.js")();
 
@@ -313,7 +324,7 @@ module.exports = async (api) => {
         utils.log.info("DASHBOARD", `Dashboard is running: ${dashBoardUrl}`);
         if (config.serverUptime.socket.enable == true)
                 require("../bot/login/socketIO.js")(server);
-};
+}
 
 function randomStringApikey(max) {
         let text = "";

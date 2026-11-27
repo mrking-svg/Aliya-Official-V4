@@ -778,34 +778,44 @@ async function startBot(loginWithEmail) {
 				if (facebookAccount.email && facebookAccount.password) {
 					return startBot(true);
 				}
-				// —————————— CHECK DASHBOARD —————————— //
-				if (global.GoatBot.config.dashBoard?.enable == true) {
+				// A rejected cookie session must never leave a half-started
+				// process that looks "online" but cannot reply to anything.
+				// Try the last-known-good state exactly once, otherwise hand a
+				// clean exit to the supervisor (it backs off and waits for a
+				// freshly pasted state instead of spinning).
+				if (!global.__aliyaLoginRecoveryTried) {
+					global.__aliyaLoginRecoveryTried = true;
 					try {
-						await require("../../dashboard/app.js")(null);
-						log.info("DASHBOARD", getText('login', 'openDashboardSuccess'));
+						const backup = require("./stateBackup");
+						const currentRaw = fs.readFileSync(dirAccount, "utf8");
+						const backupRaw = fs.existsSync(backup.BACKUP) ? fs.readFileSync(backup.BACKUP, "utf8") : "";
+						if (backupRaw && backupRaw !== currentRaw && backup.isValidState(backupRaw)) {
+							writeFileSync(dirAccount, backupRaw);
+							latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
+							log.warn("LOGIN FACEBOOK", "Restored last-known-good FB state. Restarting.");
+							return process.exit(2);
+						}
 					}
-					catch (err) {
-						log.err("DASHBOARD", getText('login', 'openDashboardError'), err);
-					}
-					return;
+					catch (_e) { /* recovery is best effort */ }
 				}
-				else {
-					process.exit();
-				}
+				log.err("LOGIN FACEBOOK", "Saved FB state is rejected by Facebook. Waiting for a fresh state.");
+				return process.exit(3);
 			}
 
 			global.GoatBot.fcaApi = api;
 			// Every outgoing message (text/image/video/audio/file) keeps the typing
 			// indicator on until Facebook confirms delivery.
 			require("../handler/typingSend.js").wrap(api);
-			if (!api.ws3 || typeof api.ws3.relogin !== "function") {
-				api.ws3 = Object.assign({}, api.ws3 || {}, {
-					relogin: () => {
-						try { if (typeof global.GoatBot.reLoginBot === "function") global.GoatBot.reLoginBot(); }
-						catch (_) {}
-					}
-				});
-			}
+			// fb-chat-api calls ws3.relogin() on ANY MQTT socket error. A full
+			// Facebook login there is destructive: it reuses the same cookies,
+			// Facebook rejects them ("deleted c_user/xs"), and the bot ends up
+			// half-started and silent. Transient drops are handled by the
+			// listener retry below, so keep this a deliberate no-op.
+			api.ws3 = Object.assign({}, api.ws3 || {}, {
+				relogin: () => {
+					log.warn("MQTT", "Facebook requested a full relogin; ignored to protect the saved session.");
+				}
+			});
 			global.GoatBot.botID = api.getCurrentUserID();
 			log.info("LOGIN FACEBOOK", getText('login', 'loginSuccess'));
 			let hasBanned = false;
@@ -1074,15 +1084,24 @@ async function startBot(loginWithEmail) {
 					}
 					global.responseUptimeCurrent = responseUptimeError;
 					if (error != "Connection closed." && error != "Connection closed by user.") markMqttDown();
-					if (
+					// Every MQTT/socket failure is a transport problem, not proof
+					// that the account is dead. Retry the listener with the SAME
+					// cookies; only a real checkpoint/suspension switches accounts.
+					const listenErrorText = String((error && (error.error || error.message)) || error || "");
+					const isTransientListenError =
 						error.error == "Not logged in" ||
 						error.error == "Not logged in." ||
-						error.error == "Connection refused: Server unavailable"
-					) {
-						log.err("NOT LOGGEG IN", getText('login', 'notLoggedIn'), error);
+						error.error == "Connection refused: Server unavailable" ||
+						/blocked login|server unavailable|temporar|timeout|timed out|ECONN|ETIMEDOUT|socket hang up| MQTT/i.test(listenErrorText);
+					if (isTransientListenError) {
+						const authLost = /not logged in/i.test(listenErrorText);
+						if (authLost)
+							log.err("NOT LOGGEG IN", getText('login', 'notLoggedIn'), error);
+						else
+							log.warn("MQTT", "Connection dropped; retrying listener with the existing session.");
 						global.responseUptimeCurrent = responseUptimeError;
-						global.statusAccountBot = 'can\'t login';
-						if (!isSendNotiErrorMessage) {
+						global.statusAccountBot = authLost ? 'can\'t login' : 'reconnecting';
+						if (!isSendNotiErrorMessage && authLost) {
 							await handlerWhenListenHasError({ api, threadModel, userModel, dashBoardModel, globalModel, threadsData, usersData, dashBoardData, globalData, error });
 							isSendNotiErrorMessage = true;
 						}
