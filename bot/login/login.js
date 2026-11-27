@@ -1034,6 +1034,53 @@ async function startBot(loginWithEmail) {
 			writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 2));
 			writeFileSync(global.client.dirConfigCommands, JSON.stringify(global.GoatBot.configCommands, null, 2));
 
+			// Facebook can log the account out while MQTT still looks connected.
+			// Ask Facebook for the bot's own profile every 5 minutes through the
+			// same session the bot uses. Two consecutive failures stop the child
+			// process, so /health reports offline instead of showing a "live"
+			// bot that can neither receive nor send anything.
+			let sessionCheckBusy = false;
+			let sessionMisses = 0;
+			let sessionRecheckTimer = null;
+			async function checkSessionLive(stopWatchdog) {
+				if (sessionCheckBusy) return;
+				sessionCheckBusy = true;
+				let dead = false;
+				let detail = "";
+				try {
+					const botID = api.getCurrentUserID && api.getCurrentUserID();
+					const info = botID && await api.getUserInfo(botID);
+					if (!info || !info[botID] || !info[botID].name) {
+						dead = true;
+						detail = "empty profile response";
+					}
+				}
+				catch (err) {
+					dead = true;
+					detail = String((err && (err.message || err.error)) || err || "").slice(0, 160);
+				}
+				finally { sessionCheckBusy = false; }
+
+				if (!dead) {
+					sessionMisses = 0;
+					if (sessionRecheckTimer) { clearTimeout(sessionRecheckTimer); sessionRecheckTimer = null; }
+					return;
+				}
+				sessionMisses++;
+				log.warn("SESSION", `Session check failed (${sessionMisses}/2): ${detail}`);
+				if (sessionMisses < 2) {
+					if (sessionRecheckTimer) clearTimeout(sessionRecheckTimer);
+					sessionRecheckTimer = setTimeout(() => checkSessionLive(true), 60 * 1000);
+					if (sessionRecheckTimer.unref) sessionRecheckTimer.unref();
+					return;
+				}
+				if (stopWatchdog) clearInterval(sessionWatchdog);
+				log.err("SESSION", "Facebook session is logged out/invalidated. Stopping the bot process.");
+				process.exit(3);
+			}
+			const sessionWatchdog = setInterval(() => checkSessionLive(false), 5 * 60 * 1000);
+			if (sessionWatchdog.unref) sessionWatchdog.unref();
+
 			// ——————————————————————————————————————————————————— //
 			const { restartListenMqtt } = global.GoatBot.config;
 			let intervalCheckLiveCookieAndRelogin = false;
@@ -1108,10 +1155,12 @@ async function startBot(loginWithEmail) {
 						log.err("LOGIN FACEBOOK", "Facebook blocked the session. Stopping retries to protect the account.");
 						return process.exit(3);
 					}
-					// Checkpoint/suspension is the only reason to rotate accounts.
+					// Checkpoint/suspension means the session is dead. Stop the
+					// process instead of restarting with the same cookies - extra
+					// attempts only extend the restriction.
 					if (isSuspendedSession(error)) {
-						log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Switching accounts.");
-						return process.exit(5);
+						log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Stopping the bot process.");
+						return process.exit(3);
 					}
 					global.responseUptimeCurrent = responseUptimeError;
 					if (error != "Connection closed." && error != "Connection closed by user.") markMqttDown();
