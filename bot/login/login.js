@@ -1053,18 +1053,11 @@ async function startBot(loginWithEmail) {
 			// process whenever no callback arrived, which killed healthy bots.
 			// Only a real checkpoint/suspension may switch accounts (handled below).
 			let mqttReadyOnce = false;
-			const mqttWatchdog = require("./mqttWatchdog.js").createMqttWatchdog({
-				log,
-				onFatal: () => log.err("MQTT", "Startup watchdog ignored (no account switch)."),
-				onSoft: () => log.warn("MQTT", "Listener watchdog ignored (no restart).")
-			});
 			function markMqttReady() {
-				if (!mqttReadyOnce) {
-					mqttReadyOnce = true;
-					log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
-					if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
-				}
-				mqttWatchdog.markReady();
+				if (mqttReadyOnce) return;
+				mqttReadyOnce = true;
+				log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
+				if (process.send) { try { process.send({ type: "READY" }); } catch (e) { /* no supervisor */ } }
 			}
 			function markMqttDown() {
 				// Temporary listener drops must NOT restart or rotate the bot.
