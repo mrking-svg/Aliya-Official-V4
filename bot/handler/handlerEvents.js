@@ -618,7 +618,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 		}
 
 		async function onAnyEvent() {
-			if (isThreadBlocked(isGroup, threadID, senderID)) return;
 			const allOnAnyEvent = GoatBot.onAnyEvent || [];
 			let args = [];
 			if (typeof event.body == "string" && event.body.startsWith(prefix))
@@ -785,7 +784,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			}
 		}
 		async function handlerEvent() {
-			if (isThreadBlocked(isGroup, threadID, senderID)) return;
 			const { author } = event;
 			const allEventCommand = GoatBot.eventCommands.entries();
 			for (const [key] of allEventCommand) {
@@ -811,7 +809,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 		}
 
 		async function onEvent() {
-			if (isThreadBlocked(isGroup, threadID, senderID)) return;
 			const allOnEvent = GoatBot.onEvent || [];
 			const args = [];
 			const { author } = event;
