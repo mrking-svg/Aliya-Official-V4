@@ -1349,6 +1349,10 @@ async function startBot(loginWithEmail) {
 						return log.warn("LISTEN_MQTT", getText('login', 'stopRestartListenMessage'));
 					}
 					try {
+						// A pending error retry would open a second listener right
+						// after this controlled restart. Cancel it first.
+						cancelListenerRetry();
+						listenerRetryAttempt = 0;
 						await stopListening();
 						await sleep(1000);
 						global.GoatBot.Listening = api.listenMqtt(createCallBackListen());

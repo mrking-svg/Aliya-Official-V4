@@ -91,7 +91,10 @@ const WOLF_AFTER = Math.max(1, envMs("ALIYA_WOLF_AFTER", 4));
 const WOLF_RETRY_MS = envMs("ALIYA_WOLF_RETRY_MS", 15 * 60 * 1000);
 const ACCOUNT_POLL_MS = envMs("ALIYA_ACCOUNT_POLL_MS", 5000);
 const FREEZE_CHECK_MS = Math.max(200, envMs("ALIYA_FREEZE_CHECK_MS", 15000));
-const OFFLINE_DELAYS_MS = (process.env.ALIYA_OFFLINE_DELAYS_S || "30,60,120,300,600,900")
+// A rejected cookie must not be retried every 30s: each attempt is another
+// Facebook login that can extend a temporary restriction. Wait longer, and
+// retry instantly only when the owner pastes a new account.txt.
+const OFFLINE_DELAYS_MS = (process.env.ALIYA_OFFLINE_DELAYS_S || "300,600,900,1800")
 	.split(",").map(s => Number(s.trim()) * 1000).filter(n => Number.isFinite(n) && n >= 0);
 if (!OFFLINE_DELAYS_MS.length) OFFLINE_DELAYS_MS.push(60000);
 

@@ -127,16 +127,21 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       clearTimeout(rTimeout);
       rTimeout = null;
     }
+    // Already stopping/stopped: never call end() twice on the same socket.
+    if (reconnecting) return;
     // Mark this as a controlled close so end() cannot re-enter the error path.
     reconnecting = true;
-    if (mqttClient) {
-      mqttClient.unsubscribe("/webrtc");
-      mqttClient.unsubscribe("/rtc_multi");
-      mqttClient.unsubscribe("/onevc");
-      mqttClient.publish("/browser_close", "{}");
-      mqttClient.end(false, function(...data) {
-        ctx.mqttClient = null;
-        mqttClient = null;
+    const client = mqttClient;
+    if (client) {
+      client.unsubscribe("/webrtc");
+      client.unsubscribe("/rtc_multi");
+      client.unsubscribe("/onevc");
+      client.publish("/browser_close", "{}");
+      client.end(false, function(...data) {
+        // A new listener may have replaced this client already. Only clear
+        // the shared handle when it still belongs to the socket we stopped.
+        if (ctx.mqttClient === client) ctx.mqttClient = null;
+        if (mqttClient === client) mqttClient = null;
       });
     }
   }
