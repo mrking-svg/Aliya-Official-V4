@@ -92,7 +92,10 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     keepalive: 10,
     reschedulePings: true,
     connectTimeout: 10 * 1000,
-    reconnectPeriod: 1 * 1000,
+    // MQTT.js auto-reconnects every second by default. On a CONNACK refusal
+    // that hammers Facebook and turns a temporary drop into a blocked login.
+    // The bot's own backoff owns all reconnects.
+    reconnectPeriod: 0,
   };
   if (typeof ctx.globalOptions.proxy != "undefined") {
     var agent = new HttpsProxyAgent(ctx.globalOptions.proxy);
@@ -122,7 +125,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     }
   }
 
-  function stopListening() {
+  function stopListening(force = false) {
     if (rTimeout) {
       clearTimeout(rTimeout);
       rTimeout = null;
@@ -137,7 +140,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       client.unsubscribe("/rtc_multi");
       client.unsubscribe("/onevc");
       client.publish("/browser_close", "{}");
-      client.end(false, function(...data) {
+      client.end(force, function(...data) {
         // A new listener may have replaced this client already. Only clear
         // the shared handle when it still belongs to the socket we stopped.
         if (ctx.mqttClient === client) ctx.mqttClient = null;
@@ -152,7 +155,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     // Controlled reconnect: this socket is already being replaced.
     if (reconnecting) return;
     utils.warn("MQTT socket error: " + (err && (err.message || err.code) || err));
-    try { stopListening(); }
+    try { stopListening(true); }
     catch (e) { utils.error("listenMqtt stopListening", e); }
     if (ctx.globalOptions.autoReconnect) {
       try { getSeqID(); }
@@ -191,15 +194,11 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     mqttClient.publish("/foreground_state", JSON.stringify({ foreground: chatOn }), { qos: 1 });
     mqttClient.publish("/set_client_settings", JSON.stringify({ make_user_available_when_in_foreground: true }), { qos: 1 });
     emitReady();
-    rTimeout = setTimeout(() => {
-      rTimeout = null;
-      // stopListening() may already have nulled the client on an MQTT error.
-      if (!mqttClient) return;
-      reconnecting = true;
-      try { mqttClient.end(); }
-      catch (e) { utils.error("listenMqtt reconnect", e); }
-      listenMqtt(defaultFuncs, api, ctx, globalCallback);
-    }, 3000);
+    // Old code closed this socket and opened a brand-new MQTT connection every
+    // 3 seconds. Facebook treats that as session abuse (CONNACK "Server
+    // unavailable", then "blocked login"). One long-lived socket is enough;
+    // drops are handled by the bot's backoff in bot/login/login.js.
+    rTimeout = null;
     ctx.tmsWait = () => {
       if (rTimeout) {
         clearTimeout(rTimeout);

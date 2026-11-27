@@ -18,6 +18,10 @@ const baseApiUrl = "https://baby-one-zeta.vercel.app";
 const botToken = process.env.BABY_BOT_TOKEN || "aliya-bot-token-2026";
 const TEACH_REWARD = 2000;
 const TEACH_WAIT_MS = 2 * 60 * 1000;
+// Facebook treats rapid unsend+send bursts as abuse. Keep a small gap between
+// teach prompts and serialize API/DB writes. Set to 0 only in local tests.
+const TEACH_PROMPT_GAP_MS = Math.max(0, Number(process.env.ALIYA_TEACH_PROMPT_GAP_MS ?? 1500));
+const TEACH_SAVE_TIMEOUT_MS = 8000;
 const OWNER_DENY = "You are Not the main Owner,Main Owner is Mr.king.";
 const OWNER_TRIGGER_RX = /^(owner|boss|admin|main owner|mr\.?king|jiraya|ji raya|0xmrking)$/i;
 
@@ -96,9 +100,9 @@ const defaultReplies = [
   "kobe je  Mr.king Real vabe khusi hobe k jne 🛌🎀"
 ];
 
-const botRequest = async (method, route, body = {}) => {
+const botRequest = async (method, route, body = {}, timeout = 15000) => {
   const url = `${baseApiUrl}/api/bot/${route}`;
-  const config = { timeout: 15000, headers: { "x-bot-token": botToken } };
+  const config = { timeout, headers: { "x-bot-token": botToken } };
   const res = method === "get" ? await axios.get(url, config) : await axios.post(url, body, config);
   return res.data;
 };
@@ -131,10 +135,52 @@ const creditTeach = async (usersData, senderID, count) => {
   await usersData.set(senderID, { money: (Number(user.money) || 0) + TEACH_REWARD * count });
 };
 
+// A Facebook send error must never become an uncaught exception in a timer or
+// callback. A real block stops the whole bot through the existing handler;
+// ordinary rate-limit errors just end this teach session quietly.
+function isFacebookBlockError(value) {
+  return /blocked login|facebook blocked login|temporarily blocked|account.*blocked/i.test(String(value || ""));
+}
+
+function handleTeachSendError(err) {
+  const text = String((err && (err.message || err.error)) || err || "");
+  if (isFacebookBlockError(text)) {
+    try { process.emit("aliyaFacebookBlocked", "baby teach send"); } catch (_) {}
+  }
+}
+
+function safeTeachSend(api, payload, threadID, callback, replyID) {
+  let settled = false;
+  const done = (err, info) => {
+    if (settled) return;
+    settled = true;
+    handleTeachSendError(err);
+    if (typeof callback === "function") callback(err, info);
+  };
+  try {
+    const result = api.sendMessage(payload, threadID, done, replyID);
+    if (result && typeof result.catch === "function") result.catch(err => done(err, null));
+    return result;
+  } catch (err) {
+    done(err, null);
+    return null;
+  }
+}
+
+// Only one teach save runs at a time. Rapid replies are queued instead of
+// firing overlapping axios calls and usersData writes.
+function queueTeachSave(session, task) {
+  const job = (session.chain || Promise.resolve()).then(task, task);
+  session.chain = job.catch(() => {});
+  return job;
+}
+
 function stopTeachSession(key, api, unsend = false) {
   const session = teachSessions.get(key);
   if (!session) return false;
+  session.closed = true;
   if (session.timer) clearTimeout(session.timer);
+  if (session.promptTimer) clearTimeout(session.promptTimer);
   if (session.messageID) {
     teachTimers.delete(session.messageID);
     if (global.GoatBot && global.GoatBot.onReply) global.GoatBot.onReply.delete(session.messageID);
@@ -153,33 +199,59 @@ function finishTeachSession(api, event, session, replyID = null) {
   const name = session.name || "there";
   if (!stopTeachSession(session.key, api, true)) return;
   if (count <= 0) {
-    return api.sendMessage(makeBold("Teach off 🐇"), event.threadID, replyID || undefined);
+    return safeTeachSend(api, makeBold("Teach off 🐇"), event.threadID, undefined, replyID || undefined);
   }
   const total = formatReward(TEACH_REWARD * count);
-  return api.sendMessage(
+  return safeTeachSend(
+    api,
     makeBold(`Hey ${name}, you have got ${total} total for teach 🐇`),
     event.threadID,
+    undefined,
     replyID || undefined
   );
 }
 
 async function sendTeachPrompt(api, event, session) {
+  if (!session || session.closed) return null;
+
+  if (session.promptTimer) {
+    clearTimeout(session.promptTimer);
+    session.promptTimer = null;
+  }
+  const wait = Math.max(0, TEACH_PROMPT_GAP_MS - (Date.now() - (session.lastPromptAt || 0)));
+  if (wait > 0) {
+    session.promptTimer = setTimeout(() => {
+      session.promptTimer = null;
+      sendTeachPrompt(api, event, session);
+    }, wait);
+    if (typeof session.promptTimer.unref === "function") session.promptTimer.unref();
+    return null;
+  }
+
+  session.lastPromptAt = Date.now();
   let prompt = "";
   let trigger = session.trigger || "baby";
   try {
-    const randomTeach = await botRequest("get", "random");
+    const randomTeach = await botRequest("get", "random", {}, TEACH_SAVE_TIMEOUT_MS);
     const line = randomTeach && (randomTeach.message || randomTeach.response || randomTeach.text);
     if (line) {
       prompt = String(line);
       trigger = String(randomTeach.trigger || trigger);
     }
   } catch (_) {}
+  if (session.closed) return null;
   if (!prompt) prompt = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
   session.trigger = trigger;
 
   return new Promise(resolve => {
-    api.sendMessage(makeBold(prompt), event.threadID, (err, info) => {
-      if (err || !info) return resolve(null);
+    safeTeachSend(api, makeBold(prompt), event.threadID, (err, info) => {
+      if (session.closed) return resolve(null);
+      if (err || !info) {
+        // Facebook refused this send. End quietly instead of retrying in a
+        // tight loop; extra sends are what turn a rate limit into a block.
+        stopTeachSession(session.key, api, false);
+        return resolve(null);
+      }
       session.messageID = info.messageID;
       if (global.GoatBot && global.GoatBot.onReply) {
         global.GoatBot.onReply.set(info.messageID, {
@@ -198,6 +270,7 @@ async function sendTeachPrompt(api, event, session) {
         // 2 min inactivity = session end -> send the total reward summary.
         finishTeachSession(api, event, session);
       }, TEACH_WAIT_MS);
+      if (typeof session.timer.unref === "function") session.timer.unref();
       teachTimers.set(info.messageID, session.timer);
       resolve(info);
     }, event.messageID);
@@ -260,13 +333,13 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
     if (msg === "list" || msg === "datacheck") {
       try {
         const s = await botRequest("get", "stats");
-        const stats = `🌸✨ ════════════════ ✨🌸\n  🌷 𝗧𝗼𝘁𝗮𝗹 𝗧𝗿𝗶𝗴𝗴𝗲𝗿𝘀: ${formatCount(s.totalTeach)} 🌷\n  🌻 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀: ${formatCount(s.totalResponses)} 🌻\n  🌺 𝗧𝗼𝘁𝗮𝗹 𝗘𝗺𝗼𝗷𝗶𝘀: ${formatCount(s.totalEmojis)} 🌺\n🌸✨ ════════════════ ✨🌸`;
+        const stats = `🌸✨ ════════════════ ✨🌸\n  🌷 𝐓𝐨𝐭𝐚𝐥 𝐓𝐫𝐢𝐠𝐠𝐞𝐫𝐬: ${formatCount(s.totalTeach)} 🌷\n  🌻 𝐓𝐨𝐭𝐚𝐥 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞𝐬: ${formatCount(s.totalResponses)} 🌻\n  🌺 𝐓𝐨𝐭𝐚𝐥 𝐄𝐦𝐨𝐣𝐢𝐬: ${formatCount(s.totalEmojis)} 🌺\n🌸✨ ════════════════ ✨🌸`;
         return api.sendMessage(makeBold(stats), event.threadID, event.messageID);
       } catch (e) {
         try {
           const res = await axios.get(`${baseApiUrl}/api/jan/stats`, { timeout: 5000 });
           if (res.data && res.data.success) {
-            const stats = `🌸✨ ════════════════ ✨🌸\n  🌷 𝗧𝗼𝘁𝗮𝗹 𝗧𝗿𝗶𝗴𝗴𝗲𝗿𝘀: ${formatCount(res.data.totalTeach)} 🌷\n  🌻 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀: ${formatCount(res.data.totalResponses)} 🌻\n  🌺 𝗗𝗮𝘁𝗮 𝗦𝗶𝘇𝗲: ${res.data.dataSize} 🌺\n🌸✨ ════════════════ ✨🌸`;
+            const stats = `🌸✨ ════════════════ ✨🌸\n  🌷 𝐓𝐨𝐭𝐚𝐥 𝐓𝐫𝐢𝐠𝐠𝐞𝐫𝐬: ${formatCount(res.data.totalTeach)} 🌷\n  🌻 𝐓𝐨𝐭𝐚𝐥 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞𝐬: ${formatCount(res.data.totalResponses)} 🌻\n  🌺 𝐃𝐚𝐭𝐚 𝐒𝐢𝐳𝐞: ${res.data.dataSize} 🌺\n🌸✨ ════════════════ ✨🌸`;
             return api.sendMessage(makeBold(stats), event.threadID, event.messageID);
           }
         } catch (e2) {}
@@ -307,6 +380,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
       stopTeachSession(key, api, true);
       const session = {
         key, trigger: "baby", messageID: null, timer: null,
+        promptTimer: null, lastPromptAt: 0, chain: Promise.resolve(), closed: false,
         count: 0, name: name || "there"
       };
       teachSessions.set(key, session);
@@ -323,7 +397,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
         return api.sendMessage(OWNER_DENY, event.threadID, event.messageID);
       }
       try {
-        await botRequest("post", "teach", { trigger, responses });
+        await botRequest("post", "teach", { trigger, responses }, TEACH_SAVE_TIMEOUT_MS);
         await creditTeach(usersData, event.senderID, responses.length);
         return api.sendMessage(makeBold(`Saved ${responses.length} teach${responses.length > 1 ? "es" : ""}. +${formatReward(TEACH_REWARD * responses.length)} balance 🐇`), event.threadID, event.messageID);
       } catch (e) {
@@ -383,35 +457,45 @@ module.exports.onReply = async ({ api, event, args, usersData, Reply }) => {
       if (String(Reply.author) !== String(event.senderID)) return;
       const key = Reply.sessionKey || sessionKey(event.threadID, event.senderID);
       const session = teachSessions.get(key);
-      if (!session || session.messageID !== Reply.messageID) return;
+      if (!session || session.messageID !== Reply.messageID || session.closed) return;
 
       const timer = teachTimers.get(Reply.messageID);
       if (timer) {
         clearTimeout(timer);
         teachTimers.delete(Reply.messageID);
       }
+      if (session.timer) {
+        clearTimeout(session.timer);
+        session.timer = null;
+      }
+      // Remove the old reply handle immediately so a double-tap cannot save
+      // the same message twice or open two prompt loops.
+      if (typeof Reply.delete === "function") Reply.delete();
 
       const text = body || (event.attachments || []).map(a => a.type || "").join(" ").trim();
       if (/^(teach\s+off|off)$/i.test(text)) {
-        if (typeof Reply.delete === "function") Reply.delete();
         return finishTeachSession(api, event, session, event.messageID);
       }
       if (!text) {
         return sendTeachPrompt(api, event, session);
       }
 
-      let saved = true;
+      const trigger = Reply.trigger || session.trigger;
+      let saved = false;
       try {
-        await botRequest("post", "teach", { trigger: Reply.trigger || session.trigger, responses: [text] });
-        await creditTeach(usersData, event.senderID, 1);
+        saved = await queueTeachSave(session, async () => {
+          if (session.closed) return false;
+          await botRequest("post", "teach", { trigger, responses: [text] }, TEACH_SAVE_TIMEOUT_MS);
+          await creditTeach(usersData, event.senderID, 1);
+          session.count = (Number(session.count) || 0) + 1;
+          return true;
+        });
       } catch (_) {
         saved = false;
       }
-      if (typeof Reply.delete === "function") Reply.delete();
-      if (saved) {
-        session.count = (Number(session.count) || 0) + 1;
-      } else {
-        await api.sendMessage(makeBold("❌ Could not save that teach."), event.threadID, event.messageID);
+      if (session.closed) return;
+      if (!saved) {
+        safeTeachSend(api, makeBold("❌ Could not save that teach."), event.threadID, undefined, event.messageID);
       }
       // No per-teach confirmation here. The total is announced only when the
       // session ends via teach off or 2 min of inactivity.
@@ -480,16 +564,16 @@ module.exports.onChat = async ({ api, event }) => {
         "🌸 You called me, and I will answer every single word 😘 🌸",
         "🌷 I sent you a message instead of a rose 🌷",
         "🌻 Tell me what is on your mind 🤭 🌻",
-        "🌺 𝗜 𝗹𝗼𝘃𝗲 𝘆𝗼𝘂__😘😘 🌺",
+        "🌺 𝐈 𝐥𝐨𝐯𝐞 𝐲𝐨𝐮__😘😘 🌺",
         "🌹 Call me boss if you want a proper answer 😑 🌹",
         "🌷 My golden Bengal, what comes next? 🙈 🌷",
         "🌸 Here, take this juice. You ran out of breath saying baby 🥲 🌸",
         "🌻 You remembered me all of a sudden 🙄 🌻",
-        "🌺 𝗔𝘀𝘀𝗮𝗹𝗮𝗺𝘂𝗹𝗮𝗶𝗸𝘂𝗺 🐤🐤 🌺",
+        "🌺 𝐀𝐬𝐬𝐚𝐥𝐚𝐦𝐮𝐥𝐚𝐢𝐤𝐮𝐦 🐤🐤 🌺",
         "🌹 I am your senior, show some respect 😼 🌹",
         "🌷 Have you eaten yet? 🌷",
         "🌸 Do not come too close, I might fall in love 🙈 🌸",
-        "🌻 𝗛𝗲𝘆 𝗛𝗮𝗻𝗱𝘀𝗼𝗺𝗲 say it 😁😁 🌻",
+        "🌻 𝐇𝐞𝐲 𝐇𝐚𝐧𝐝𝐬𝐨𝐦𝐞 say it 😁😁 🌻",
         "🌺 Tell me, my love, how are you? 😚 🌺",
         "🌹 Stop calling me, okay? 😿 🌹",
         "🌷 I want my JaNu, are you single? 🌷"

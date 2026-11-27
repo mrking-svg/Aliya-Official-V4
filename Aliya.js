@@ -34,6 +34,12 @@ process.on("unhandledRejection", error => {
 process.on("uncaughtException", error => {
 	console.error("[ALIYA_UNCAUGHT_EXCEPTION]", error && error.stack ? error.stack : error);
 
+	const blockText = String((error && (error.message || error.error)) || error || "");
+	if (/blocked login|facebook blocked login/i.test(blockText)) {
+		console.error("[ALIYA] Facebook blocked the session. Stopping all retries to protect the account.");
+		return process.exit(3);
+	}
+
 	// startup crash because a package is not installed -> let index.js install it
 	const missing = String(error && error.message || "").match(/Cannot find module '([^'./][^']*)'/);
 	if (error && error.code === "MODULE_NOT_FOUND" && missing && !(global.GoatBot && global.GoatBot.startupDone)) {

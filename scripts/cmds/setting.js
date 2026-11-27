@@ -505,9 +505,11 @@ module.exports = {
 				return message.reply({ body: `✦ Only Admin Box — ${status(config.onlyAdminBox)}`, effect: "love" });
 			}
 			if (num === 7) {
-				config.autoRefreshFbstate = !config.autoRefreshFbstate;
+				// Locked: periodic state refresh rewrites account.txt and rotates xs.
+				config.autoRefreshFbstate = false;
+				config.fbstateRefreshMs = 0;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Refresh Fbstate — ${status(config.autoRefreshFbstate)}`, effect: "love" });
+				return message.reply({ body: "✦ Auto Refresh Fbstate — locked off (protects the Facebook session)", effect: "love" });
 			}
 			if (num === 8) {
 				config.autoReloginWhenChangeAccount = !config.autoReloginWhenChangeAccount;
@@ -872,9 +874,10 @@ module.exports = {
 		if (state === "restartListenMqtt") {
 			config.restartListenMqtt = config.restartListenMqtt || {};
 			if (num === 1) {
-				config.restartListenMqtt.enable = !config.restartListenMqtt.enable;
+				// Locked: hourly listener restarts caused repeated login/logout.
+				config.restartListenMqtt.enable = false;
 				saveConfig();
-				return message.reply({ body: `✦ Restart Listen MQTT Enable — ${status(config.restartListenMqtt.enable)}`, effect: "love" });
+				return message.reply({ body: "✦ Restart Listen MQTT Enable — locked off (protects the Facebook session)", effect: "love" });
 			}
 			if (num === 2) return await sendAndListen("› Reply with new restart interval (ms):", "mqttTimeRestartSet");
 			if (num === 3) return await sendAndListen("› Reply with new delay after stop (ms):", "mqttDelaySet");

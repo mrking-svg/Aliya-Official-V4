@@ -19,9 +19,14 @@ const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY ||
 	process.env.ALIYA_TESTER_API_KEY ||
 	'AQ.Ab8RN6Iv0ybAD8vsSTO7uHYAMIfaiZKIZ-gQuMBk97WJNIBiKQ';
 const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
-const MAX_SOURCE_CHARS = 40000;
-const MAX_OUTPUT_TOKENS = Math.max(400, Number(process.env.ALIYA_TESTER_MAX_TOKENS) || 1600);
+const MAX_SOURCE_CHARS = 24000;
+const MAX_OUTPUT_TOKENS = Math.max(400, Number(process.env.ALIYA_TESTER_MAX_TOKENS) || 1000);
 const MODEL_COOLDOWN_MS = 5 * 60 * 1000;
+// Hard budgets: a stalled backend must never leave the owner staring at a
+// blank chat. The request is aborted client-side and a friendly reply is sent.
+const REQUEST_TIMEOUT_MS = Math.max(2500, Number(process.env.ALIYA_TESTER_TIMEOUT_MS) || 9000);
+const MODEL_TIMEOUT_MS = Math.max(2000, Number(process.env.ALIYA_TESTER_MODEL_TIMEOUT_MS) || 6000);
+const IMAGE_TIMEOUT_MS = Math.max(5000, Number(process.env.ALIYA_TESTER_IMAGE_TIMEOUT_MS) || 20000);
 // Image editing uses a separate image-capable model family. Override the
 // first choice with ALIYA_TESTER_IMAGE_MODEL if a newer model is available.
 const IMAGE_MODELS = [process.env.ALIYA_TESTER_IMAGE_MODEL].concat([
@@ -32,7 +37,7 @@ const IMAGE_MODELS = [process.env.ALIYA_TESTER_IMAGE_MODEL].concat([
 ]).filter((m, i, arr) => m && arr.indexOf(m) === i);
 
 const SYSTEM_INSTRUCTION = [
-	'You are Aliya Official, made by Mr.king.',
+	'You are Aliya Official Made By Mr.king.',
 	'Always speak as Aliya Official. Never say you are Gemini, an AI model, Google, or any other service.',
 	'You are the private tester of the Aliya bot. Your main job is command checking:',
 	'read the supplied command source, find the exact bug or weak point, explain the problem clearly,',
@@ -99,13 +104,13 @@ const TOOL_LIST = [
 	'aliyatester what can you do shows what I can do.',
 	'',
 	'Identity',
-	'I am Aliya Official, made by Mr.king. I never claim to be another service.',
+	'I am Aliya Official Made By Mr.king. I never claim to be another service.',
 	'',
 	'Owner only. Made by Mr.king'
 ].join('\n');
 
 const CAPABILITY_ANSWER = [
-	'I am Aliya Official, made by Mr.king.',
+	'I am Aliya Official Made By Mr.king',
 	'I can check any bot command and tell you the exact problem plus what to fix or update.',
 	'I can view and analyse images, videos, audio, music and files you reply to.',
 	'I can write image or video generation prompts from your media.',
@@ -124,6 +129,9 @@ function clean(text) {
 	return String(text == null ? '' : text)
 		.replace(/\*\*/g, '')
 		.replace(/\*/g, '')
+		// Never leak the backend name in a user-facing answer.
+		.replace(/\b(?:gemini|google|bard|chatgpt|openai|claude)[-\w.]*/gi, '')
+		.replace(/[ \t]{2,}/g, ' ')
 		.trim();
 }
 
@@ -137,24 +145,38 @@ function normalizeName(raw) {
 		.slice(0, 80);
 }
 
+// Reading and regex-scanning 570+ files on every request was a large part of
+// the perceived slowness. Build the index once and refresh it at most once a
+// minute; direct filename hits are still instant.
+let commandIndex = null;
+let commandIndexedAt = 0;
+
+function getCommandIndex() {
+	const now = Date.now();
+	if (commandIndex && now - commandIndexedAt < 60 * 1000) return commandIndex;
+	const entries = [];
+	for (const file of fs.readdirSync(CMD_DIR)) {
+		if (!file.endsWith('.js')) continue;
+		let source = '';
+		try { source = fs.readFileSync(path.join(CMD_DIR, file), 'utf8'); }
+		catch (_e) { continue; }
+		entries.push({ file, base: path.basename(file, '.js').toLowerCase(), source });
+	}
+	commandIndex = entries;
+	commandIndexedAt = now;
+	return entries;
+}
+
 function findCommandFile(rawName) {
 	const name = normalizeName(rawName);
 	if (!name) return null;
-	const files = fs.readdirSync(CMD_DIR).filter(f => f.endsWith('.js'));
-	const direct = files.find(f => path.basename(f, '.js').toLowerCase() === name);
+	const entries = getCommandIndex();
+	const direct = entries.find(e => e.base === name);
 	const nameRe = new RegExp(`\\bname\\s*:\\s*['"\`]${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"\`]`, 'i');
 	const aliasRe = new RegExp(`\\baliases\\s*:\\s*\\[[^\\]]*['"\`]${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"\`]`, 'i');
-	const byConfig = files.find(f => {
-		try {
-			const src = fs.readFileSync(path.join(CMD_DIR, f), 'utf8');
-			return nameRe.test(src) || aliasRe.test(src);
-		}
-		catch (_e) { return false; }
-	});
-	const found = direct || byConfig;
+	const found = direct || entries.find(e => nameRe.test(e.source) || aliasRe.test(e.source));
 	if (!found) return null;
-	const full = path.join(CMD_DIR, found);
-	return { file: found, content: fs.readFileSync(full, 'utf8') };
+	return { file: found.file, content: found.source };
 }
 
 function isBotOwner(senderID) {
@@ -290,8 +312,27 @@ async function getClient() {
 	return clientPromise;
 }
 
+async function generateWithTimeout(ai, params, timeoutMs) {
+	const controller = typeof AbortController === 'function' ? new AbortController() : null;
+	const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+	try {
+		const config = Object.assign({}, params.config || {});
+		if (controller) config.abortSignal = controller.signal;
+		return await ai.models.generateContent({
+			model: params.model,
+			contents: params.contents,
+			config
+		});
+	}
+	finally {
+		if (timer) clearTimeout(timer);
+	}
+}
+
 async function askGemini(text, parts, context) {
 	const ai = await getClient();
+	const startedAt = Date.now();
+	const remaining = () => Math.max(0, REQUEST_TIMEOUT_MS - (Date.now() - startedAt));
 	const contents = [];
 	for (const turn of (Array.isArray(context) ? context.slice(-4) : [])) {
 		contents.push({ role: 'user', parts: [{ text: clean(turn.q) }] });
@@ -311,8 +352,9 @@ async function askGemini(text, parts, context) {
 	if (!modelOrder.length) modelOrder.push(...allModels);
 
 	async function tryModel(model) {
+		if (remaining() <= 0) throw new Error('Tester is busy. Try again in a moment.');
 		try {
-			const response = await ai.models.generateContent({
+			const response = await generateWithTimeout(ai, {
 				model,
 				contents,
 				config: {
@@ -321,7 +363,7 @@ async function askGemini(text, parts, context) {
 					maxOutputTokens: MAX_OUTPUT_TOKENS,
 					thinkingConfig: { thinkingBudget: 0 }
 				}
-			});
+			}, Math.min(MODEL_TIMEOUT_MS, remaining()));
 			let out = '';
 			try { out = typeof response.text === 'function' ? response.text() : response.text; }
 			catch (_e) { /* fall through to candidates */ }
@@ -337,7 +379,8 @@ async function askGemini(text, parts, context) {
 			const raw = String((err && (err.message || (err.error && err.error.message))) || '');
 			const match = raw.match(/\b(404|429|503)\b/);
 			const status = Number((err && (err.status || (err.error && err.error.code))) || (match && match[1]) || 0);
-			if ([404, 429, 503].includes(status)) modelCooldown.set(model, Date.now() + MODEL_COOLDOWN_MS);
+			if ([404, 429, 503].includes(status) || /abort|timeout|timed out/i.test(raw))
+				modelCooldown.set(model, Date.now() + MODEL_COOLDOWN_MS);
 			throw err;
 		}
 	}
@@ -356,7 +399,7 @@ async function askGemini(text, parts, context) {
 			catch (e) { lastError = e; }
 		}
 	}
-	if (!winner) throw lastError || new Error('No Gemini model available.');
+	if (!winner) throw new Error('Tester is busy. Try again in a moment.');
 	return winner.answer;
 }
 
@@ -369,13 +412,16 @@ async function askImageEdit(prompt, parts) {
 	}];
 
 	let lastError = null;
+	const startedAt = Date.now();
 	for (const model of IMAGE_MODELS) {
+		const remaining = IMAGE_TIMEOUT_MS - (Date.now() - startedAt);
+		if (remaining <= 0) break;
 		try {
-			const response = await ai.models.generateContent({
+			const response = await generateWithTimeout(ai, {
 				model,
 				contents,
 				config: { responseModalities: ['TEXT', 'IMAGE'] }
-			});
+			}, Math.min(IMAGE_TIMEOUT_MS, remaining));
 			const responseParts = (response && response.candidates && response.candidates[0] &&
 				response.candidates[0].content && response.candidates[0].content.parts) || [];
 			const image = responseParts.find(p => p && p.inlineData && p.inlineData.data);
@@ -391,6 +437,17 @@ async function askImageEdit(prompt, parts) {
 		}
 	}
 	throw lastError || new Error('No image model available.');
+}
+
+function friendlyTestError(err) {
+	const raw = String((err && (err.message || err.name)) || err || '');
+	if (/abort|timeout|timed out|busy/i.test(raw))
+		return 'Tester is busy right now. Try again in a moment.';
+	if (/429|quota|billing|rate limit/i.test(raw))
+		return 'Tester is out of quota right now. Try again later.';
+	if (/404|not found|not supported|invalid model/i.test(raw))
+		return 'Tester is not available on this setup.';
+	return 'Tester could not answer that right now. Try again with a shorter request.';
 }
 
 function friendlyImageError(err) {
@@ -429,7 +486,7 @@ async function sendEditedImage(env, result) {
 async function sendAnswer(env, answer, context) {
 	const { api, event, message, commandName } = env;
 	const author = event.senderID;
-	const chunks = splitText(answer);
+	const chunks = splitText(clean(answer));
 	for (let i = 0; i < chunks.length; i++) {
 		const last = i === chunks.length - 1;
 		if (!last) {
@@ -484,7 +541,7 @@ async function handle(env, rawText, replyContext) {
 	if (!text && !hasMedia) return sendAnswer(env, MENU, []);
 	if (isCapabilityQuestion(text) && !hasMedia) return sendAnswer(env, CAPABILITY_ANSWER, []);
 	if (isQuickChat(text) && !hasMedia) {
-		return sendAnswer(env, 'I am Aliya Official, made by Mr.king. Tell me what to check or ask me anything.', []);
+		return sendAnswer(env, 'I am Aliya Official Made By Mr.king. Tell me what to check or ask me anything.', []);
 	}
 
 	if (isEditMode) {
@@ -548,8 +605,7 @@ async function handle(env, rawText, replyContext) {
 		return await sendAnswer(env, answer, context);
 	}
 	catch (err) {
-		const detail = clean(err && (err.message || err.name) || 'unknown error').slice(0, 300);
-		return message.reply(clean(`Tester error: ${detail}. Use aliyatester help for the menu.`));
+		return message.reply(clean(`${friendlyTestError(err)} Use aliyatester help for the menu.`));
 	}
 }
 
@@ -597,5 +653,5 @@ module.exports = {
 		return handle(env, text, (Reply && Reply.context) || []);
 	},
 
-	_test: { clean, normalizeName, findCommandFile, isBotOwner, isCapabilityQuestion, isQuickChat, isPromptRequest, isEditRequest, editPromptFrom, isImageAttachment, compactSource, collectAttachments, splitText, askGemini, askImageEdit, friendlyImageError, sendEditedImage, MENU, TOOL_LIST, CAPABILITY_ANSWER }
+	_test: { clean, normalizeName, findCommandFile, isBotOwner, isCapabilityQuestion, isQuickChat, isPromptRequest, isEditRequest, editPromptFrom, isImageAttachment, compactSource, collectAttachments, splitText, generateWithTimeout, askGemini, askImageEdit, friendlyTestError, friendlyImageError, sendEditedImage, MENU, TOOL_LIST, CAPABILITY_ANSWER }
 };

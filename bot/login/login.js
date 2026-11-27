@@ -737,7 +737,9 @@ async function startBot(loginWithEmail) {
 
 	let appState = await getAppStateToLogin(loginWithEmail);
 	appState = filterKeysAppState(appState);
-	writeOwnAppState(appState, "login");
+	// Do NOT write account.txt on startup: rewriting the state after every
+	// login is what rotated xs and invalidated the session. It is saved only
+	// on graceful exit by the existing handler.
 	// ——————————————————— LOGIN ———————————————————— //
 	(function loginBot(appState) {
 		global.GoatBot.commands = new Map();
@@ -1079,6 +1081,17 @@ async function startBot(loginWithEmail) {
 			console.log(`\x1b[1m\x1b[33m${("COPYRIGHT:")}\x1b[0m\x1b[1m\x1b[37m \x1b[0m\x1b[1m\x1b[36m${("ALIYA OFFICIAL V4 | Made by 0xMr_King x ┃ Tanin Islam")}\x1b[0m`);
 			logColor("#f5ab00", character);
 			global.GoatBot.config.adminBot = adminBot;
+			// Hard-lock the session-protection flags. Even if a runtime setting
+			// command or an old config tried to turn them on, config.json on
+			// disk can never re-enable hourly restarts or periodic state writes.
+			{
+				const cfg = global.GoatBot.config;
+				if (cfg.restartListenMqtt) cfg.restartListenMqtt.enable = false;
+				cfg.autoRefreshFbstate = false;
+				cfg.fbstateRefreshMs = 0;
+				if (cfg.database) cfg.database.autoSyncWhenStart = false;
+				if (cfg.optionsFca) cfg.optionsFca.autoReconnect = false;
+			}
 			writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 2));
 			writeFileSync(global.client.dirConfigCommands, JSON.stringify(global.GoatBot.configCommands, null, 2));
 

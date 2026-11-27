@@ -14,7 +14,7 @@ const FILE = process.env.APPROVAL_STATE_FILE ||
 const CONFIG_FILE = path.join(__dirname, "..", "config.json");
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-let state = { seeded: false, threads: {}, pending: {} };
+let state = { seeded: false, threads: {}, pending: {}, revoked: {} };
 
 try {
   if (fs.existsSync(FILE)) {
@@ -23,7 +23,8 @@ try {
       state = {
         seeded: !!s.seeded,
         threads: s.threads,
-        pending: (s.pending && typeof s.pending === "object") ? s.pending : {}
+        pending: (s.pending && typeof s.pending === "object") ? s.pending : {},
+        revoked: (s.revoked && typeof s.revoked === "object") ? s.revoked : {}
       };
     }
   }
@@ -75,18 +76,35 @@ function approvalInfo(id) {
   return entry;
 }
 
-function approve(id, by, days = 0) {
+function approve(id, by, days = 0, at = null, expiresAt = undefined) {
   const k = String(id);
   const n = Math.max(0, Math.floor(Number(days) || 0));
   state.threads[k] = {
     by: by ? String(by) : null,
-    at: new Date().toISOString(),
+    at: at || new Date().toISOString(),
     days: n,
-    expiresAt: n > 0 ? Date.now() + n * DAY_MS : null
+    expiresAt: expiresAt === undefined ? (n > 0 ? Date.now() + n * DAY_MS : null) : (expiresAt || null)
   };
   delete state.pending[k];
+  delete state.revoked[k];
   save();
   return state.threads[k];
+}
+
+// Mirror a DB/config approval without resetting its timer. A timed approval
+// must keep its original expiry after a restart or a redeploy.
+function approveFromExternal(id, entry) {
+  return approve(
+    id,
+    entry && entry.by ? entry.by : "migrate",
+    entry && entry.days ? entry.days : 0,
+    entry && entry.at ? entry.at : null,
+    entry && entry.expiresAt ? entry.expiresAt : null
+  );
+}
+
+function isRevoked(id) {
+  return !!state.revoked[String(id)];
 }
 
 function addPending(id, by) {
@@ -101,6 +119,9 @@ function remove(id) {
   let changed = false;
   if (state.threads[k]) { delete state.threads[k]; changed = true; }
   if (state.pending[k]) { delete state.pending[k]; changed = true; }
+  // Remember the refusal so threadsData/config cannot silently re-approve the
+  // group when the bot is kicked and later added again.
+  if (!state.revoked[k]) { state.revoked[k] = Date.now(); changed = true; }
   if (changed) save();
 }
 
@@ -137,6 +158,28 @@ function isAdmin(id) {
     ...(g.adminBot || []), ...(g.developer || [])
   ].map(String);
   return all.includes(String(id));
+}
+
+// cancelled/kicked groups must also disappear from the config whitelist,
+// otherwise a re-add silently re-approves them from config.
+function removeFromConfig(id) {
+  try {
+    const cfg = readConfig();
+    let changed = false;
+    for (const list of [
+      cfg.threadApproval && cfg.threadApproval.approvedThreadIDs,
+      cfg.whiteListMode && cfg.whiteListMode.whiteListIds
+    ]) {
+      if (!Array.isArray(list)) continue;
+      const kept = list.filter(x => String(x) !== String(id));
+      if (kept.length !== list.length) {
+        list.length = 0;
+        list.push(...kept);
+        changed = true;
+      }
+    }
+    if (changed) fs.writeFileSync(CONFIG_FILE, JSON.stringify(cfg, null, 2));
+  } catch (_) {}
 }
 
 function getPrefix() {
@@ -283,6 +326,7 @@ function allow(event, api) {
     String(event.logMessageData && event.logMessageData.leftParticipantFbId) === botID
   ) {
     remove(tid);
+    removeFromConfig(tid);
     return false;
   }
 
@@ -320,20 +364,57 @@ function allow(event, api) {
 async function approvedByAnySource(tid, threadsData, globalData) {
   const k = String(tid || "");
   if (!k) return true;
-  if (isApproved(k) || configApprovedIds().includes(k)) return true;
+  if (isRevoked(k)) {
+    try {
+      if (threadsData && typeof threadsData.set === "function")
+        await threadsData.set(k, false, "data.approved");
+      if (threadsData && typeof threadsData.set === "function")
+        await threadsData.set(k, null, "data.approvedExpiresAt");
+    } catch (_) {}
+    return false;
+  }
+  if (isApproved(k)) return true;
+
+  // The DB may hold a timed approval. Honour its original expiry instead of
+  // treating the boolean flag as a permanent approval.
   try {
     if (threadsData && typeof threadsData.get === "function") {
       const flag = await threadsData.get(k, "data.approved");
-      if (flag === true || String(flag) === "true") return true;
+      if (flag === true || String(flag) === "true") {
+        let expiresAt = 0;
+        let at = null;
+        let days = 0;
+        try { expiresAt = Number(await threadsData.get(k, "data.approvedExpiresAt")) || 0; } catch (_) {}
+        try { at = await threadsData.get(k, "data.approvedAt"); } catch (_) {}
+        try { days = Number(await threadsData.get(k, "data.approvedDays")) || 0; } catch (_) {}
+        if (expiresAt && Date.now() >= expiresAt) {
+          try {
+            if (typeof threadsData.set === "function") await threadsData.set(k, false, "data.approved");
+          } catch (_) {}
+          return false;
+        }
+        approveFromExternal(k, { by: "db", at, days, expiresAt });
+        return true;
+      }
     }
   } catch (_) {}
+
+  // Legacy global list has no per-group expiry; it is a permanent approval.
   try {
     if (globalData && typeof globalData.get === "function") {
       const old = await globalData.get("approved", "data", {});
       const ids = (old && old.approved) || [];
-      if (ids.map(String).includes(k)) return true;
+      if (ids.map(String).includes(k)) {
+        approveFromExternal(k, { by: "migrate", days: 0, expiresAt: null });
+        return true;
+      }
     }
   } catch (_) {}
+
+  if (configApprovedIds().includes(k)) {
+    approveFromExternal(k, { by: "config", days: 0, expiresAt: null });
+    return true;
+  }
   return false;
 }
 
@@ -342,10 +423,9 @@ async function approvedByAnySource(tid, threadsData, globalData) {
 async function allowWithData(event, api, threadsData, globalData) {
   const tid = String(event?.threadID || "");
   if (!tid) return true;
-  if (await approvedByAnySource(tid, threadsData, globalData)) {
-    if (!isApproved(tid)) approve(tid, "migrate");
-    return true;
-  }
+  // approvedByAnySource already mirrors external approvals with their real
+  // expiry; never call approve() here or a 7-day pass becomes permanent.
+  if (await approvedByAnySource(tid, threadsData, globalData)) return true;
   return allow(event, api);
 }
 

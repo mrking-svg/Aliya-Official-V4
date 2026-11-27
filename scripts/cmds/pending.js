@@ -272,8 +272,12 @@ module.exports = {
         await tryCall(() => approval && approval.remove && approval.remove(targetThreadID));
         await updateApprovalLists(targetThreadID, false);
 
-        if (threadsData && typeof threadsData.set === "function")
+        if (threadsData && typeof threadsData.set === "function") {
           await tryCall(() => threadsData.set(targetThreadID, false, "data.approved"));
+          await tryCall(() => threadsData.set(targetThreadID, null, "data.approvedExpiresAt"));
+          await tryCall(() => threadsData.set(targetThreadID, null, "data.approvedAt"));
+          await tryCall(() => threadsData.set(targetThreadID, 0, "data.approvedDays"));
+        }
 
         count++;
       }
@@ -298,10 +302,25 @@ module.exports = {
       await tryCall(() => threadsData && threadsData.create && threadsData.create(targetThread));
       await tryCall(() => threadsData && threadsData.refreshInfo && threadsData.refreshInfo(targetThread));
       await tryCall(() => approval && approval.approveById && approval.approveById(api, targetThread, event.senderID, days));
-      await updateApprovalLists(targetThread, true);
+      // Only permanent approvals go into the config whitelist. A timed pass
+      // must never be re-migrated as permanent after a restart.
+      await updateApprovalLists(targetThread, days <= 0);
 
-      if (threadsData && typeof threadsData.set === "function")
+      if (threadsData && typeof threadsData.set === "function") {
         await tryCall(() => threadsData.set(targetThread, true, "data.approved"));
+        if (days > 0) {
+          const entry = approval && typeof approval.approvalInfo === "function"
+            ? approval.approvalInfo(targetThread) : null;
+          await tryCall(() => threadsData.set(targetThread, entry ? entry.expiresAt : null, "data.approvedExpiresAt"));
+          await tryCall(() => threadsData.set(targetThread, entry ? entry.at : null, "data.approvedAt"));
+          await tryCall(() => threadsData.set(targetThread, days, "data.approvedDays"));
+        }
+        else {
+          await tryCall(() => threadsData.set(targetThread, null, "data.approvedExpiresAt"));
+          await tryCall(() => threadsData.set(targetThread, null, "data.approvedAt"));
+          await tryCall(() => threadsData.set(targetThread, 0, "data.approvedDays"));
+        }
+      }
 
       if (botID)
         await tryCall(() => api.changeNickname && api.changeNickname((global.GoatBot.config.nickNameBot || "Aliya Official V4"), targetThread, botID));
