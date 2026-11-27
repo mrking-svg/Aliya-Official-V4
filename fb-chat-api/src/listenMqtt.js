@@ -161,9 +161,9 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       try { globalCallback({ type: "stop_listen", error: "Connection refused: Server unavailable" }, null); }
       catch (e) { utils.error("listenMqtt callback", e); }
     }
-    utils.warn("Error detected. Will relogin automatically...");
-    try { if (api.ws3 && typeof api.ws3.relogin === "function") api.ws3.relogin(); }
-    catch (e) { utils.error("listenMqtt relogin", e); }
+    // Never call ws3.relogin() here. A Facebook socket drop is not a failed
+    // login; a full relogin reuses the same cookies, gets rejected and can
+    // destroy the session. The bot's own backoff handles the reconnect.
     return;
   });
 

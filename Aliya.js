@@ -17,6 +17,10 @@ const send = msg => { if (process.send) { try { process.send(msg); } catch (e) {
 
 // A single broken command must NOT take the whole bot down (old code switched to Wolf.js on ANY error).
 const crashTimes = [];
+process.on("aliyaFacebookBlocked", where => {
+	console.error("[ALIYA] Facebook blocked login during " + where + ". Stopping all retries to protect the account.");
+	process.exit(3);
+});
 process.on("unhandledRejection", error => {
 	const text = String((error && (error.message || error.error)) || error || "");
 	console.error("[ALIYA_UNHANDLED_REJECTION]", text);

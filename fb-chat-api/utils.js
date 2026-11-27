@@ -1030,7 +1030,13 @@ function parseAndCheckLogin(ctx, http, retryCount) {
                     }
                 }
             }
-            if (res.error === 1357001) throw new Error('Facebook blocked login');
+            if (res.error === 1357001) {
+                // A handled send error used to leave the process "online" but
+                // unable to send anything. Tell the supervisor to stop before
+                // Facebook extends the restriction.
+                try { process.emit('aliyaFacebookBlocked', 'api call'); } catch (e) { /* no listener */ }
+                throw new Error('Facebook blocked login');
+            }
             return res;
         }
         return _try(any);

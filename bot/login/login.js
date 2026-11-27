@@ -1104,8 +1104,8 @@ async function startBot(loginWithEmail) {
 				// A CONNACK "Server unavailable" / "Connection refused" is
 				// Facebook refusing the session. Retrying it every few seconds
 				// turns a temporary refusal into a real account block.
-				const base = hard ? 900000 : 60000; // 15 min / 1 min
-				const cap = hard ? 7200000 : 900000; // 2 h / 15 min
+				const base = hard ? 120000 : 60000; // 2 min / 1 min
+				const cap = hard ? 900000 : 900000; // 15 min max, never hammer
 				const delay = Math.min(base * Math.pow(2, listenerRetryAttempt), cap);
 				listenerRetryAttempt++;
 				log.warn("LISTEN_MQTT", `Listener retry #${listenerRetryAttempt} in ${Math.round(delay / 1000)}s (${reason}).`);
