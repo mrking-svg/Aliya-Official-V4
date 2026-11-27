@@ -31,7 +31,7 @@ Use:
 /fbcover name - title - address - email - phone - color
 
 Example:
-/fbcover Saim x69x - Bot Creator - Dhaka,Bangladesh - hrxnobita3@gmail.com - 01729xxxxxx - green`, effect: "love" },
+/fbcover Saim x69x - Bot Creator - Dhaka,Bangladesh - hrxnobita3@gmail.com - 01729xxxxxx - green` },
           event.threadID,
           event.messageID
         );
@@ -41,7 +41,7 @@ Example:
 
       const avatarURL = await usersData.getAvatarUrl(event.senderID);
 
-      const notice = await api.sendMessage({ body: "⏳ Generating your FB cover…", effect: "love" }, event.threadID, event.messageID);
+      const notice = await api.sendMessage({ body: "⏳ Generating your FB cover…" }, event.threadID, event.messageID);
 
       const githubRaw = "https://raw.githubusercontent.com/Saim-x69x/sakura/main/ApiUrl.json";
       const rawRes = await axios.get(githubRaw);
@@ -87,7 +87,7 @@ Example:
 
     } catch (err) {
       console.error("FB Cover Error:", err);
-      api.sendMessage({ body: "❌ | Oops! Something went wrong. Try again later.", effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ | Oops! Something went wrong. Try again later." }, event.threadID, event.messageID);
     }
   }
 };

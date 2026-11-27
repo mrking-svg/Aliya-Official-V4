@@ -23,18 +23,18 @@ module.exports = {
 
   onStart: async function ({ message, args }) {
     if (args.length < 2) {
-      return message.reply({ body: "repitor <number> <text/emoji>", effect: "love" });
+      return message.reply({ body: "repitor <number> <text/emoji>" });
     }
 
     const count = parseInt(args[0]);
     const text = args.slice(1).join(" ");
 
     if (isNaN(count) || count < 1) {
-      return message.reply({ body: "Invalid number", effect: "love" });
+      return message.reply({ body: "Invalid number" });
     }
 
     if (count > 500) {
-      return message.reply({ body: "Max 500", effect: "love" });
+      return message.reply({ body: "Max 500" });
     }
 
     return message.reply(text.repeat(count));

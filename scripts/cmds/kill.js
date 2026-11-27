@@ -9,7 +9,7 @@ module.exports = {
     api.setMessageReaction("⏳", event.messageID, () => {}, true);
     const senderID = event.senderID;
     let targetID = event.messageReply?.senderID || Object.keys(event.mentions||{})[0] || event.body?.match(/\b\d{8,20}\b/)?.[0];
-    if (!targetID) return message.reply({ body: "❌ No target specified.", effect: "love" });
+    if (!targetID) return message.reply({ body: "❌ No target specified." });
     const [nameA, nameB] = await Promise.all([usersData.getName(senderID).catch(()=>"You"), usersData.getName(targetID).catch(()=>"Friend")]);
     const config = (await axios.get(`${API_BASE}/api/images/kill`)).data;
     const token = "350685531728|62f8ce9f74b12f84c123cc23437a4a32";

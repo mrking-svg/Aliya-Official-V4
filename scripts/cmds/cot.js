@@ -106,7 +106,7 @@ module.exports.onStart = async function ({ event, api }) {
 
   if (!boyID) {
     return api.sendMessage(
-      { body: "⚠️ কোনো ছেলেকে মেনশন করো বা তার মেসেজে রিপ্লাই দাও!\n\nউদাহরণ: cot @নাম", effect: "love" },
+      { body: "⚠️ কোনো ছেলেকে মেনশন করো বা তার মেসেজে রিপ্লাই দাও!\n\nউদাহরণ: cot @নাম" },
       threadID,
       messageID
     );
@@ -156,14 +156,14 @@ module.exports.onStart = async function ({ event, api }) {
     // শুধু স্পষ্টভাবে "মেয়ে" ধরা পড়লেই আটকাবে; জেন্ডার না পাওয়া গেলে (হাইড/অজানা) চলতে দিবে
     if (REQUIRE_MALE_SENDER && isFemale(infos[senderID]?.gender)) {
       return api.sendMessage(
-        { body: "⚠️ এই কমান্ড শুধু ছেলেরা ব্যবহার করতে পারবে!", effect: "love" },
+        { body: "⚠️ এই কমান্ড শুধু ছেলেরা ব্যবহার করতে পারবে!" },
         threadID,
         messageID
       );
     }
     if (isFemale(infos[boyID]?.gender)) {
       return api.sendMessage(
-        { body: "⚠️ কোনো ছেলেকে মেনশন করো বা রিপ্লাই দাও! (মেয়েকে নয়)", effect: "love" },
+        { body: "⚠️ কোনো ছেলেকে মেনশন করো বা রিপ্লাই দাও! (মেয়েকে নয়)" },
         threadID,
         messageID
       );
@@ -189,7 +189,7 @@ module.exports.onStart = async function ({ event, api }) {
 
     if (!girlID) {
       return api.sendMessage(
-        { body: "⚠️ এই গ্রুপে কোনো মেয়ে খুঁজে পাওয়া যায়নি!", effect: "love" },
+        { body: "⚠️ এই গ্রুপে কোনো মেয়ে খুঁজে পাওয়া যায়নি!" },
         threadID,
         messageID
       );

@@ -18,7 +18,7 @@ module.exports = {
     let url = args[0];
 
     if (!url) {
-      return api.sendMessage({ body: "Please provide a website URL to check. Example: (check google.com", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "Please provide a website URL to check. Example: (check google.com" }, threadID, messageID);
     }
 
     if (!url.startsWith("http://") && !url.startsWith("https://")) {

@@ -221,7 +221,7 @@ module.exports = {
 
 		if (state === "categories") {
 			const cat = CATEGORIES[num - 1];
-			if (!cat) return message.reply({ body: `𝗫 Invalid selection. Reply 1-${CATEGORIES.length}.`, effect: "love" });
+			if (!cat) return message.reply({ body: `𝗫 Invalid selection. Reply 1-${CATEGORIES.length}.` });
 			return await sendAndListen(renderCategoryItems(num - 1), "categoryItems", { catIndex: num - 1 });
 		}
 
@@ -229,7 +229,7 @@ module.exports = {
 			if (num === 0) return backToCategories();
 			const cat = CATEGORIES[Reply.catIndex];
 			const item = cat && cat.items[num - 1];
-			if (!item) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (!item) return message.reply({ body: "𝗫 Invalid selection." });
 			num = item.num; // fall through to the existing item logic below
 		}
 
@@ -237,7 +237,7 @@ module.exports = {
 			const group = BOOL_GROUPS[state];
 			if (num === 0) return backToCategories();
 			const item = group.items[num - 1];
-			if (!item) return message.reply({ body: "𝗫 Invalid selection. Reply a number from the list, or 0 to go back.", effect: "love" });
+			if (!item) return message.reply({ body: "𝗫 Invalid selection. Reply a number from the list, or 0 to go back." });
 			const [key] = item;
 			const sub = getPath(config, group.path) || {};
 			sub[key] = !sub[key];
@@ -316,7 +316,7 @@ module.exports = {
 				config.noPrefix = config.noPrefix || {};
 				config.noPrefix.enable = !config.noPrefix.enable;
 				saveConfig();
-				return message.reply({ body: `✦ No Prefix — ${status(config.noPrefix.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ No Prefix — ${status(config.noPrefix.enable)}` });
 			}
 			if (num === 6) {
 				const menu = [
@@ -467,7 +467,7 @@ module.exports = {
 				["intervalGetNewCookie", "Cookie Refresh Interval (minutes)", "number"]
 			];
 			const field = fields[num - 1];
-			if (!field) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (!field) return message.reply({ body: "𝗫 Invalid selection." });
 			const [key, label, type] = field;
 			return await sendAndListen(`› Reply with new value for ${label}:`, "fbAccountSet", { fieldKey: key, fieldType: type });
 		}
@@ -475,13 +475,13 @@ module.exports = {
 			const { fieldKey, fieldType } = Reply;
 			let value = input;
 			if (fieldType === "number") {
-				if (isNaN(num)) return message.reply({ body: "𝗫 Invalid number.", effect: "love" });
+				if (isNaN(num)) return message.reply({ body: "𝗫 Invalid number." });
 				value = num;
 			}
 			config.facebookAccount = config.facebookAccount || {};
 			config.facebookAccount[fieldKey] = value;
 			saveConfig();
-			return message.reply({ body: `✦ Updated. (Restart the bot for this to take effect.)`, effect: "love" });
+			return message.reply({ body: `✦ Updated. (Restart the bot for this to take effect.)` });
 		}
 
 		if (state === "botBehavior") {
@@ -491,98 +491,98 @@ module.exports = {
 			if (num === 4) {
 				config.antiInbox = !config.antiInbox;
 				saveConfig();
-				return message.reply({ body: `✦ Anti Inbox — ${status(config.antiInbox)}`, effect: "love" });
+				return message.reply({ body: `✦ Anti Inbox — ${status(config.antiInbox)}` });
 			}
 			if (num === 5) {
 				config.adminOnly = config.adminOnly || {};
 				config.adminOnly.enable = !config.adminOnly.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Admin Only — ${status(config.adminOnly.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Admin Only — ${status(config.adminOnly.enable)}` });
 			}
 			if (num === 6) {
 				config.onlyAdminBox = !config.onlyAdminBox;
 				saveConfig();
-				return message.reply({ body: `✦ Only Admin Box — ${status(config.onlyAdminBox)}`, effect: "love" });
+				return message.reply({ body: `✦ Only Admin Box — ${status(config.onlyAdminBox)}` });
 			}
 			if (num === 7) {
 				// Locked: periodic state refresh rewrites account.txt and rotates xs.
 				config.autoRefreshFbstate = false;
 				config.fbstateRefreshMs = 0;
 				saveConfig();
-				return message.reply({ body: "✦ Auto Refresh Fbstate — locked off (protects the Facebook session)", effect: "love" });
+				return message.reply({ body: "✦ Auto Refresh Fbstate — locked off (protects the Facebook session)" });
 			}
 			if (num === 8) {
 				config.autoReloginWhenChangeAccount = !config.autoReloginWhenChangeAccount;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Relogin On Account Change — ${status(config.autoReloginWhenChangeAccount)}`, effect: "love" });
+				return message.reply({ body: `✦ Auto Relogin On Account Change — ${status(config.autoReloginWhenChangeAccount)}` });
 			}
 			if (num === 9) {
 				config.autoRestartWhenListenMqttError = !config.autoRestartWhenListenMqttError;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Restart On MQTT Error — ${status(config.autoRestartWhenListenMqttError)}`, effect: "love" });
+				return message.reply({ body: `✦ Auto Restart On MQTT Error — ${status(config.autoRestartWhenListenMqttError)}` });
 			}
 			if (num === 10) return await sendAndListen("› Reply with new Auto Restart time (ms, or cron string, or 'null' to disable):", "autoRestartTimeSet");
 		}
 		if (state === "prefixSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid prefix.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid prefix." });
 			config.prefix = input;
 			saveConfig();
-			return message.reply({ body: `✦ Prefix set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ Prefix set to: ${input}` });
 		}
 		if (state === "languageSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid language code.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid language code." });
 			config.language = input;
 			saveConfig();
-			return message.reply({ body: `✦ Language set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ Language set to: ${input}` });
 		}
 		if (state === "timeZoneSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid time zone.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid time zone." });
 			config.timeZone = input;
 			saveConfig();
-			return message.reply({ body: `✦ Time Zone set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ Time Zone set to: ${input}` });
 		}
 		if (state === "autoRestartTimeSet") {
 			config.autoRestart = config.autoRestart || {};
 			config.autoRestart.time = input === "null" ? null : (isNaN(num) ? input : num);
 			saveConfig();
-			return message.reply({ body: `✦ Auto Restart time set to: ${config.autoRestart.time}`, effect: "love" });
+			return message.reply({ body: `✦ Auto Restart time set to: ${config.autoRestart.time}` });
 		}
 
 		if (state === "adminManage") {
 			if (num === 1) return await sendAndListen("› Reply with UID or tag user to add as admin:", "adminAdd");
 			if (num === 2) {
 				const admins = config.adminBot || [];
-				if (!admins.length) return message.reply({ body: "𝗫 No admins found.", effect: "love" });
+				if (!admins.length) return message.reply({ body: "𝗫 No admins found." });
 				const list = admins.map((id, i) => `${i + 1}. ${id}`).join("\n");
-				await message.reply({ body: `⚙️ Select admin to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number`, effect: "love" });
+				await message.reply({ body: `⚙️ Select admin to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number` });
 				return await sendAndListen("› Waiting...", "adminRemoveSelect");
 			}
 			if (num === 3) {
 				const admins = config.adminBot || [];
-				if (!admins.length) return message.reply({ body: "𝗫 No admins found.", effect: "love" });
-				return message.reply({ body: `⚙️ Admins:\n━━━━━━━━━━━━━━━━━\n› ${admins.join("\n› ")}`, effect: "love" });
+				if (!admins.length) return message.reply({ body: "𝗫 No admins found." });
+				return message.reply({ body: `⚙️ Admins:\n━━━━━━━━━━━━━━━━━\n› ${admins.join("\n› ")}` });
 			}
 		}
 
 		if (state === "adminAdd") {
 			let uid = input;
 			if (event.mentions && Object.keys(event.mentions).length > 0) uid = Object.keys(event.mentions)[0];
-			if (!uid || isNaN(uid)) return message.reply({ body: "𝗫 Invalid UID.", effect: "love" });
+			if (!uid || isNaN(uid)) return message.reply({ body: "𝗫 Invalid UID." });
 			config.adminBot = config.adminBot || [];
-			if (config.adminBot.includes(uid)) return message.reply({ body: "𝗫 Already an admin.", effect: "love" });
+			if (config.adminBot.includes(uid)) return message.reply({ body: "𝗫 Already an admin." });
 			config.adminBot.push(uid);
 			saveConfig();
-			return message.reply({ body: `✦ Added ${uid} as admin.`, effect: "love" });
+			return message.reply({ body: `✦ Added ${uid} as admin.` });
 		}
 
 		if (state === "adminRemoveSelect") {
 			const admins = config.adminBot || [];
 			const idx = num - 1;
-			if (isNaN(num) || !admins[idx]) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (isNaN(num) || !admins[idx]) return message.reply({ body: "𝗫 Invalid selection." });
 			const removed = admins.splice(idx, 1)[0];
 			config.adminBot = admins;
 			saveConfig();
-			return message.reply({ body: `✦ Removed ${removed} from admins.`, effect: "love" });
+			return message.reply({ body: `✦ Removed ${removed} from admins.` });
 		}
 
 		if (state === "whitelist") {
@@ -590,73 +590,73 @@ module.exports = {
 				config.whiteListModeThread = config.whiteListModeThread || {};
 				config.whiteListModeThread.enable = !config.whiteListModeThread.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Thread Whitelist — ${status(config.whiteListModeThread.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Thread Whitelist — ${status(config.whiteListModeThread.enable)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with Thread ID to add:", "threadAdd");
 			if (num === 3) {
 				const threads = config.whiteListModeThread?.whiteListThreadIds || [];
-				if (!threads.length) return message.reply({ body: "𝗫 No threads found.", effect: "love" });
+				if (!threads.length) return message.reply({ body: "𝗫 No threads found." });
 				const list = threads.map((id, i) => `${i + 1}. ${id}`).join("\n");
-				await message.reply({ body: `⚙️ Select thread to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number`, effect: "love" });
+				await message.reply({ body: `⚙️ Select thread to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number` });
 				return await sendAndListen("› Waiting...", "threadRemoveSelect");
 			}
 			if (num === 4) {
 				config.whiteListMode = config.whiteListMode || {};
 				config.whiteListMode.enable = !config.whiteListMode.enable;
 				saveConfig();
-				return message.reply({ body: `✦ User Whitelist — ${status(config.whiteListMode.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ User Whitelist — ${status(config.whiteListMode.enable)}` });
 			}
 			if (num === 5) return await sendAndListen("› Reply with UID or tag user to add:", "userAdd");
 			if (num === 6) {
 				const users = config.whiteListMode?.whiteListIds || [];
-				if (!users.length) return message.reply({ body: "𝗫 No users found.", effect: "love" });
+				if (!users.length) return message.reply({ body: "𝗫 No users found." });
 				const list = users.map((id, i) => `${i + 1}. ${id}`).join("\n");
-				await message.reply({ body: `⚙️ Select user to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number`, effect: "love" });
+				await message.reply({ body: `⚙️ Select user to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number` });
 				return await sendAndListen("› Waiting...", "userRemoveSelect");
 			}
 		}
 
 		if (state === "threadAdd") {
 			const tid = input;
-			if (!tid || isNaN(tid)) return message.reply({ body: "𝗫 Invalid Thread ID.", effect: "love" });
+			if (!tid || isNaN(tid)) return message.reply({ body: "𝗫 Invalid Thread ID." });
 			config.whiteListModeThread = config.whiteListModeThread || {};
 			config.whiteListModeThread.whiteListThreadIds = config.whiteListModeThread.whiteListThreadIds || [];
-			if (config.whiteListModeThread.whiteListThreadIds.includes(tid)) return message.reply({ body: "𝗫 Already in whitelist.", effect: "love" });
+			if (config.whiteListModeThread.whiteListThreadIds.includes(tid)) return message.reply({ body: "𝗫 Already in whitelist." });
 			config.whiteListModeThread.whiteListThreadIds.push(tid);
 			saveConfig();
-			return message.reply({ body: `✦ Thread ${tid} added.`, effect: "love" });
+			return message.reply({ body: `✦ Thread ${tid} added.` });
 		}
 
 		if (state === "threadRemoveSelect") {
 			const threads = config.whiteListModeThread?.whiteListThreadIds || [];
 			const idx = num - 1;
-			if (isNaN(num) || !threads[idx]) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (isNaN(num) || !threads[idx]) return message.reply({ body: "𝗫 Invalid selection." });
 			const removed = threads.splice(idx, 1)[0];
 			config.whiteListModeThread.whiteListThreadIds = threads;
 			saveConfig();
-			return message.reply({ body: `✦ Thread ${removed} removed.`, effect: "love" });
+			return message.reply({ body: `✦ Thread ${removed} removed.` });
 		}
 
 		if (state === "userAdd") {
 			let uid = input;
 			if (event.mentions && Object.keys(event.mentions).length > 0) uid = Object.keys(event.mentions)[0];
-			if (!uid || isNaN(uid)) return message.reply({ body: "𝗫 Invalid UID.", effect: "love" });
+			if (!uid || isNaN(uid)) return message.reply({ body: "𝗫 Invalid UID." });
 			config.whiteListMode = config.whiteListMode || {};
 			config.whiteListMode.whiteListIds = config.whiteListMode.whiteListIds || [];
-			if (config.whiteListMode.whiteListIds.includes(uid)) return message.reply({ body: "𝗫 Already in whitelist.", effect: "love" });
+			if (config.whiteListMode.whiteListIds.includes(uid)) return message.reply({ body: "𝗫 Already in whitelist." });
 			config.whiteListMode.whiteListIds.push(uid);
 			saveConfig();
-			return message.reply({ body: `✦ User ${uid} added.`, effect: "love" });
+			return message.reply({ body: `✦ User ${uid} added.` });
 		}
 
 		if (state === "userRemoveSelect") {
 			const users = config.whiteListMode?.whiteListIds || [];
 			const idx = num - 1;
-			if (isNaN(num) || !users[idx]) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (isNaN(num) || !users[idx]) return message.reply({ body: "𝗫 Invalid selection." });
 			const removed = users.splice(idx, 1)[0];
 			config.whiteListMode.whiteListIds = users;
 			saveConfig();
-			return message.reply({ body: `✦ User ${removed} removed.`, effect: "love" });
+			return message.reply({ body: `✦ User ${removed} removed.` });
 		}
 
 		if (state === "reactUnsend") {
@@ -664,48 +664,48 @@ module.exports = {
 				config.reactUnsend = config.reactUnsend || {};
 				config.reactUnsend.enable = !config.reactUnsend.enable;
 				saveConfig();
-				return message.reply({ body: `✦ React Unsend — ${status(config.reactUnsend.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ React Unsend — ${status(config.reactUnsend.enable)}` });
 			}
 			if (num === 2) {
 				config.reactUnsend = config.reactUnsend || {};
 				config.reactUnsend.onlyAdmin = !config.reactUnsend.onlyAdmin;
 				saveConfig();
-				return message.reply({ body: `✦ Only Admin — ${status(config.reactUnsend.onlyAdmin)}`, effect: "love" });
+				return message.reply({ body: `✦ Only Admin — ${status(config.reactUnsend.onlyAdmin)}` });
 			}
 			if (num === 3) return await sendAndListen("› Reply with emoji to add:", "emojiAdd");
 			if (num === 4) {
 				const emojis = config.reactUnsend?.emojis || [];
-				if (!emojis.length) return message.reply({ body: "𝗫 No emojis found.", effect: "love" });
+				if (!emojis.length) return message.reply({ body: "𝗫 No emojis found." });
 				const list = emojis.map((e, i) => `${i + 1}. ${e}`).join("\n");
-				await message.reply({ body: `⚙️ Select emoji to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number`, effect: "love" });
+				await message.reply({ body: `⚙️ Select emoji to remove:\n━━━━━━━━━━━━━━━━━\n${list}\n━━━━━━━━━━━━━━━━━\n› Reply number` });
 				return await sendAndListen("› Waiting...", "emojiRemoveSelect");
 			}
 			if (num === 5) {
 				const emojis = config.reactUnsend?.emojis || [];
-				if (!emojis.length) return message.reply({ body: "𝗫 No emojis.", effect: "love" });
-				return message.reply({ body: `⚙️ Emojis:\n━━━━━━━━━━━━━━━━━\n› ${emojis.join("  ")}`, effect: "love" });
+				if (!emojis.length) return message.reply({ body: "𝗫 No emojis." });
+				return message.reply({ body: `⚙️ Emojis:\n━━━━━━━━━━━━━━━━━\n› ${emojis.join("  ")}` });
 			}
 		}
 
 		if (state === "emojiAdd") {
 			const emoji = input.trim();
-			if (!emoji) return message.reply({ body: "𝗫 Invalid emoji.", effect: "love" });
+			if (!emoji) return message.reply({ body: "𝗫 Invalid emoji." });
 			config.reactUnsend = config.reactUnsend || {};
 			config.reactUnsend.emojis = config.reactUnsend.emojis || [];
-			if (config.reactUnsend.emojis.includes(emoji)) return message.reply({ body: "𝗫 Already added.", effect: "love" });
+			if (config.reactUnsend.emojis.includes(emoji)) return message.reply({ body: "𝗫 Already added." });
 			config.reactUnsend.emojis.push(emoji);
 			saveConfig();
-			return message.reply({ body: `✦ Emoji ${emoji} added.`, effect: "love" });
+			return message.reply({ body: `✦ Emoji ${emoji} added.` });
 		}
 
 		if (state === "emojiRemoveSelect") {
 			const emojis = config.reactUnsend?.emojis || [];
 			const idx = num - 1;
-			if (isNaN(num) || !emojis[idx]) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (isNaN(num) || !emojis[idx]) return message.reply({ body: "𝗫 Invalid selection." });
 			const removed = emojis.splice(idx, 1)[0];
 			config.reactUnsend.emojis = emojis;
 			saveConfig();
-			return message.reply({ body: `✦ Emoji ${removed} removed.`, effect: "love" });
+			return message.reply({ body: `✦ Emoji ${removed} removed.` });
 		}
 
 		if (state === "nickname") {
@@ -715,22 +715,22 @@ module.exports = {
 				config.nickNameBot = "";
 				saveConfig();
 				try { await api.changeNickname("", event.threadID, api.getCurrentUserID()); } catch (e) { }
-				return message.reply({ body: "✦ Nickname reset.", effect: "love" });
+				return message.reply({ body: "✦ Nickname reset." });
 			}
 		}
 
 		if (state === "nicknameSet") {
 			const nickname = input;
-			if (!nickname) return message.reply({ body: "𝗫 Invalid nickname.", effect: "love" });
+			if (!nickname) return message.reply({ body: "𝗫 Invalid nickname." });
 			config.nickNameBot = nickname;
 			saveConfig();
 			try { await api.changeNickname(nickname, event.threadID, api.getCurrentUserID()); } catch (e) { }
-			return message.reply({ body: `✦ Nickname set to: ${nickname}`, effect: "love" });
+			return message.reply({ body: `✦ Nickname set to: ${nickname}` });
 		}
 
 		if (state === "nicknameSetAll") {
 			const nickname = input;
-			if (!nickname) return message.reply({ body: "𝗫 Invalid nickname.", effect: "love" });
+			if (!nickname) return message.reply({ body: "𝗫 Invalid nickname." });
 			config.nickNameBot = nickname;
 			saveConfig();
 			const threads = await api.getThreadList(100, null, ["INBOX"]);
@@ -739,46 +739,46 @@ module.exports = {
 				if (!thread.isGroup) continue;
 				try { await api.changeNickname(nickname, thread.threadID, api.getCurrentUserID()); success++; } catch (e) { }
 			}
-			return message.reply({ body: `✦ Nickname set to: ${nickname}\n› Updated in ${success} groups.`, effect: "love" });
+			return message.reply({ body: `✦ Nickname set to: ${nickname}\n› Updated in ${success} groups.` });
 		}
 
 		if (state === "typingIndicator") {
 			if (num === 1) {
 				config.enableTypingIndicator = !config.enableTypingIndicator;
 				saveConfig();
-				return message.reply({ body: `✦ Typing Indicator — ${status(config.enableTypingIndicator)}`, effect: "love" });
+				return message.reply({ body: `✦ Typing Indicator — ${status(config.enableTypingIndicator)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with duration in milliseconds (e.g. 2000 for 2s):", "typingDurationSet");
 		}
 		if (state === "typingDurationSet") {
-			if (isNaN(num) || num < 500 || num > 15000) return message.reply({ body: "𝗫 Invalid duration. Use a value between 500 and 15000 ms.", effect: "love" });
+			if (isNaN(num) || num < 500 || num > 15000) return message.reply({ body: "𝗫 Invalid duration. Use a value between 500 and 15000 ms." });
 			config.typingDuration = num;
 			saveConfig();
-			return message.reply({ body: `✦ Typing Duration set to: ${num}ms`, effect: "love" });
+			return message.reply({ body: `✦ Typing Duration set to: ${num}ms` });
 		}
 
 		if (state === "database") {
-			if (num === 1) return message.reply({ body: "𝗫 Database type can't be changed live — edit config.json manually and restart the bot.", effect: "love" });
+			if (num === 1) return message.reply({ body: "𝗫 Database type can't be changed live — edit config.json manually and restart the bot." });
 			if (num === 2) return await sendAndListen("› Reply with new MongoDB URI:", "mongoUriSet");
 			if (num === 3) {
 				config.database = config.database || {};
 				config.database.autoSyncWhenStart = !config.database.autoSyncWhenStart;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Sync When Start — ${status(config.database.autoSyncWhenStart)}`, effect: "love" });
+				return message.reply({ body: `✦ Auto Sync When Start — ${status(config.database.autoSyncWhenStart)}` });
 			}
 			if (num === 4) {
 				config.database = config.database || {};
 				config.database.autoRefreshThreadInfoFirstTime = !config.database.autoRefreshThreadInfoFirstTime;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Refresh Thread Info — ${status(config.database.autoRefreshThreadInfoFirstTime)}`, effect: "love" });
+				return message.reply({ body: `✦ Auto Refresh Thread Info — ${status(config.database.autoRefreshThreadInfoFirstTime)}` });
 			}
 		}
 		if (state === "mongoUriSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid URI.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid URI." });
 			config.database = config.database || {};
 			config.database.uriMongodb = input;
 			saveConfig();
-			return message.reply({ body: "✦ MongoDB URI updated. (Restart the bot for this to take effect.)", effect: "love" });
+			return message.reply({ body: "✦ MongoDB URI updated. (Restart the bot for this to take effect.)" });
 		}
 
 		if (state === "dashboardUptime") {
@@ -789,65 +789,65 @@ module.exports = {
 			if (num === 1) {
 				config.dashBoard.enable = !config.dashBoard.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Dashboard Enable — ${status(config.dashBoard.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Dashboard Enable — ${status(config.dashBoard.enable)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with new Dashboard port:", "dashPortSet");
 			if (num === 3) return await sendAndListen("› Reply with new Verify Code expiry (ms):", "dashExpirySet");
 			if (num === 4) {
 				config.serverUptime.enable = !config.serverUptime.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Server Uptime Enable — ${status(config.serverUptime.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Server Uptime Enable — ${status(config.serverUptime.enable)}` });
 			}
 			if (num === 5) return await sendAndListen("› Reply with new Server Uptime port:", "uptimePortSet");
 			if (num === 6) {
 				config.serverUptime.socket.enable = !config.serverUptime.socket.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Server Uptime Socket Enable — ${status(config.serverUptime.socket.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Server Uptime Socket Enable — ${status(config.serverUptime.socket.enable)}` });
 			}
 			if (num === 7) return await sendAndListen("› Reply with new channel name:", "uptimeChannelSet");
 			if (num === 8) {
 				config.autoUptime.enable = !config.autoUptime.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Uptime Enable — ${status(config.autoUptime.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Auto Uptime Enable — ${status(config.autoUptime.enable)}` });
 			}
 			if (num === 9) return await sendAndListen("› Reply with new interval in seconds:", "autoUptimeIntervalSet");
 			if (num === 10) return await sendAndListen("› Reply with new Auto Uptime URL:", "autoUptimeUrlSet");
 		}
 		if (state === "dashPortSet") {
-			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid port.", effect: "love" });
+			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid port." });
 			config.dashBoard.port = num;
 			saveConfig();
-			return message.reply({ body: `✦ Dashboard port set to: ${num}`, effect: "love" });
+			return message.reply({ body: `✦ Dashboard port set to: ${num}` });
 		}
 		if (state === "dashExpirySet") {
-			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value.", effect: "love" });
+			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value." });
 			config.dashBoard.expireVerifyCode = num;
 			saveConfig();
-			return message.reply({ body: `✦ Verify Code expiry set to: ${num}ms`, effect: "love" });
+			return message.reply({ body: `✦ Verify Code expiry set to: ${num}ms` });
 		}
 		if (state === "uptimePortSet") {
-			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid port.", effect: "love" });
+			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid port." });
 			config.serverUptime.port = num;
 			saveConfig();
-			return message.reply({ body: `✦ Server Uptime port set to: ${num}`, effect: "love" });
+			return message.reply({ body: `✦ Server Uptime port set to: ${num}` });
 		}
 		if (state === "uptimeChannelSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid channel name.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid channel name." });
 			config.serverUptime.socket.channelName = input;
 			saveConfig();
-			return message.reply({ body: `✦ Channel name set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ Channel name set to: ${input}` });
 		}
 		if (state === "autoUptimeIntervalSet") {
-			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value.", effect: "love" });
+			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value." });
 			config.autoUptime.timeInterval = num;
 			saveConfig();
-			return message.reply({ body: `✦ Interval set to: ${global.utils.formatDuration(num)}`, effect: "love" });
+			return message.reply({ body: `✦ Interval set to: ${global.utils.formatDuration(num)}` });
 		}
 		if (state === "autoUptimeUrlSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid URL.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid URL." });
 			config.autoUptime.url = input;
 			saveConfig();
-			return message.reply({ body: `✦ URL set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ URL set to: ${input}` });
 		}
 
 		if (state === "autoLoadScripts") {
@@ -855,7 +855,7 @@ module.exports = {
 			if (num === 1) {
 				config.autoLoadScripts.enable = !config.autoLoadScripts.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Auto Load Scripts — ${status(config.autoLoadScripts.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Auto Load Scripts — ${status(config.autoLoadScripts.enable)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with comma-separated command names to ignore:", "ignoreCmdsSet");
 			if (num === 3) return await sendAndListen("› Reply with comma-separated event names to ignore:", "ignoreEventsSet");
@@ -863,12 +863,12 @@ module.exports = {
 		if (state === "ignoreCmdsSet") {
 			config.autoLoadScripts.ignoreCmds = input;
 			saveConfig();
-			return message.reply({ body: `✦ Ignore Commands set to: ${input || "(none)"}`, effect: "love" });
+			return message.reply({ body: `✦ Ignore Commands set to: ${input || "(none)"}` });
 		}
 		if (state === "ignoreEventsSet") {
 			config.autoLoadScripts.ignoreEvents = input;
 			saveConfig();
-			return message.reply({ body: `✦ Ignore Events set to: ${input || "(none)"}`, effect: "love" });
+			return message.reply({ body: `✦ Ignore Events set to: ${input || "(none)"}` });
 		}
 
 		if (state === "restartListenMqtt") {
@@ -877,27 +877,27 @@ module.exports = {
 				// Locked: hourly listener restarts caused repeated login/logout.
 				config.restartListenMqtt.enable = false;
 				saveConfig();
-				return message.reply({ body: "✦ Restart Listen MQTT Enable — locked off (protects the Facebook session)", effect: "love" });
+				return message.reply({ body: "✦ Restart Listen MQTT Enable — locked off (protects the Facebook session)" });
 			}
 			if (num === 2) return await sendAndListen("› Reply with new restart interval (ms):", "mqttTimeRestartSet");
 			if (num === 3) return await sendAndListen("› Reply with new delay after stop (ms):", "mqttDelaySet");
 			if (num === 4) {
 				config.restartListenMqtt.logNoti = !config.restartListenMqtt.logNoti;
 				saveConfig();
-				return message.reply({ body: `✦ Log Notification — ${status(config.restartListenMqtt.logNoti)}`, effect: "love" });
+				return message.reply({ body: `✦ Log Notification — ${status(config.restartListenMqtt.logNoti)}` });
 			}
 		}
 		if (state === "mqttTimeRestartSet") {
-			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value.", effect: "love" });
+			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value." });
 			config.restartListenMqtt.timeRestart = num;
 			saveConfig();
-			return message.reply({ body: `✦ Restart interval set to: ${num}ms`, effect: "love" });
+			return message.reply({ body: `✦ Restart interval set to: ${num}ms` });
 		}
 		if (state === "mqttDelaySet") {
-			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value.", effect: "love" });
+			if (isNaN(num)) return message.reply({ body: "𝗫 Invalid value." });
 			config.restartListenMqtt.delayAfterStopListening = num;
 			saveConfig();
-			return message.reply({ body: `✦ Delay set to: ${num}ms`, effect: "love" });
+			return message.reply({ body: `✦ Delay set to: ${num}ms` });
 		}
 
 		if (state === "notiMqttPick") {
@@ -915,15 +915,15 @@ module.exports = {
 			if (num === 1) {
 				config.notiWhenListenMqttError.gmail.enable = !config.notiWhenListenMqttError.gmail.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Gmail Notify — ${status(config.notiWhenListenMqttError.gmail.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Gmail Notify — ${status(config.notiWhenListenMqttError.gmail.enable)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with notify email:", "notiGmailEmailSet");
 		}
 		if (state === "notiGmailEmailSet") {
-			if (!input) return message.reply({ body: "𝗫 Invalid email.", effect: "love" });
+			if (!input) return message.reply({ body: "𝗫 Invalid email." });
 			config.notiWhenListenMqttError.gmail.emailGetNoti = input;
 			saveConfig();
-			return message.reply({ body: `✦ Notify email set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ Notify email set to: ${input}` });
 		}
 		if (state === "notiMqttTelegramMenu") {
 			config.notiWhenListenMqttError = config.notiWhenListenMqttError || {};
@@ -931,7 +931,7 @@ module.exports = {
 			if (num === 1) {
 				config.notiWhenListenMqttError.telegram.enable = !config.notiWhenListenMqttError.telegram.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Telegram Notify — ${status(config.notiWhenListenMqttError.telegram.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Telegram Notify — ${status(config.notiWhenListenMqttError.telegram.enable)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with bot token:", "notiTgTokenSet");
 			if (num === 3) return await sendAndListen("› Reply with chat ID:", "notiTgChatSet");
@@ -939,12 +939,12 @@ module.exports = {
 		if (state === "notiTgTokenSet") {
 			config.notiWhenListenMqttError.telegram.botToken = input;
 			saveConfig();
-			return message.reply({ body: "✦ Bot token updated.", effect: "love" });
+			return message.reply({ body: "✦ Bot token updated." });
 		}
 		if (state === "notiTgChatSet") {
 			config.notiWhenListenMqttError.telegram.chatId = input;
 			saveConfig();
-			return message.reply({ body: `✦ Chat ID set to: ${input}`, effect: "love" });
+			return message.reply({ body: `✦ Chat ID set to: ${input}` });
 		}
 		if (state === "notiMqttDiscordMenu") {
 			config.notiWhenListenMqttError = config.notiWhenListenMqttError || {};
@@ -952,14 +952,14 @@ module.exports = {
 			if (num === 1) {
 				config.notiWhenListenMqttError.discordHook.enable = !config.notiWhenListenMqttError.discordHook.enable;
 				saveConfig();
-				return message.reply({ body: `✦ Discord Notify — ${status(config.notiWhenListenMqttError.discordHook.enable)}`, effect: "love" });
+				return message.reply({ body: `✦ Discord Notify — ${status(config.notiWhenListenMqttError.discordHook.enable)}` });
 			}
 			if (num === 2) return await sendAndListen("› Reply with webhook URL:", "notiDiscordUrlSet");
 		}
 		if (state === "notiDiscordUrlSet") {
 			config.notiWhenListenMqttError.discordHook.webhookUrl = input;
 			saveConfig();
-			return message.reply({ body: "✦ Webhook URL updated.", effect: "love" });
+			return message.reply({ body: "✦ Webhook URL updated." });
 		}
 
 		if (state === "credentials") {
@@ -976,7 +976,7 @@ module.exports = {
 				["gRecaptcha", "secretKey", "reCAPTCHA Secret Key"]
 			];
 			const field = fields[num - 1];
-			if (!field) return message.reply({ body: "𝗫 Invalid selection.", effect: "love" });
+			if (!field) return message.reply({ body: "𝗫 Invalid selection." });
 			const [section, key, label] = field;
 			return await sendAndListen(`› Reply with new value for ${label}:`, "credentialSet", { credSection: section, credKey: key });
 		}
@@ -984,7 +984,7 @@ module.exports = {
 			const { credSection, credKey } = Reply;
 			config.credentials[credSection][credKey] = input;
 			saveConfig();
-			return message.reply({ body: "✦ Updated.", effect: "love" });
+			return message.reply({ body: "✦ Updated." });
 		}
 	}
 };

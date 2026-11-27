@@ -61,7 +61,7 @@ module.exports.onStart = async function ({ api, event }) {
 📁 বটের রিপো (Fork করুন):
 🔗 ${repoLink}
 
-╰━━━━━━━━━━━━━━━━━━╯`, effect: "love" },
+╰━━━━━━━━━━━━━━━━━━╯` },
     event.threadID,
     event.messageID
   );
@@ -99,7 +99,7 @@ module.exports.handleEvent = async function ({ api, event }) {
 📁 বটের রিপো (Fork করুন):
 🔗 ${repoLink}
 
-╰━━━━━━━━━━━━━━━━━━╯`, effect: "love" },
+╰━━━━━━━━━━━━━━━━━━╯` },
       event.threadID,
       event.messageID
     );

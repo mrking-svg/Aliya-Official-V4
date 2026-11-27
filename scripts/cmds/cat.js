@@ -20,7 +20,7 @@ module.exports = {
       const images = res.data?.images;
       
       if (!images || images.length === 0) 
-        return message.reply({ body: "No cat images found from API.", effect: "love" });
+        return message.reply({ body: "No cat images found from API." });
 
       const attachments = await Promise.all(images.map(url => getStreamFromURL(url)));
       
@@ -31,7 +31,7 @@ module.exports = {
 
     } catch (err) {
       console.error(err);
-      message.reply({ body: "An error occurred while fetching cat images.", effect: "love" });
+      message.reply({ body: "An error occurred while fetching cat images." });
     }
 
     async function getStreamFromURL(url) {

@@ -7,7 +7,7 @@ module.exports = {
   config: { name: "board", version: "2.0", author: "0xMr_King x ┃ Tanin Islam", shortDescription: "Tom এর board এ text লেখো", category: "Tag Fun", guide: { en: "{pn} <text>" }, coolDown: 5 },
   onStart: async function ({ message, args }) {
     const text = args.join(" ").trim();
-    if (!text) return message.reply({ body: "❌ কী লিখবা বলো!\nExample: !board আমি সেরা 😎", effect: "love" });
+    if (!text) return message.reply({ body: "❌ কী লিখবা বলো!\nExample: !board আমি সেরা 😎" });
     const cacheDir = path.join(__dirname, "cache");
     if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
     const outputPath = path.join(cacheDir, `board_${Date.now()}.png`);
@@ -39,6 +39,6 @@ module.exports = {
       fs.writeFileSync(outputPath, canvas.toBuffer("image/png"));
       await message.reply({ body: "", attachment: fs.createReadStream(outputPath) });
       if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-    } catch (err) { return message.reply({ body: `❌ সমস্যা হয়েছে!\nError: ${err.message}`, effect: "love" }); }
+    } catch (err) { return message.reply({ body: `❌ সমস্যা হয়েছে!\nError: ${err.message}` }); }
   }
 };

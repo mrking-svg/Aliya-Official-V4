@@ -167,7 +167,7 @@ module.exports.onStart = async ({ api, event }) => {
   };
 
   const waitMsg = await new Promise((resolve) =>
-    api.sendMessage({ body: "⏳ Sigma ভিডিও লোড হচ্ছে, একটু অপেক্ষা করো...", effect: "love" }, threadID, (err, info) =>
+    api.sendMessage({ body: "⏳ Sigma ভিডিও লোড হচ্ছে, একটু অপেক্ষা করো..." }, threadID, (err, info) =>
       resolve(err ? null : info)
     )
   );
@@ -199,7 +199,7 @@ module.exports.onStart = async ({ api, event }) => {
 
   if (!usedUrl) {
     return api.sendMessage(
-      { body: `❌ Sigma ভিডিও পাঠাতে সমস্যা হয়েছে!\nআবার চেষ্টা করো।\n\n👑 ${CREDIT}`, effect: "love" },
+      { body: `❌ Sigma ভিডিও পাঠাতে সমস্যা হয়েছে!\nআবার চেষ্টা করো।\n\n👑 ${CREDIT}` },
       threadID,
       messageID
     );

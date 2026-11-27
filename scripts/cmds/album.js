@@ -30,18 +30,18 @@ module.exports = {
     const { threadID, messageID, senderID } = event;
 
     if (this.config.author !== REQUIRED_AUTHOR) {
-      return api.sendMessage({ body: "❌ Command Author altered! Access permanently revoked.", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "❌ Command Author altered! Access permanently revoked." }, threadID, messageID);
     }
 
     try {
       const res = await axios.get(`${BASE_URL}/api/public/categories`);
       if (res.data.status !== "success") {
-        return api.sendMessage({ body: "❌ Category list fetch korte problem hoyeche!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ Category list fetch korte problem hoyeche!" }, threadID, messageID);
       }
 
       const categories = res.data.data;
       if (!categories || categories.length === 0) {
-        return api.sendMessage({ body: "⚠️ Website-e kuno active category paowa jayni!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "⚠️ Website-e kuno active category paowa jayni!" }, threadID, messageID);
       }
 
       const itemsPerPage = 10;
@@ -49,7 +49,7 @@ module.exports = {
       const totalPages = Math.ceil(categories.length / itemsPerPage);
 
       if (page < 1 || page > totalPages) {
-        return api.sendMessage({ body: `❌ Invalid page! Please choose between 1 - ${totalPages}.`, effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: `❌ Invalid page! Please choose between 1 - ${totalPages}.` }, threadID, messageID);
       }
 
       const startIndex = (page - 1) * itemsPerPage;
@@ -91,7 +91,7 @@ module.exports = {
       }, messageID);
 
     } catch (err) {
-      return api.sendMessage({ body: `❌ Error: ${err.response?.data?.message || err.message}`, effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: `❌ Error: ${err.response?.data?.message || err.message}` }, threadID, messageID);
     }
   },
 
@@ -100,7 +100,7 @@ module.exports = {
     const { threadID, messageID, body } = event;
 
     if (this.config.author !== REQUIRED_AUTHOR) {
-      return api.sendMessage({ body: "❌ Command Author altered! Access permanently revoked.", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "❌ Command Author altered! Access permanently revoked." }, threadID, messageID);
     }
 
     if (replyData.messageID) {
@@ -111,7 +111,7 @@ module.exports = {
     const replyIndex = parseInt(String(body || "").trim()) - 1;
 
     if (isNaN(replyIndex) || replyIndex < 0 || replyIndex >= displayedCategories.length) {
-      return api.sendMessage({ body: `❌ Invalid choice! Reply with a number from 1 to ${displayedCategories.length}.`, effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: `❌ Invalid choice! Reply with a number from 1 to ${displayedCategories.length}.` }, threadID, messageID);
     }
 
     const selectedCategory = displayedCategories[replyIndex];
@@ -134,7 +134,7 @@ module.exports = {
       });
 
       if (mediaRes.data.status !== "success") {
-        return api.sendMessage({ body: `❌ ${mediaRes.data.message || "No video found in this category!"}`, effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: `❌ ${mediaRes.data.message || "No video found in this category!"}` }, threadID, messageID);
       }
 
       const downloadUrl = mediaRes.data.url;
@@ -171,12 +171,12 @@ module.exports = {
 
       writer.on("error", () => {
         if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
-        api.sendMessage({ body: "❌ Failed to download video attachment!", effect: "love" }, threadID, messageID);
+        api.sendMessage({ body: "❌ Failed to download video attachment!" }, threadID, messageID);
       });
 
     } catch (err) {
       if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
-      return api.sendMessage({ body: `❌ Error: ${err.response?.data?.message || err.message}`, effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: `❌ Error: ${err.response?.data?.message || err.message}` }, threadID, messageID);
     }
   }
 };

@@ -33,7 +33,7 @@ module.exports = {
 
   onStart: async function({ api, event }) {
     api.sendMessage(
-      { body: "📥 Send a video/media link (https://) from any supported site (YouTube, Facebook, TikTok, Instagram, Likee, CapCut, Spotify, Terabox, Twitter, Google Drive, SoundCloud, NDown, Pinterest, etc.) to auto-download.", effect: "love" },
+      { body: "📥 Send a video/media link (https://) from any supported site (YouTube, Facebook, TikTok, Instagram, Likee, CapCut, Spotify, Terabox, Twitter, Google Drive, SoundCloud, NDown, Pinterest, etc.) to auto-download." },
       event.threadID,
       event.messageID
     );

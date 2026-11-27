@@ -16,20 +16,20 @@ onStart: async function ({ api, event, args }) {
 const mentions = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []));
 
 if (mentions.length == 0) {
-return api.sendMessage({ body: "⚠️ Please mention users\nExample:\n-cr Pookie Group @user", effect: "love" }, event.threadID);
+return api.sendMessage({ body: "⚠️ Please mention users\nExample:\n-cr Pookie Group @user" }, event.threadID);
 }
 
 const groupName = args.join(" ").replace(/@\S+/g, "").trim();
 
 if (!groupName) {
-return api.sendMessage({ body: "⚠️ Give group name", effect: "love" }, event.threadID);
+return api.sendMessage({ body: "⚠️ Give group name" }, event.threadID);
 }
 
 const members = [...mentions, event.senderID];
 
 api.createNewGroup(members, groupName, (err, info) => {
 
-if (err) return api.sendMessage({ body: "❌ Group create failed!", effect: "love" }, event.threadID);
+if (err) return api.sendMessage({ body: "❌ Group create failed!" }, event.threadID);
 
 api.sendMessage(
 { body: `🎉 GROUP CREATED
@@ -38,7 +38,7 @@ api.sendMessage(
 👥 Members: ${members.length}
 📌 Name: ${groupName}
 
-♡┋ 𝙋𝙊𝙊𝙆𝙄𝙀 ᥫ᭡🎀🙂`, effect: "love" },
+♡┋ 𝙋𝙊𝙊𝙆𝙄𝙀 ᥫ᭡🎀🙂` },
 info.threadID
 );
 

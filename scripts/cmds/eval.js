@@ -44,7 +44,7 @@ function sendText(api, threadID, messageID, text, title) {
 	const header = title ? `${title}\n\n` : "";
 	return Promise.all(chunks.map((chunk, index) => {
 		const label = chunks.length > 1 ? `[${index + 1}/${chunks.length}]\n` : "";
-		return api.sendMessage({ body: `${header}${label}\`\`\`javascript\n${chunk}\n\`\`\``, effect: "love" }, threadID, messageID);
+		return api.sendMessage({ body: `${header}${label}\`\`\`javascript\n${chunk}\n\`\`\`` }, threadID, messageID);
 	}));
 }
 
@@ -52,7 +52,7 @@ async function runCode({ api, event, code, args, role, context = {} }) {
 	const { threadID, messageID, senderID } = event;
 
 	if (Number(role || 0) < 2)
-		return api.sendMessage({ body: `⛔ Admin only.\nMade by ${AUTHOR}`, effect: "love" }, threadID, messageID);
+		return api.sendMessage({ body: `⛔ Admin only.\nMade by ${AUTHOR}` }, threadID, messageID);
 
 	code = String(code || "").replace(/^\s*```(?:js|javascript)?\s*/i, "").replace(/```\s*$/, "");
 	code = code.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, "$2");

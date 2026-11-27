@@ -103,7 +103,7 @@ module.exports.onStart = async function ({ event, api }) {
 
   if (!targetID) {
     return api.sendMessage(
-      { body: "⚠️ কাউকে মেনশন করো বা রিপ্লাই দাও!\n\nউদাহরণ: bf @0xMr_King x ┃ Tanin Islam", effect: "love" },
+      { body: "⚠️ কাউকে মেনশন করো বা রিপ্লাই দাও!\n\nউদাহরণ: bf @0xMr_King x ┃ Tanin Islam" },
       threadID,
       messageID
     );

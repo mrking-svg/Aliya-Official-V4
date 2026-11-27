@@ -138,7 +138,7 @@ module.exports.onStart = async function ({ event, api }) {
   }
 
   if (!targetID) {
-    return api.sendMessage({ body: "Please reply or mention someone......", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "Please reply or mention someone......" }, threadID, messageID);
   }
 
   const cacheDir = path.join(__dirname, "cache");

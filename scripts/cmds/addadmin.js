@@ -70,7 +70,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  ⚠️ ইউজার পাওয়া যায়নি
 ╚════════════════════╝
 
-📌 কাউকে Reply / Mention / UID দাও`, effect: "love" },
+📌 কাউকে Reply / Mention / UID দাও` },
  threadID, messageID
  );
  }
@@ -85,7 +85,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  ⚠️ আগে থেকেই Admin
 ╚════════════════════╝
 
-👤 এই ইউজার আগে থেকেই Admin আছে`, effect: "love" },
+👤 এই ইউজার আগে থেকেই Admin আছে` },
  threadID, messageID
  );
  }
@@ -119,7 +119,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  api.sendMessage(
 { body: `⏱️ সময় শেষ!
 
-👤 ${name} এখন আর Admin না`, effect: "love" },
+👤 ${name} এখন আর Admin না` },
  threadID
  );
  }
@@ -133,7 +133,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
  api.sendMessage(
 { body: `🎉 অভিনন্দন!
 
-আপনাকে একটি গ্রুপে Admin বানানো হয়েছে ✅`, effect: "love" },
+আপনাকে একটি গ্রুপে Admin বানানো হয়েছে ✅` },
  targetID
  );
 
@@ -150,7 +150,7 @@ module.exports.onStart = async function ({ api, event, args, Users }) {
 
 ${!isNaN(time) ? `⏱️ সময়: ${time} ঘন্টা` : "🔒 স্থায়ী Admin"}
 
-🛡️ Protected System চালু`, effect: "love" },
+🛡️ Protected System চালু` },
  threadID,
  messageID
  );
@@ -163,7 +163,7 @@ ${!isNaN(time) ? `⏱️ সময়: ${time} ঘন্টা` : "🔒 স্�
 ╚════════════════════╝
 
 ⚠️ Admin করতে সমস্যা হয়েছে!
-👉 নিশ্চিত হও বট গ্রুপে Admin আছে এবং UID সঠিক`, effect: "love" },
+👉 নিশ্চিত হও বট গ্রুপে Admin আছে এবং UID সঠিক` },
  threadID,
  messageID
  );
@@ -192,7 +192,7 @@ module.exports.handleEvent = async function ({ api, event }) {
 ╚════════════════════╝
 
 ❌ Protected Admin remove করা যাবে না!
-✅ আবার Admin করে দেওয়া হয়েছে`, effect: "love" },
+✅ আবার Admin করে দেওয়া হয়েছে` },
  threadID
  );
  } catch {}

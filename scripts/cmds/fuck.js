@@ -19,7 +19,7 @@ module.exports = {
     try {
       const mention = Object.keys(event.mentions);
       if (mention.length === 0) {
-        return message.reply({ body: "⚠️ Please mention 1 person to use this command!", effect: "love" });
+        return message.reply({ body: "⚠️ Please mention 1 person to use this command!" });
       }
 
       const one = event.senderID;
@@ -96,7 +96,7 @@ module.exports = {
 
     } catch (err) {
       console.error(err);
-      return message.reply({ body: `❌ Error while generating image: ${err.message}`, effect: "love" });
+      return message.reply({ body: `❌ Error while generating image: ${err.message}` });
     }
   },
 };

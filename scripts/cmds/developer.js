@@ -37,7 +37,7 @@ module.exports = {
     switch (args[0]?.toLowerCase()) {
       case "add":
       case "-a": {
-        if (role < 2) return message.reply({ body: "⚠️ | Only bot owner/main developers can add new developers.", effect: "love" });
+        if (role < 2) return message.reply({ body: "⚠️ | Only bot owner/main developers can add new developers." });
 
         let uids = [];
         if (event.messageReply) {
@@ -80,7 +80,7 @@ module.exports = {
       case "delete":
       case "del":
       case "-r": {
-        if (role < 2) return message.reply({ body: "⚠️ | Only bot owner/main developers can remove developers.", effect: "love" });
+        if (role < 2) return message.reply({ body: "⚠️ | Only bot owner/main developers can remove developers." });
 
         let uids = [];
         if (event.messageReply) {
@@ -126,7 +126,7 @@ module.exports = {
       case "list":
       case "-l": {
         if (!config.developer || config.developer.length === 0)
-          return message.reply({ body: "⚠️ | No developers found in bot configuration.", effect: "love" });
+          return message.reply({ body: "⚠️ | No developers found in bot configuration." });
 
         const getNames = await Promise.all(config.developer.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));
         return message.reply(getLang("listDev", getNames.map(({ uid, name }) => `• ${name} (${uid})`).join("\n")));

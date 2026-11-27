@@ -74,7 +74,7 @@ module.exports = {
 
     } catch (error) {
       console.log("RAJAKAR ERROR:", error);
-      return api.sendMessage({ body: "Something went wrong, please try again later.", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "Something went wrong, please try again later." }, threadID, messageID);
     }
   }
 };

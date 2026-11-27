@@ -737,9 +737,8 @@ async function startBot(loginWithEmail) {
 
 	let appState = await getAppStateToLogin(loginWithEmail);
 	appState = filterKeysAppState(appState);
-	// Do NOT write account.txt on startup: rewriting the state after every
-	// login is what rotated xs and invalidated the session. It is saved only
-	// on graceful exit by the existing handler.
+	// Do NOT write account.txt on startup or exit: rewriting the pasted state
+	// can rotate xs. The single-account state is kept exactly as provided.
 	// ——————————————————— LOGIN ———————————————————— //
 	(function loginBot(appState) {
 		global.GoatBot.commands = new Map();
@@ -913,71 +912,11 @@ async function startBot(loginWithEmail) {
 				log.err("ERROR", "Can't get notifications data");
 				process.exit();
 			}
-			// Save the live appState back to account.txt, then keep refreshing it.
-			// A cookie pasted once should stay usable for days instead of dying
-			// after the first MQTT reconnect (the old code refreshed only at boot).
-			global.__aliyaCurrentApi = api;
-			function saveFreshAppState(why) {
-				if (!api || typeof api.getAppState !== "function") return;
-				// A new-state switch is queued: never write the old session now.
-				if (global.__aliyaOutsideStatePending) {
-					log.warn("REFRESH FBSTATE", "A new account.txt state is pending. Skipping refresh with the old session.");
-					return;
-				}
-				// If the user pasted a new state (e.g. a new bot account after a
-				// suspension), keep it and switch to it instead of overwriting it
-				// with the old session cookies.
-				try {
-					const currentMtime = fs.statSync(dirAccount).mtimeMs;
-					if (currentMtime !== latestChangeContentAccount) {
-						log.warn("REFRESH FBSTATE", "account.txt was changed outside the bot. Keeping the new state and switching to it.");
-						latestChangeContentAccount = currentMtime;
-						scheduleAccountRelogin("New FB state detected");
-						return;
-					}
-				}
-				catch (_e) { /* account.txt check is best effort */ }
-
-				const fresh = filterKeysAppState(api.getAppState());
-				if (!fresh.length) return;
-				try {
-					writeOwnAppState(fresh, why);
-					log.info("REFRESH FBSTATE", `${getText('login', 'refreshFbstateSuccess', path.basename(dirAccount))}${why === 'auto' ? ' (auto)' : ''}`);
-				}
-				catch (err) {
-					log.warn("REFRESH FBSTATE", getText('login', 'refreshFbstateError', path.basename(dirAccount)), err);
-				}
-			}
-
-			// Preserve the newest cookies on planned restarts too, but never
-			// overwrite a state the user pasted manually while the bot was up.
-			if (!global.__aliyaStateExitHook) {
-				global.__aliyaStateExitHook = true;
-				process.on("exit", () => {
-					try {
-						if (fs.statSync(dirAccount).mtimeMs !== latestChangeContentAccount) return;
-						const currentApi = global.__aliyaCurrentApi;
-						if (!currentApi || typeof currentApi.getAppState !== "function") return;
-						const fresh = filterKeysAppState(currentApi.getAppState());
-						if (fresh.length) {
-							const raw = JSON.stringify(fresh, null, 2);
-							writeFileSync(dirAccount, raw);
-							lastWrittenStateRaw = raw;
-							selfWriteUntil = Date.now() + 5000;
-							stateBackup.save(fresh);
-						}
-					}
-					catch (_e) { /* best effort only */ }
-				});
-			}
-
-			// No periodic account.txt writes. Rewriting the state every few minutes
-			// made hosts/git sync look like "new state pasted", which killed uptime.
-			// Fresh cookies are still persisted once on graceful exit (hook above),
-			// so a valid state normally stays good for weeks without any input.
+			// No account.txt writes by the bot itself. The pasted single-account
+			// state is kept exactly as provided, including across restarts.
 			if (global.intervalRefreshFbstate) clearInterval(global.intervalRefreshFbstate);
 			if (global.GoatBot.config.autoRefreshFbstate == true) {
-				log.info("REFRESH FBSTATE", "Periodic writes disabled; state is kept until restart.");
+				log.info("REFRESH FBSTATE", "Periodic writes disabled; state is kept as pasted.");
 			}
 			if (hasBanned == true) {
 				log.err('GBAN', getText('login', 'youAreBanned'));

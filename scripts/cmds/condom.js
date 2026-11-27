@@ -23,12 +23,12 @@ module.exports = {
       let uid;
       if (Object.keys(event.mentions || {}).length > 0) uid = Object.keys(event.mentions)[0];
       else if (event.messageReply) uid = event.messageReply.senderID;
-      else return message.reply({ body: "❌ | Mention or reply someone.", effect: "love" });
+      else return message.reply({ body: "❌ | Mention or reply someone." });
 
       const file = await buildImage(uid);
       return message.reply({ body: "😂 Ops Crazy Condom Fail!", attachment: fs.createReadStream(file) });
     } catch (err) {
-      return message.reply({ body: "❌ Failed to create image.", effect: "love" });
+      return message.reply({ body: "❌ Failed to create image." });
     }
   }
 };

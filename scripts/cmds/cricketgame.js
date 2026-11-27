@@ -27,7 +27,7 @@ module.exports = {
     const getExp = 121;
 
     if (event.senderID !== author) {
-      return api.sendMessage({ body: "𝐓𝐡𝐢𝐬 𝐢𝐬 𝐧𝐨𝐭 𝐲𝐨𝐮𝐫 𝐪𝐮𝐢𝐳 𝐛𝐚𝐛𝐲 >🐸", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "𝐓𝐡𝐢𝐬 𝐢𝐬 𝐧𝐨𝐭 𝐲𝐨𝐮𝐫 𝐪𝐮𝐢𝐳 𝐛𝐚𝐛𝐲 >🐸" }, event.threadID, event.messageID);
     }
 
     const reply = event.body.trim().toLowerCase();
@@ -44,7 +44,7 @@ module.exports = {
         });
 
         return api.sendMessage(
-          { body: `✅ | Correct answer baby.\nYou have earned ${global.utils?.formatCompact ? global.utils.formatCompact(getCoin) : getCoin} coins and ${getExp} exp.`, effect: "love" },
+          { body: `✅ | Correct answer baby.\nYou have earned ${global.utils?.formatCompact ? global.utils.formatCompact(getCoin) : getCoin} coins and ${getExp} exp.` },
           event.threadID,
           event.messageID
         );
@@ -53,7 +53,7 @@ module.exports = {
       }
     } else {
       return api.sendMessage(
-        { body: `❌ | Wrong answer baby.\nCorrect answer was: ${cricketNames.join(" / ")}`, effect: "love" },
+        { body: `❌ | Wrong answer baby.\nCorrect answer was: ${cricketNames.join(" / ")}` },
         event.threadID,
         event.messageID
       );
@@ -64,7 +64,7 @@ module.exports = {
     const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam";
     if (module.exports.config.author !== obfuscatedAuthor) {
       return api.sendMessage(
-        { body: "You are not authorized to change the author name.\n", effect: "love" },
+        { body: "You are not authorized to change the author name.\n" },
         event.threadID,
         event.messageID
       );
@@ -107,7 +107,7 @@ module.exports = {
       );
     } catch (error) {
       console.error("Error:", error.message);
-      api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam." }, event.threadID, event.messageID);
     }
   }
 };

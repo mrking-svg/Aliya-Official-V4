@@ -20,14 +20,14 @@ module.exports = {
   onStart: async function ({ api, event, args }) {
     const query = args.join(" ");
     if (!query) {
-      return api.sendMessage({ body: "❗ Anime name missing. Try: aniinfo demon slayer", effect: "love" }, event.threadID);
+      return api.sendMessage({ body: "❗ Anime name missing. Try: aniinfo demon slayer" }, event.threadID);
     }
 
     try {
       const res = await axios.get(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=1`);
       const anime = res.data.data[0];
 
-      if (!anime) return api.sendMessage({ body: "❌ No results found.", effect: "love" }, event.threadID);
+      if (!anime) return api.sendMessage({ body: "❌ No results found." }, event.threadID);
 
       const {
         title,
@@ -73,7 +73,7 @@ ${synopsis?.substring(0, 400) || "No synopsis found."}...
 
     } catch (err) {
       console.error(err);
-      api.sendMessage({ body: "🚫 Error fetching anime data. Please try again.", effect: "love" }, event.threadID);
+      api.sendMessage({ body: "🚫 Error fetching anime data. Please try again." }, event.threadID);
     }
   }
 };

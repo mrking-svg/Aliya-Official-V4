@@ -52,7 +52,7 @@ module.exports = {
     }
 
     if (candidates.length === 0)
-      return api.sendMessage({ body: "❌ No suitable partner found.", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ No suitable partner found." }, event.threadID, event.messageID);
 
     const id2 = candidates[Math.floor(Math.random() * candidates.length)];
 

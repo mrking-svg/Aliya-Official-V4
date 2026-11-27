@@ -42,7 +42,7 @@ module.exports = {
  ᥫ᭡ {pn} all ── Tᴏɢɢʟᴇ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs
  ᥫ᭡ {pn} <cmd> ── Tᴏɢɢʟᴇ sᴘᴇᴄɪғɪᴄ ᴄᴏᴍᴍᴀɴᴅ
  ᥫ᭡ {pn} role <0-4> ── Set role access
- ᥫ᭡ {pn} off ── Rᴇsᴇᴛ ᴀʟʟ NPX sᴇᴛᴛɪɴɢs`, effect: "love" }
+ ᥫ᭡ {pn} off ── Rᴇsᴇᴛ ᴀʟʟ NPX sᴇᴛᴛɪɴɢs` }
       );
     }
 
@@ -50,30 +50,30 @@ module.exports = {
       npxConfig.all = !npxConfig.all;
       await saveConfig(npxConfig);
       return message.reply(
-        { body: `𓍢ִ໋🌸✧ NPX All-Commands Mode is now ${npxConfig.all ? "🟢 ENABLED" : "🔴 DISABLED"}!`, effect: "love" }
+        { body: `𓍢ִ໋🌸✧ NPX All-Commands Mode is now ${npxConfig.all ? "🟢 ENABLED" : "🔴 DISABLED"}!` }
       );
     }
 
     if (action === "off" || action === "reset") {
       await saveConfig({ all: false, commands: [], roles: [] });
-      return message.reply({ body: "𓍢ִ໋🌸✧ All NPX prefixless settings have been reset!", effect: "love" });
+      return message.reply({ body: "𓍢ִ໋🌸✧ All NPX prefixless settings have been reset!" });
     }
 
     if (action === "role") {
       const targetRole = Number(args[1]);
       if (!Number.isInteger(targetRole) || targetRole < 0 || targetRole > 4) {
-        return message.reply({ body: "⚠️ Invalid role! Allowed values: 0 (All), 1 (Admin), 2 (VIP), 3 (Bot Admin), 4 (Dev)", effect: "love" });
+        return message.reply({ body: "⚠️ Invalid role! Allowed values: 0 (All), 1 (Admin), 2 (VIP), 3 (Bot Admin), 4 (Dev)" });
       }
 
       if (npxConfig.roles.includes(targetRole)) {
         npxConfig.roles = npxConfig.roles.filter(r => r !== targetRole);
         await saveConfig(npxConfig);
-        return message.reply({ body: `𓍢ִ໋🌸✧ Role level [ ${targetRole} ] removed from NPX mode.`, effect: "love" });
+        return message.reply({ body: `𓍢ִ໋🌸✧ Role level [ ${targetRole} ] removed from NPX mode.` });
       }
 
       npxConfig.roles.push(targetRole);
       await saveConfig(npxConfig);
-      return message.reply({ body: `𓍢ִ໋🌸✧ Role level [ ${targetRole} ] granted prefixless access!`, effect: "love" });
+      return message.reply({ body: `𓍢ִ໋🌸✧ Role level [ ${targetRole} ] granted prefixless access!` });
     }
 
     const targetCmd = action;
@@ -81,7 +81,7 @@ module.exports = {
     const aliasRegistry = global.GoatBot && global.GoatBot.aliases;
 
     if (!registry || typeof registry.get !== "function") {
-      return message.reply({ body: "❌ Command registry is not ready yet. Try again in a moment.", effect: "love" });
+      return message.reply({ body: "❌ Command registry is not ready yet. Try again in a moment." });
     }
 
     const aliasName = aliasRegistry && typeof aliasRegistry.get === "function"
@@ -90,7 +90,7 @@ module.exports = {
     const commandExists = registry.get(targetCmd) || (aliasName ? registry.get(aliasName) : undefined);
 
     if (!commandExists || !commandExists.config) {
-      return message.reply({ body: `❌ Command or alias "${targetCmd}" does not exist in bot registry!`, effect: "love" });
+      return message.reply({ body: `❌ Command or alias "${targetCmd}" does not exist in bot registry!` });
     }
 
     const realCmdName = String(commandExists.config.name || targetCmd);
@@ -98,11 +98,11 @@ module.exports = {
     if (npxConfig.commands.includes(realCmdName)) {
       npxConfig.commands = npxConfig.commands.filter(c => c !== realCmdName);
       await saveConfig(npxConfig);
-      return message.reply({ body: `𓍢ִ໋🌸✧ Prefixless mode disabled for command: "${realCmdName}"`, effect: "love" });
+      return message.reply({ body: `𓍢ִ໋🌸✧ Prefixless mode disabled for command: "${realCmdName}"` });
     }
 
     npxConfig.commands.push(realCmdName);
     await saveConfig(npxConfig);
-    return message.reply({ body: `𓍢ִ໋🌸✧ Prefixless mode enabled for command: "${realCmdName}"`, effect: "love" });
+    return message.reply({ body: `𓍢ִ໋🌸✧ Prefixless mode enabled for command: "${realCmdName}"` });
   }
 };

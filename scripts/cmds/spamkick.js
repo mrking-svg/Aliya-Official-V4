@@ -82,18 +82,18 @@ module.exports.onStart = async ({ api, event, args }) => {
       case "on":
 if (!global.antispam) global.antispam = new Map();
         global.antispam.set(event.threadID, { users: {} });
-        api.sendMessage({ body: "Spam kick has been turned on for this Group.", effect: "love" }, event.threadID,event.messageID);
+        api.sendMessage({ body: "Spam kick has been turned on for this Group." }, event.threadID,event.messageID);
         break;
       case "off":
         if (global.antispam && global.antispam.has(event.threadID)) {
           global.antispam.delete(event.threadID);
-          api.sendMessage({ body: "Spam kick has been turned off for this group", effect: "love" }, event.threadID,event.messageID);
+          api.sendMessage({ body: "Spam kick has been turned off for this group" }, event.threadID,event.messageID);
         } else {
-          api.sendMessage({ body: "Spam kick is not active on this group", effect: "love" }, event.threadID,event.messageID);
+          api.sendMessage({ body: "Spam kick is not active on this group" }, event.threadID,event.messageID);
         }
         break;
       default:
-        api.sendMessage({ body: "Please use 'on' to activate or 'off' to deactivate the Spam kick.", effect: "love" }, event.threadID,event.messageID);
+        api.sendMessage({ body: "Please use 'on' to activate or 'off' to deactivate the Spam kick." }, event.threadID,event.messageID);
     }
   };
   

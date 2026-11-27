@@ -1,7 +1,6 @@
 const fs = require("fs-extra");
 const nullAndUndefined = [undefined, null];
 const leven = require('leven');
-const typing = require("./typingIndicator.js");
 const { createGetText2 } = require("./commandLanguage.js");
 
 // Global per-user command throttle — independent of each command's own cooldown.
@@ -230,21 +229,8 @@ function getRoleConfig(utils, command, isGroup, threadData, commandName) {
 	return roleConfig;
 }
 
-// Group approval. When config.threadApproval.enable is true the bot only works in the groups listed in
-// threadApproval.approvedThreadIDs. Bot admins / developers can still use it anywhere (to run a "tid"
-// command in a new group, etc). Private chats are not affected. Missing key = feature off.
-function isThreadBlocked(isGroup, threadID, senderID) {
-	const cfg = global.GoatBot.config.threadApproval;
-	if (!cfg || cfg.enable !== true || !isGroup) return false;
-	if ((cfg.approvedThreadIDs || []).map(String).includes(String(threadID))) return false;
-	const { adminBot = [], developer = [] } = global.GoatBot.config;
-	if (senderID && [...adminBot, ...developer].map(String).includes(String(senderID))) return false;
-	return true;
-}
-
 function isBannedOrOnlyAdmin(userData, threadData, senderID, threadID, isGroup, commandName, message, lang) {
 	const config = global.GoatBot.config;
-	if (isThreadBlocked(isGroup, threadID, senderID)) return true; // silent: unapproved group
 	const { adminBot, hideNotiMessage, developerOnly, vipOnly } = config; 
     const role = getRole(threadData, senderID); 
 
@@ -529,7 +515,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			const time = getTime("DD/MM/YYYY HH:mm:ss");
 			isUserCallCommand = true;
 
-			const typingHandle = typing.start(api, threadID, "command");
 			try {
 				trackAnalytics(globalData, commandName);
 				try {
@@ -553,8 +538,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			} catch (err) {
 				log.err("CALL COMMAND", `An error occurred when calling the command ${commandName}`, err);
 				return await message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "errorOccurred", time, commandName, removeHomeDir(err.stack ? err.stack.split("\n").slice(0, 5).join("\n") : JSON.stringify(err, null, 2))));
-			} finally {
-				typingHandle.stop();
 			}
 		}
 
@@ -749,7 +732,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 
 			const getText2 = createGetText2(langCode, `${process.cwd()}/languages/cmds/${langCode}.js`, prefix, command);
 			const time = getTime("DD/MM/YYYY HH:mm:ss");
-			const typingHandle = typing.start(api, threadID, "reply");
 			try {
 				const args = body ? body.split(/ +/) : [];
 				createMessageSyntaxError(commandName);
@@ -765,8 +747,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 				log.info("onReply", `${commandName} | ${senderName} | ${senderID} | ${threadID} | ${args.join(" ")}`);
 			} catch (err) {
 				log.err("onReply", `An error occurred when calling onReply ${commandName}`, err);
-			} finally {
-				typingHandle.stop();
 			}
 		}
 
@@ -786,7 +766,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 			if (typeof command.onReaction !== "function") return;
 
 			const time = getTime("DD/MM/YYYY HH:mm:ss");
-			const typingHandle = typing.start(api, threadID, "reaction");
 			try {
 				const getText2 = createGetText2(langCode, `${process.cwd()}/languages/cmds/${langCode}.js`, prefix, command);
 				const args = [];
@@ -803,8 +782,6 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 				log.info("onReaction", `${commandName} | ${senderName} | ${senderID} | ${threadID} | ${event.reaction}`);
 			} catch (err) {
 				log.err("onReaction", `An error occurred when calling onReaction ${commandName}`, err);
-			} finally {
-				typingHandle.stop();
 			}
 		}
 		async function handlerEvent() {

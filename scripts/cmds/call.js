@@ -28,7 +28,7 @@ module.exports.onStart = async function ({ message, args, event, usersData }) {
 
   // Level requirement (same as before)
   if (level < 2) {
-    return message.reply({ body: "🚫 এই কমান্ড ব্যবহার করতে আপনার লেভেল কমপক্ষে 2 হতে হবে!", effect: "love" });
+    return message.reply({ body: "🚫 এই কমান্ড ব্যবহার করতে আপনার লেভেল কমপক্ষে 2 হতে হবে!" });
   }
 
   // Invalid BD number check
@@ -41,13 +41,13 @@ module.exports.onStart = async function ({ message, args, event, usersData }) {
   }
 
   // No coin system — no balance check — free command
-  message.reply({ body: `📞 কল বোম্বিং শুরু হয়েছে ${number} নম্বরে...\n🕐 অনুগ্রহ করে অপেক্ষা করুন...`, effect: "love" });
+  message.reply({ body: `📞 কল বোম্বিং শুরু হয়েছে ${number} নম্বরে...\n🕐 অনুগ্রহ করে অপেক্ষা করুন...` });
 
   try {
     await axios.get(`https://tbblab.shop/callbomber.php?mobile=${number}`);
-    return message.reply({ body: `✅ কল বোম্বিং সম্পন্ন হয়েছে ${number} নম্বরে!`, effect: "love" });
+    return message.reply({ body: `✅ কল বোম্বিং সম্পন্ন হয়েছে ${number} নম্বরে!` });
   } catch (error) {
-    return message.reply({ body: `❌ ত্রুটি ঘটেছে: ${error.message}`, effect: "love" });
+    return message.reply({ body: `❌ ত্রুটি ঘটেছে: ${error.message}` });
   }
 };
 

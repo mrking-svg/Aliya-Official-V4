@@ -23,7 +23,7 @@ module.exports = {
 
     let times = parseInt(args[0]);
     if (isNaN(times) || times < 1 || times > 50) {
-      return message.reply({ body: "❌ দয়া করে 1 থেকে 50 এর মধ্যে একটি সংখ্যা দাও!\nউদাহরণ: everyone 10", effect: "love" });
+      return message.reply({ body: "❌ দয়া করে 1 থেকে 50 এর মধ্যে একটি সংখ্যা দাও!\nউদাহরণ: everyone 10" });
     }
 
     const mentions = [];
@@ -42,7 +42,7 @@ module.exports = {
       i++;
     }
 
-    message.reply({ body: `✅ ${times} বার everyone mention শুরু হচ্ছে...`, effect: "love" });
+    message.reply({ body: `✅ ${times} বার everyone mention শুরু হচ্ছে...` });
 
     for (let t = 1; t <= times; t++) {
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -52,6 +52,6 @@ module.exports = {
       }, threadID);
     }
 
-    message.reply({ body: ` ${times} বার everyone mention করা হয়েছে।\nAuthor: 𝗧𝗠 ^〲𝗠𝗔𝗠𝗨𝗡ツ࿐ ⁰⁰⁷`, effect: "love" });
+    message.reply({ body: ` ${times} বার everyone mention করা হয়েছে।\nAuthor: 𝗧𝗠 ^〲𝗠𝗔𝗠𝗨𝗡ツ࿐ ⁰⁰⁷` });
   }
 };

@@ -134,7 +134,7 @@ module.exports = {
 			case "list":
 			case "-l": {
 				if (!config.adminBot || config.adminBot.length === 0) {
-					return message.reply({ body: " | No admins found in bot configuration.", effect: "love" });
+					return message.reply({ body: " | No admins found in bot configuration." });
 				}
 				const getNames = await Promise.all(config.adminBot.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));
 				return message.reply(getLang("listAdmin", getNames.map(({ uid, name }) => `• ${name} (${uid})`).join("\n")));

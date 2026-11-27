@@ -12,7 +12,7 @@ This directory is a clean copy of the audited Bot1 tree (no git history, no `nod
   - `optionsFca.autoReconnect = false`
 - `bot/login/login.js`
   - config flags are forcibly re-asserted before every config write, so a runtime setting command cannot re-enable hourly restarts or state refresh.
-  - `account.txt` is no longer rewritten on startup; only the graceful-exit path saves fresh cookies.
+  - `account.txt` is never rewritten by the bot: no startup write, no exit write, no periodic refresh.
   - listener reconnect backoff: 2 min → 4 min → … → 15 min cap (no 10/20/40 s hammering).
   - `Facebook blocked login` → immediate `exit(3)`.
 - `fb-chat-api/src/listenMqtt.js`
@@ -22,18 +22,16 @@ This directory is a clean copy of the audited Bot1 tree (no git history, no `nod
 - `Aliya.js`
   - `unhandledRejection`, `uncaughtException` and the `aliyaFacebookBlocked` event all stop on a real Facebook block.
 - `index.js`
+  - single account only: `account.txt` is the one state file; no account rotation, no multi-account pool, no fallback engine.
   - offline delays: 1800, 3600, 7200, 21600 s; instant retry when `account.txt` changes.
 
 ## Requirement fixes applied here
 
-- `includes/approve.js`
-  - timed approvals (`1 add 7`) keep their real expiry across DB/config migration and restarts; never become permanent.
-  - kick/unsubscribe or cancel records a revoked marker and clears the config whitelist, so re-adding the bot does not silently re-approve.
-  - DB approval metadata (`approvedExpiresAt`, `approvedAt`, `approvedDays`) is honoured.
+- Approval system removed: `includes/approve.js`, `scripts/cmds/approve.js` and the approval gate in `bot/handler/handlerAction.js` are gone.
 - `scripts/cmds/pending.js`
-  - timed approvals are not added to the permanent config whitelist; expiry metadata is stored in `threadsData`.
-  - cancel clears all DB approval metadata.
-  - Imgur connect image is downloaded and sent as a real attachment.
+  - SakuraBot_V2-style pending list, accept/refuse by reply, and text-to-image connect card from `xsaim8x-xxx-api.onrender.com/api/botconnect`.
+  - no approval persistence, no `handleMessageRequest()`, no config whitelist writes, no DB approval metadata.
+  - Imgur fallback image is downloaded and sent as a real attachment.
 - `scripts/cmds/aliyatester.js`
   - exact identity: `I am Aliya Official Made By Mr.king`.
   - all replies are sanitised: no stars, no Gemini/Google/other-service names.
@@ -47,7 +45,9 @@ This directory is a clean copy of the audited Bot1 tree (no git history, no `nod
 ## Preserved on purpose
 
 - 570+ commands/aliases, economy `k/m/b/t`, `word.js` 2k, daily full clear 20M, bold balance, real bank + `bank top`, quiz games.
-- `slot.js` replies keep `effect: "fire"` (rendering intentionally dropped).
+- Messenger effects removed from `fb-chat-api` (`lib/effects.js`, `lib/messageMetadata.js`, `sendMessage.js`, parsed effect fields in `utils.js`) and all `effect: "love"/"fire"` fields stripped from commands.
+- Removed Render-incompatible commands: `avatar.js`, `song.js`, `songfinder.js`, `music.js`, `audio.js`.
+- Typing indicator is response-time only: it starts when `api.sendMessage()` sends any text/image/video/audio/file response and stops when delivery finishes. No command/reply/reaction typing loops.
 - Islamic commands and non-working image commands stay deleted.
 - pre-existing duplicate `pp` is left unchanged.
 - `config.json`, `account.txt`, `.gitkeep`, deploy files are visible/tracked; `node_modules/` ignored.
@@ -60,9 +60,12 @@ Self-tests live outside the repo in `~/aliya-fresh-tests` (not committed):
 cd ~/aliya-fresh-tests
 NODE_PATH=~/Bot1/node_modules node pending-selftest.js
 NODE_PATH=~/Bot1/node_modules node baby-selftest.js
+NODE_PATH=~/Bot1/node_modules node tester-selftest.js
+NODE_PATH=~/Bot1/node_modules node teach-safety-selftest.js
+NODE_PATH=~/Bot1/node_modules node typing-selftest.js
 ```
 
-All four suites (`pending`, `baby`, `tester`, `teach-safety`) passed after every edit. No local bot process was started or stopped during the self-tests.
+All five suites (`pending`, `baby`, `tester`, `teach-safety`, `typing`) pass. No local bot process was started or stopped during the self-tests.
 
 ## Speed / logout fixes verified before push
 
@@ -90,7 +93,7 @@ All four suites (`pending`, `baby`, `tester`, `teach-safety`) passed after every
 ## Local PM2 verification (new state)
 
 - `node /usr/lib/node_modules/pm2/bin/pm2 start ecosystem.config.js` (`botfresh`); process deleted again before push.
-- Latest run: `Successful login`, `MQTT: Facebook listener is connected`, `READY`, MongoDB connected, 575 commands loaded.
+- Latest run with the new `account.txt`: `Successful login`, `MQTT: Facebook listener is connected`, `READY`, MongoDB connected, 569 commands loaded.
 - Zero `ENETUNREACH`, `ETIMEDOUT`, `LISTEN_MQTT: Callback error`, `Server unavailable`, `blocked login`, `retry #` or `relogin` lines.
 - `account.txt` mtime unchanged during startup — no periodic state rewrite.
 

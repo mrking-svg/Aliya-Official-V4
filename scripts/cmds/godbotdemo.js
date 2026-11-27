@@ -16,5 +16,5 @@ module.exports.config = {
 
 module.exports.onStart = async function ({ message, args, usersData, event, role }) {
   const info = await usersData.get(event.senderID);
-  return message.reply({ body: `✅ GoatBot/Mirai style command কাজ করছে!\nname: ${info.name}\nrole: ${role}\nargs: ${args.join(" ")}`, effect: "love" });
+  return message.reply({ body: `✅ GoatBot/Mirai style command কাজ করছে!\nname: ${info.name}\nrole: ${role}\nargs: ${args.join(" ")}` });
 };

@@ -122,7 +122,7 @@ module.exports = {
       );
     } catch (e) {
       console.error(e);
-      api.sendMessage({ body: "❌ Eʀʀᴏʀ Pʟᴇᴀsᴇ Tʀʏ Aɢᴀɪɴ ", effect: "love" }, event.threadID);
+      api.sendMessage({ body: "❌ Eʀʀᴏʀ Pʟᴇᴀsᴇ Tʀʏ Aɢᴀɪɴ " }, event.threadID);
     }
   }
 };

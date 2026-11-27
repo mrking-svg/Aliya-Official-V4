@@ -43,11 +43,11 @@ module.exports = {
     }
 
     if (!xalman_target) {
-      return message.reply({ body: "❌", effect: "love" });
+      return message.reply({ body: "❌" });
     }
 
     if (xalman_access.includes(xalman_target)) {
-      return message.reply({ body: "🚫", effect: "love" });
+      return message.reply({ body: "🚫" });
     }
 
     try {
@@ -109,7 +109,7 @@ module.exports = {
       );
 
     } catch {
-      message.reply({ body: "❌", effect: "love" });
+      message.reply({ body: "❌" });
     }
   }
 };

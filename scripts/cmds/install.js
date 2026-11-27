@@ -84,7 +84,7 @@ module.exports = {
 
       if (url) {
         rawCode = await fetchCodeFromUrl(url);
-        if (!rawCode) return message.reply({ body: "❌ Could not fetch code from URL.", effect: "love" });
+        if (!rawCode) return message.reply({ body: "❌ Could not fetch code from URL." });
       }
       else {
         rawCode = replyText;
@@ -96,7 +96,7 @@ module.exports = {
     // install raw url
     else if (args[0] && isURL(args[0])) {
       rawCode = await fetchCodeFromUrl(args[0]);
-      if (!rawCode) return message.reply({ body: "❌ Invalid or unreachable URL.", effect: "love" });
+      if (!rawCode) return message.reply({ body: "❌ Invalid or unreachable URL." });
 
       fileName = extractCommandName(rawCode);
     }
@@ -108,17 +108,17 @@ module.exports = {
     }
 
     if (!rawCode)
-      return message.reply({ body: "⚠ Provide code, reply to code, or give a raw URL.", effect: "love" });
+      return message.reply({ body: "⚠ Provide code, reply to code, or give a raw URL." });
 
     if (!fileName)
-      return message.reply({ body: "❌ Could not detect command name.", effect: "love" });
+      return message.reply({ body: "❌ Could not detect command name." });
 
     const filePath = path.join(process.cwd(), "scripts", "cmds", fileName);
 
     // overwrite protection
     if (fs.existsSync(filePath)) {
       return message.reply(
-        { body: `⚠ ${fileName} already exists.\nReact 👍 to overwrite.`, effect: "love" },
+        { body: `⚠ ${fileName} already exists.\nReact 👍 to overwrite.` },
         (err, info) => {
           global.GoatBot.onReaction.set(info.messageID, {
             commandName: "install",
@@ -140,10 +140,10 @@ module.exports = {
     );
 
     if (load.status === "success") {
-      return message.reply({ body: `✅ Installed successfully: ${fileName}`, effect: "love" });
+      return message.reply({ body: `✅ Installed successfully: ${fileName}` });
     }
     else {
-      return message.reply({ body: `❌ Installation failed:\n${load.error?.message || "Unknown error"}`, effect: "love" });
+      return message.reply({ body: `❌ Installation failed:\n${load.error?.message || "Unknown error"}` });
     }
   },
 
@@ -166,10 +166,10 @@ module.exports = {
     );
 
     if (load.status === "success") {
-      message.reply({ body: `✅ Overwritten & installed: ${fileName}`, effect: "love" });
+      message.reply({ body: `✅ Overwritten & installed: ${fileName}` });
     }
     else {
-      message.reply({ body: `❌ Failed:\n${load.error?.message || "Unknown error"}`, effect: "love" });
+      message.reply({ body: `❌ Failed:\n${load.error?.message || "Unknown error"}` });
     }
   }
 };

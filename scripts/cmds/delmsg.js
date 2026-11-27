@@ -22,12 +22,12 @@ if (args[0] == "all") {
  return api.getThreadList(1000, null, ["INBOX"], (err, list) => {
  	if (err) throw err;
  	list.forEach(item => (item.threadID != event.threadID) ? api.deleteThread(item.threadID) : "");
- 	api.sendMessage({ body: "Successfully erase all messages", effect: "love" }, event.threadID)
+ 	api.sendMessage({ body: "Successfully erase all messages" }, event.threadID)
  })
 }
 else return api.getThreadList(1000, null, ["INBOX"], (err, list) => {
  	if (err) throw err;
  	list.forEach(item => (item.isGroup == true && item.threadID != event.threadID) ? api.deleteThread(item.threadID) : "");
- 	api.sendMessage({ body: "Successfully erase all group messages", effect: "love" }, event.threadID)
+ 	api.sendMessage({ body: "Successfully erase all group messages" }, event.threadID)
  })
 }

@@ -96,21 +96,21 @@ module.exports = {
 
     if (Reply.stage === "viewFile") {
         if (body.toLowerCase() !== "raw") {
-            return api.sendMessage({ body: '❌ Reply "raw" to get a paste link, or ignore this message.', effect: "love" }, event.threadID, event.messageID);
+            return api.sendMessage({ body: '❌ Reply "raw" to get a paste link, or ignore this message.' }, event.threadID, event.messageID);
         }
         const abs = path.join(ROOT_DIR, Reply.filePath);
         let code;
         try {
             code = fs.readFileSync(abs, "utf8");
         } catch (e) {
-            return api.sendMessage({ body: "❌ Couldn't read that file (it may have been deleted).", effect: "love" }, event.threadID, event.messageID);
+            return api.sendMessage({ body: "❌ Couldn't read that file (it may have been deleted)." }, event.threadID, event.messageID);
         }
         try {
             const res = await axios.post(`${PASTEBIN_API}/api/paste`, { code });
             if (res.data && res.data.url) {
-                return api.sendMessage({ body: `📄 File: ${path.basename(Reply.filePath)}\n🔗 ${res.data.url}`, effect: "love" }, event.threadID, event.messageID);
+                return api.sendMessage({ body: `📄 File: ${path.basename(Reply.filePath)}\n🔗 ${res.data.url}` }, event.threadID, event.messageID);
             }
-            return api.sendMessage({ body: "⚠️ Upload failed - no valid link received.", effect: "love" }, event.threadID, event.messageID);
+            return api.sendMessage({ body: "⚠️ Upload failed - no valid link received." }, event.threadID, event.messageID);
         } catch (e) {
             return api.sendMessage("❌ Upload failed: " + e.message, event.threadID, event.messageID);
         }
@@ -121,7 +121,7 @@ module.exports = {
     const entries = Reply.entries;
 
     if (body.toLowerCase() === "back") {
-        if (!relDir) return api.sendMessage({ body: "⚡️Already at the project root.", effect: "love" }, event.threadID, event.messageID);
+        if (!relDir) return api.sendMessage({ body: "⚡️Already at the project root." }, event.threadID, event.messageID);
         const parent = relDir.includes("/") ? relDir.slice(0, relDir.lastIndexOf("/")) : "";
         const parentAbs = path.join(ROOT_DIR, parent);
         const parentEntries = listDir(parentAbs);
@@ -154,7 +154,7 @@ module.exports = {
                 msg += `❌ Failed: ${target.name} (${err.message})\n`;
             }
         }
-        return api.sendMessage({ body: `⚡️Done:\n\n${msg}`, effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: `⚡️Done:\n\n${msg}` }, event.threadID, event.messageID);
     }
 
     const rawMatch = body.match(/^raw\s+(.+)$/i);
@@ -185,12 +185,12 @@ module.exports = {
                 msg += `❌ ${target.name} - upload failed: ${err.message}\n`;
             }
         }
-        return api.sendMessage({ body: `⚡️Raw links:\n\n${msg}`, effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: `⚡️Raw links:\n\n${msg}` }, event.threadID, event.messageID);
     }
 
     const num = parseInt(body, 10);
     if (!Number.isInteger(num) || !entries[num - 1]) {
-        return api.sendMessage({ body: "❌ Invalid reply. Send a number, \"back\", or \"delete 1,2,3\".", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ Invalid reply. Send a number, \"back\", or \"delete 1,2,3\"." }, event.threadID, event.messageID);
     }
     const entry = entries[num - 1];
     const entryAbs = path.join(dirAbs, entry.name);
@@ -224,7 +224,7 @@ module.exports = {
     }
 
     return api.sendMessage(
-        { body: `📄 ${entry.name}\n✦Reply "raw" to get a paste link for this file\n✦Or use the delete command to remove it`, effect: "love" },
+        { body: `📄 ${entry.name}\n✦Reply "raw" to get a paste link for this file\n✦Or use the delete command to remove it` },
         event.threadID,
         (e, info) => {
             if (e || !info) return;
@@ -252,7 +252,7 @@ module.exports = {
 •Reply a number to open a folder or preview an image
 •Reply "back" to go up a level
 •Reply "delete 1,2,3" to delete
-•Reply "raw 1,2,3" to get paste links for those files`, effect: "love" },
+•Reply "raw 1,2,3" to get paste links for those files` },
             event.threadID, event.messageID);
     }
 
@@ -273,9 +273,9 @@ module.exports = {
         key = `⚡️Files containing: ${word}`;
     }
 
-    if (entries.length === 0) return api.sendMessage({ body: "⚡️No matching files/folders found.", effect: "love" }, event.threadID, event.messageID);
+    if (entries.length === 0) return api.sendMessage({ body: "⚡️No matching files/folders found." }, event.threadID, event.messageID);
 
-    return api.sendMessage({ body: `${key}\n\n${renderList(COMMANDS_RELDIR, entries)}`, effect: "love" }, event.threadID, (e, info) => {
+    return api.sendMessage({ body: `${key}\n\n${renderList(COMMANDS_RELDIR, entries)}` }, event.threadID, (e, info) => {
         if (e || !info) return;
         global.GoatBot.onReply.set(info.messageID, {
             commandName: "file2",

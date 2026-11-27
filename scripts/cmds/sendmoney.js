@@ -67,28 +67,28 @@ module.exports = {
 		const targetID = rawTarget ? String(rawTarget) : null;
 
 		if (!targetID) {
-			return message.reply({ body: "Mention a user, reply to their message, or provide their user ID to send coins.", effect: "love" });
+			return message.reply({ body: "Mention a user, reply to their message, or provide their user ID to send coins." });
 		}
 
 		if (targetID === senderID) {
-			return message.reply({ body: "You cannot send coins to yourself.", effect: "love" });
+			return message.reply({ body: "You cannot send coins to yourself." });
 		}
 
 		const amount = (global.utils && typeof global.utils.parseMoney === "function")
 			? global.utils.parseMoney(amountText)
 			: Number(String(amountText || "").replace(/,/g, "").trim());
 		if (!Number.isFinite(amount) || amount <= 0 || !Number.isInteger(amount)) {
-			return message.reply({ body: "Enter a valid positive whole number of coins to send.", effect: "love" });
+			return message.reply({ body: "Enter a valid positive whole number of coins to send." });
 		}
 
 		if (activeTransfers.has(senderID)) {
-			return message.reply({ body: "Another transfer is still in progress. Please try again in a moment.", effect: "love" });
+			return message.reply({ body: "Another transfer is still in progress. Please try again in a moment." });
 		}
 
 		activeTransfers.add(senderID);
 		try {
 			if (!usersData || typeof usersData.get !== "function" || typeof usersData.subtractMoney !== "function" || typeof usersData.addMoney !== "function") {
-				return message.reply({ body: "The wallet database is not available right now.", effect: "love" });
+				return message.reply({ body: "The wallet database is not available right now." });
 			}
 
 			const [senderData, receiverData] = await Promise.all([
@@ -100,7 +100,7 @@ module.exports = {
 			const receiverBalance = Number(receiverData.money) || 0;
 
 			if (senderBalance < amount) {
-				return message.reply({ body: `You do not have enough coins. Your balance: ${formatCoins(senderBalance)} coins.`, effect: "love" });
+				return message.reply({ body: `You do not have enough coins. Your balance: ${formatCoins(senderBalance)} coins.` });
 			}
 
 			await usersData.subtractMoney(senderID, amount);
@@ -125,7 +125,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error("SENDMONEY", error);
-			return message.reply({ body: "The transfer could not be completed. Please try again.", effect: "love" });
+			return message.reply({ body: "The transfer could not be completed. Please try again." });
 		}
 		finally {
 			activeTransfers.delete(senderID);

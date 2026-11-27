@@ -34,7 +34,7 @@ module.exports = {
 
         if (!results || results.length === 0) {
           api.setMessageReaction("❌", event.messageID, () => {}, true);
-          return message.reply({ body: `𓍢ִ໋🌸✧ Cʜᴀʀᴀᴄᴛᴇʀ "${input}" ɴᴏᴛ ғᴏᴜɴᴅ! ✧🌸𓍢ִ໋`, effect: "love" });
+          return message.reply({ body: `𓍢ִ໋🌸✧ Cʜᴀʀᴀᴄᴛᴇʀ "${input}" ɴᴏᴛ ғᴏᴜɴᴅ! ✧🌸𓍢ִ໋` });
         }
 
         character = results[0];
@@ -72,7 +72,7 @@ module.exports = {
 
     } catch (error) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply({ body: "𓍢ִ໋🌸✧ Cʜᴀʀᴀᴄᴛᴇʀ ɴᴏᴛ ғᴏᴜɴᴅ ᴏʀ API ᴇʀʀᴏʀ! ✧🌸𓍢ִ໋", effect: "love" });
+      return message.reply({ body: "𓍢ִ໋🌸✧ Cʜᴀʀᴀᴄᴛᴇʀ ɴᴏᴛ ғᴏᴜɴᴅ ᴏʀ API ᴇʀʀᴏʀ! ✧🌸𓍢ִ໋" });
     }
   }
 };

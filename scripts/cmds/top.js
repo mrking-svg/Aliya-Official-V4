@@ -43,7 +43,7 @@ module.exports = {
     try {
       const allUsers = await usersData.getAll();
       if (!allUsers || allUsers.length === 0) {
-        return api.sendMessage({ body: "❌ | NO USER DATA FOUND IN DATABASE!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ | NO USER DATA FOUND IN DATABASE!" }, threadID, messageID);
       }
 
       const sortedUsers = allUsers
@@ -226,7 +226,7 @@ module.exports = {
 
     } catch (error) {
       console.error(error);
-      return api.sendMessage({ body: `❌ | Error: ${error.message}`, effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: `❌ | Error: ${error.message}` }, threadID, messageID);
     }
   }
 };

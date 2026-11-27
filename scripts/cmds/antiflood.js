@@ -26,7 +26,7 @@ module.exports.onStart = async function ({ api, event, args, Threads }) {
     const cur = (await Threads.getData(threadID)) || {};
     const enabled = (cur.data || {}).antiFlood === true;
     return api.sendMessage(
-      { body: `ব্যবহার: ${global.config.PREFIX}antiflood on/off\nবর্তমান অবস্থা: ${enabled ? "চালু ✅" : "বন্ধ ❌"}`, effect: "love" },
+      { body: `ব্যবহার: ${global.config.PREFIX}antiflood on/off\nবর্তমান অবস্থা: ${enabled ? "চালু ✅" : "বন্ধ ❌"}` },
       threadID, messageID
     );
   }
@@ -35,7 +35,7 @@ module.exports.onStart = async function ({ api, event, args, Threads }) {
   const data = record.data || {};
 
   if (mode === "status") {
-    return api.sendMessage({ body: `Anti-Flood বর্তমানে: ${data.antiFlood === true ? "চালু ✅" : "বন্ধ ❌"}`, effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: `Anti-Flood বর্তমানে: ${data.antiFlood === true ? "চালু ✅" : "বন্ধ ❌"}` }, threadID, messageID);
   }
 
   data.antiFlood = mode === "on";
@@ -43,7 +43,7 @@ module.exports.onStart = async function ({ api, event, args, Threads }) {
   global.data.threadData.set(threadID, data);
 
   return api.sendMessage(
-    { body: `✅ Anti-Flood প্রোটেকশন এখন ${mode === "on" ? "চালু করা হয়েছে" : "বন্ধ করা হয়েছে"}।`, effect: "love" },
+    { body: `✅ Anti-Flood প্রোটেকশন এখন ${mode === "on" ? "চালু করা হয়েছে" : "বন্ধ করা হয়েছে"}।` },
     threadID, messageID
   );
 };

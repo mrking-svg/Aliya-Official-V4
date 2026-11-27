@@ -129,7 +129,7 @@ module.exports = {
     } catch (error) {
       console.error("AMV Error:", error.message);
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply({ body: "Failed to fetch anime video, please try again!", effect: "love" });
+      return message.reply({ body: "Failed to fetch anime video, please try again!" });
     }
   }
 };

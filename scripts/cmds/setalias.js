@@ -48,28 +48,28 @@ module.exports = {
 			if (String(args[1] || "").toLowerCase() === "-g") {
 				const stored = await globalData.get("setalias", "data", []);
 				const list = Array.isArray(stored) ? stored : [];
-				if (!list.length) return message.reply({ body: "No global aliases are configured.", effect: "love" });
-				return message.reply({ body: `Global aliases:\n${list.map(item => `• ${item.commandName}: ${(item.aliases || []).join(", ")}`).join("\n")}`, effect: "love" });
+				if (!list.length) return message.reply({ body: "No global aliases are configured." });
+				return message.reply({ body: `Global aliases:\n${list.map(item => `• ${item.commandName}: ${(item.aliases || []).join(", ")}`).join("\n")}` });
 			}
-			if (!Object.keys(local).length) return message.reply({ body: "This group has no custom aliases.", effect: "love" });
-			return message.reply({ body: `Group aliases:\n${formatList(local)}`, effect: "love" });
+			if (!Object.keys(local).length) return message.reply({ body: "This group has no custom aliases." });
+			return message.reply({ body: `Group aliases:\n${formatList(local)}` });
 		}
 
 		if (!["add", "remove", "rm", "delete", "-d"].includes(mode))
-			return message.reply({ body: `Unknown option "${mode}". Use ${prefix}setalias for the command list.`, effect: "love" });
+			return message.reply({ body: `Unknown option "${mode}". Use ${prefix}setalias for the command list.` });
 
 		const alias = String(args[1] || "").toLowerCase();
 		const commandName = String(args[2] || "").toLowerCase();
 		const globalMode = String(args[3] || "").toLowerCase() === "-g";
-		if (!alias || !commandName) return message.reply({ body: `Usage: ${prefix}setalias ${mode} <alias> <command>`, effect: "love" });
+		if (!alias || !commandName) return message.reply({ body: `Usage: ${prefix}setalias ${mode} <alias> <command>` });
 
 		const adding = mode === "add";
 		const adminLevel = Number(role || 0) >= 2;
 
 		if (globalMode) {
-			if (!adminLevel) return message.reply({ body: "Only bot admins can change global aliases.", effect: "love" });
+			if (!adminLevel) return message.reply({ body: "Only bot admins can change global aliases." });
 			if (adding && (commandExists(alias) || aliasExists(alias)))
-				return message.reply({ body: `Alias "${alias}" is already used by a command or alias.`, effect: "love" });
+				return message.reply({ body: `Alias "${alias}" is already used by a command or alias.` });
 
 			const stored = await globalData.get("setalias", "data", []);
 			const list = Array.isArray(stored) ? stored : [];
@@ -86,14 +86,14 @@ module.exports = {
 			await globalData.set("setalias", list, "data");
 			if (adding) global.GoatBot.aliases.set(alias, commandName);
 			else global.GoatBot.aliases.delete(alias);
-			return message.reply({ body: `${adding ? "Added" : "Removed"} global alias "${alias}" ${adding ? "for" : "from"} "${commandName}".`, effect: "love" });
+			return message.reply({ body: `${adding ? "Added" : "Removed"} global alias "${alias}" ${adding ? "for" : "from"} "${commandName}".` });
 		}
 
 		if (adding && commandExists(alias))
-			return message.reply({ body: `Alias "${alias}" is already a command name.`, effect: "love" });
+			return message.reply({ body: `Alias "${alias}" is already a command name.` });
 		for (const name of Object.keys(local))
 			if ((local[name] || []).includes(alias))
-				return message.reply({ body: `Alias "${alias}" is already used in this group.`, effect: "love" });
+				return message.reply({ body: `Alias "${alias}" is already used in this group.` });
 
 		const list = Array.isArray(local[commandName]) ? local[commandName] : [];
 		const index = list.indexOf(alias);
@@ -103,6 +103,6 @@ module.exports = {
 		else delete local[commandName];
 
 		await threadsData.set(event.threadID, local, "data.aliases");
-		return message.reply({ body: `${adding ? "Added" : "Removed"} group alias "${alias}" ${adding ? "for" : "from"} "${commandName}".`, effect: "love" });
+		return message.reply({ body: `${adding ? "Added" : "Removed"} group alias "${alias}" ${adding ? "for" : "from"} "${commandName}".` });
 	}
 };

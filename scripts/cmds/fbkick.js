@@ -33,13 +33,13 @@ module.exports.onStart = async function ({ api, event }) {
 
   // 🔒 ক্রেডিট লক
   if (!creditOk()) {
-    return api.sendMessage({ body: "⛔ ক্রেডিট বদলানো হয়েছে! কমান্ড বন্ধ।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "⛔ ক্রেডিট বদলানো হয়েছে! কমান্ড বন্ধ।" }, threadID, messageID);
   }
 
   // শুধু কনফিগারেশনের বট অ্যাডমিন
   const adminBot = ((global.config && global.config.adminBot) || []).map(String);
   if (!adminBot.includes(String(senderID))) {
-    return api.sendMessage({ body: "❌ শুধু বট অ্যাডমিন ব্যবহার করতে পারবে।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "❌ শুধু বট অ্যাডমিন ব্যবহার করতে পারবে।" }, threadID, messageID);
   }
 
   try {
@@ -63,7 +63,7 @@ module.exports.onStart = async function ({ api, event }) {
 🤖 বট গ্রুপ অ্যাডমিন: ❌ নেই
 আগে বটকে গ্রুপ অ্যাডমিন করুন।
 
-━━━━━━━━━━━━━━━━━━`, effect: "love" },
+━━━━━━━━━━━━━━━━━━` },
         threadID,
         messageID
       );
@@ -89,14 +89,14 @@ module.exports.onStart = async function ({ api, event }) {
 
     if (targets.length === 0) {
       return api.sendMessage(
-        { body: "🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n✅ কোনো সাসপেন্ড/ডিসেবল আইডি পাওয়া যায়নি।", effect: "love" },
+        { body: "🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n✅ কোনো সাসপেন্ড/ডিসেবল আইডি পাওয়া যায়নি।" },
         threadID,
         messageID
       );
     }
 
     await api.sendMessage(
-      { body: `🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n🔍 ${targets.length} টি আইডি পাওয়া গেছে, কিক হচ্ছে...`, effect: "love" },
+      { body: `🤖 বট গ্রুপ অ্যাডমিন: ✅ আছে\n🔍 ${targets.length} টি আইডি পাওয়া গেছে, কিক হচ্ছে...` },
       threadID
     );
 
@@ -125,11 +125,11 @@ module.exports.onStart = async function ({ api, event }) {
 ⚠️ ব্যর্থ: ${failed} টি
 
 ━━━━━━━━━━━━━━━━━━
-👑 0xMr_King x ┃ Tanin Islam`, effect: "love" },
+👑 0xMr_King x ┃ Tanin Islam` },
       threadID
     );
   } catch (e) {
     console.log("fbkick error:", e);
-    return api.sendMessage({ body: "❌ কিছু সমস্যা হয়েছে।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "❌ কিছু সমস্যা হয়েছে।" }, threadID, messageID);
   }
 };

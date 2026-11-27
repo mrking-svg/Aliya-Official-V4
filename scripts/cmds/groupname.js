@@ -16,7 +16,7 @@ module.exports = {
 
     if (!name) {
       return api.sendMessage(
-        { body: "❌ | দয়া করে নতুন গ্রুপ নাম লিখো!\n\n📝 উদাহরণঃ /groupname Dark Army 💀", effect: "love" },
+        { body: "❌ | দয়া করে নতুন গ্রুপ নাম লিখো!\n\n📝 উদাহরণঃ /groupname Dark Army 💀" },
         event.threadID,
         event.messageID
       );
@@ -24,10 +24,10 @@ module.exports = {
 
     try {
       await api.setTitle(name, event.threadID);
-      api.sendMessage({ body: `✅ | গ্রুপের নাম পরিবর্তন হয়েছে:\n➡️ ${name}`, effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: `✅ | গ্রুপের নাম পরিবর্তন হয়েছে:\n➡️ ${name}` }, event.threadID, event.messageID);
     } catch (err) {
       console.error(err);
-      api.sendMessage({ body: "⚠️ | নাম পরিবর্তন করা যায়নি! নিশ্চিত হও বটের পর্যাপ্ত পারমিশন আছে কিনা।", effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: "⚠️ | নাম পরিবর্তন করা যায়নি! নিশ্চিত হও বটের পর্যাপ্ত পারমিশন আছে কিনা।" }, event.threadID, event.messageID);
     }
   }
 };

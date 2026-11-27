@@ -15,7 +15,7 @@ module.exports = {
 
     onStart: async function ({ api, event, args, message }) {
         if (args.length === 0) {
-            return message.reply({ body: "❌ | Please provide a sing name\n\nExample: sing moye moye", effect: "love" });
+            return message.reply({ body: "❌ | Please provide a sing name\n\nExample: sing moye moye" });
         }
 
         try {
@@ -30,7 +30,7 @@ module.exports = {
             console.log("Response:", response);
 
             if (response.data.error) {
-                return message.reply({ body: `${response.data.error}`, effect: "love" });
+                return message.reply({ body: `${response.data.error}` });
             }
 
             message.reply({
@@ -44,10 +44,10 @@ module.exports = {
             if (error.response) {
                 console.error("Response error data:", error.response.data);
                 console.error("Response status:", error.response.status);
-                return message.reply({ body: `${error.response.data.error || error.message}`, effect: "love" });
+                return message.reply({ body: `${error.response.data.error || error.message}` });
             }
 
-            message.reply({ body: "error🥺", effect: "love" });
+            message.reply({ body: "error🥺" });
         }
     }
 };

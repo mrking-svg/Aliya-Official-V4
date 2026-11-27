@@ -21,7 +21,7 @@ onStart: async function ({ api, event }) {
 const { threadID, messageID, senderID, mentions } = event;
 
 const mentionID = ((Object.keys(mentions || {}).length) ? Object.keys(mentions || {}) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []))[0];
-if (!mentionID) return api.sendMessage({ body: "Please mention someone first!", effect: "love" }, threadID, messageID);
+if (!mentionID) return api.sendMessage({ body: "Please mention someone first!" }, threadID, messageID);
 
 const cacheDir = path.join(__dirname, "cache");
 if (!fs.existsSync(cacheDir)) fs.ensureDirSync(cacheDir);
@@ -80,7 +80,7 @@ if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
 
 } catch (error) {
 console.log("NEKHA ERROR:", error);
-return api.sendMessage({ body: "An error occurred while creating the image.", effect: "love" }, threadID, messageID);
+return api.sendMessage({ body: "An error occurred while creating the image." }, threadID, messageID);
 }
 }
 };

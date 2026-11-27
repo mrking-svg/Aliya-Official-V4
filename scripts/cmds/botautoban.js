@@ -537,7 +537,7 @@ module.exports.onStart = async ({ event, api }) => {
 📊 Total Keywords: ${botKeywords.length}
 🛡️ Protected Admins: ${adminList.length}
 
-Made by 0xMr_King x ┃ Tanin Islam`, effect: "love" },
+Made by 0xMr_King x ┃ Tanin Islam` },
         event.threadID
     );
 };

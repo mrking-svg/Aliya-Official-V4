@@ -32,7 +32,7 @@ module.exports.onStart = async ({ api, event }) => {
     request(res.data.url).pipe(fs.createWriteStream(__dirname + `/cache/rushia.${ext}`)).on("close", callback);
    })
       .catch(err => {
-                     api.sendMessage({ body: "there's something problem while generating photo, please try again!", effect: "love" }, event.threadID, event.messageID);
+                     api.sendMessage({ body: "there's something problem while generating photo, please try again!" }, event.threadID, event.messageID);
     api.setMessageReaction("☹️", event.messageID, (err) => {}, true);
                   })    
 }

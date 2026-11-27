@@ -39,22 +39,22 @@ module.exports.onStart = async function ({ api, event }) {
 
   // 🔒 ক্রেডিট লক
   if (!creditOk()) {
-    return api.sendMessage({ body: "⛔ ক্রেডিট বদলানো হয়েছে! কমান্ড বন্ধ।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "⛔ ক্রেডিট বদলানো হয়েছে! কমান্ড বন্ধ।" }, threadID, messageID);
   }
 
   // শুধু বট অ্যাডমিন
   const adminBot = (global.config && global.config.adminBot) || [];
   if (!adminBot.includes(String(senderID))) {
-    return api.sendMessage({ body: "❌ শুধু বট অ্যাডমিন ব্যবহার করতে পারবে।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "❌ শুধু বট অ্যাডমিন ব্যবহার করতে পারবে।" }, threadID, messageID);
   }
 
   if (!messageReply || !messageReply.attachments || messageReply.attachments.length === 0) {
-    return api.sendMessage({ body: "📸 একটি ছবিতে রিপ্লাই দিন।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "📸 একটি ছবিতে রিপ্লাই দিন।" }, threadID, messageID);
   }
 
   const attachment = messageReply.attachments[0];
   if (attachment.type !== "photo") {
-    return api.sendMessage({ body: "❌ এটা ছবি নয়।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "❌ এটা ছবি নয়।" }, threadID, messageID);
   }
 
   const cacheDir = path.join(__dirname, "cache");
@@ -71,7 +71,7 @@ module.exports.onStart = async function ({ api, event }) {
 
       if (err) {
         console.log("setpp error:", err);
-        return api.sendMessage({ body: "❌ প্রোফাইল পিকচার সেট হয়নি।", effect: "love" }, threadID);
+        return api.sendMessage({ body: "❌ প্রোফাইল পিকচার সেট হয়নি।" }, threadID);
       }
 
       return api.sendMessage(
@@ -83,13 +83,13 @@ module.exports.onStart = async function ({ api, event }) {
 সফলভাবে সেট হয়েছে!
 
 ━━━━━━━━━━━━━━━━━━
-👑 0xMr_King x ┃ Tanin Islam`, effect: "love" },
+👑 0xMr_King x ┃ Tanin Islam` },
         threadID
       );
     });
   } catch (e) {
     console.log("setpp error:", e);
     if (fs.existsSync(imgPath)) fs.removeSync(imgPath);
-    return api.sendMessage({ body: "❌ কিছু সমস্যা হয়েছে।", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "❌ কিছু সমস্যা হয়েছে।" }, threadID, messageID);
   }
 };

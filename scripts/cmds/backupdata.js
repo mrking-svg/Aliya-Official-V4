@@ -46,7 +46,7 @@ module.exports = {
 				attachment
 			});
 		} catch (err) {
-			return message.reply({ body: `Backup failed: ${err.message}`, effect: "love" });
+			return message.reply({ body: `Backup failed: ${err.message}` });
 		}
 	}
 };

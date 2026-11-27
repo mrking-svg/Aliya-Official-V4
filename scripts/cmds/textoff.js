@@ -102,7 +102,7 @@ delete textOff[threadID];
 if (data?.noticeMsgID) {
 try { await api.unsendMessage(data.noticeMsgID); } catch (e) {}
 }
-let msg2 = await api.sendMessage({ body: "✅ চালু", effect: "love" }, threadID);
+let msg2 = await api.sendMessage({ body: "✅ চালু" }, threadID);
 setTimeout(() => { api.unsendMessage(msg2.messageID); }, 120000);
 }, t.ms);
 }

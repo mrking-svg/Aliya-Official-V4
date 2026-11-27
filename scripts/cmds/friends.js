@@ -36,7 +36,7 @@ module.exports.handleReply = async function ({ api, args, Users, handleReply, ev
           //console.log(msg);
         }
 
-        api.sendMessage({ body: `successfully deleted from friend list\n\n${msg}`, effect: "love" }, threadID, () =>
+        api.sendMessage({ body: `successfully deleted from friend list\n\n${msg}` }, threadID, () =>
           api.unsendMessage(handleReply.messageID));
       }
       break;

@@ -23,7 +23,7 @@ module.exports.config = {
 
 module.exports.onStart = async function({ api, args, Users, event}) {
     var mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []))[0];
-    if(!mention) return api.sendMessage({ body: "আপনি কাকে ভালোবাসেন এমন 1 জনকে @ম্যানশন করতে হবে", effect: "love" }, event.threadID);
+    if(!mention) return api.sendMessage({ body: "আপনি কাকে ভালোবাসেন এমন 1 জনকে @ম্যানশন করতে হবে" }, event.threadID);
  let name =  event.mentions[mention];
     var arraytag = [];
         arraytag.push({id: mention, tag: name});

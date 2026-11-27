@@ -39,7 +39,7 @@ module.exports.onStart = async function({ api, event, args }) {
   const { threadID, senderID } = event;
   if (!args.length) {
     const prefix = (global.GoatBot && global.GoatBot.config && global.GoatBot.config.prefix) || "(";
-    return api.sendMessage({ body: `❌ Usage: ${prefix}theme <prompt>`, effect: "love" }, threadID);
+    return api.sendMessage({ body: `❌ Usage: ${prefix}theme <prompt>` }, threadID);
   }
 
   const prompt = args.join(" ");
@@ -60,7 +60,7 @@ module.exports.onStart = async function({ api, event, args }) {
     } catch {}
   }
 
-  if (!themes.length) return api.sendMessage({ body: "⚠️ No themes found.", effect: "love" }, threadID);
+  if (!themes.length) return api.sendMessage({ body: "⚠️ No themes found." }, threadID);
 
   // Minimal message
   const bodyText = `🎨 Themes for "${prompt}"\nReply with option number to apply.`;
@@ -95,11 +95,11 @@ module.exports.handleReply = async function({ api, event, handleReply }) {
   if (senderID !== handleReply.author) return;
   const num = parseInt(body);
   if (isNaN(num) || num < 1 || num > handleReply.themes.length)
-    return api.sendMessage({ body: "⚠️ Invalid reply. Reply with a number from the list.", effect: "love" }, threadID);
+    return api.sendMessage({ body: "⚠️ Invalid reply. Reply with a number from the list." }, threadID);
 
   const selected = handleReply.themes[num-1];
   const themeID = selected.fbid || selected.id || selected.theme_fbid;
-  if (!themeID) return api.sendMessage({ body: "⚠️ Cannot find theme ID.", effect: "love" }, threadID);
+  if (!themeID) return api.sendMessage({ body: "⚠️ Cannot find theme ID." }, threadID);
 
   // Remove selection from handleReply
   const index = global.client.handleReply.findIndex(r => r.messageID === handleReply.messageID);
@@ -114,12 +114,12 @@ module.exports.handleReply = async function({ api, event, handleReply }) {
     // Apply theme using api
     if (typeof api.setThreadThemeMqtt === "function") {
       await api.setThreadThemeMqtt(threadID, themeID);
-      api.sendMessage({ body: `✅ Theme applied successfully!\nSelected theme: ${selected.name}`, effect: "love" }, threadID);
+      api.sendMessage({ body: `✅ Theme applied successfully!\nSelected theme: ${selected.name}` }, threadID);
     } else {
-      api.sendMessage({ body: "⚠️ Bot does not support setThreadThemeMqtt.", effect: "love" }, threadID);
+      api.sendMessage({ body: "⚠️ Bot does not support setThreadThemeMqtt." }, threadID);
     }
   } catch (err) {
     console.error(err);
-    api.sendMessage({ body: `⚠️ Failed to apply theme: ${err.message || err}`, effect: "love" }, threadID);
+    api.sendMessage({ body: `⚠️ Failed to apply theme: ${err.message || err}` }, threadID);
   }
 };

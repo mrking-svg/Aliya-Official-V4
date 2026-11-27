@@ -30,7 +30,7 @@ module.exports = {
 │
 │ Example:
 │ photo 1 Mamun
-╰─────────────`, effect: "love" },
+╰─────────────` },
         event.threadID,
         event.messageID
       );
@@ -75,7 +75,7 @@ module.exports = {
 1 - 25
 
 Example:
-ephoto 5 Mamun`, effect: "love" },
+ephoto 5 Mamun` },
         event.threadID,
         event.messageID
       );
@@ -92,7 +92,7 @@ ephoto 5 Mamun`, effect: "love" },
     try {
 
       await api.sendMessage(
-        { body: "⏳ | Creating your stylish image...", effect: "love" },
+        { body: "⏳ | Creating your stylish image..." },
         event.threadID
       );
 
@@ -127,7 +127,7 @@ ephoto 5 Mamun`, effect: "love" },
       console.log(error);
 
       return api.sendMessage(
-        { body: `❌ Failed to generate image!\n\n${error.message}`, effect: "love" },
+        { body: `❌ Failed to generate image!\n\n${error.message}` },
         event.threadID,
         event.messageID
       );

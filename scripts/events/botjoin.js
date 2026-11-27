@@ -20,10 +20,6 @@ function getPrefix(threadID) {
 }
 
 function contactLink() {
-  try {
-    const approval = require("../../includes/approve");
-    if (typeof approval.contactLinks === "function") return approval.contactLinks()[0];
-  } catch (_) {}
   return "https://m.me/0xmrking";
 }
 

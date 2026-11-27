@@ -30,12 +30,12 @@ module.exports = {
     const bet = parseBet(args[0]);
 
     if (isNaN(bet) || bet < 100)
-      return message.reply({ body: "❌ Minimum bet is 100 coins.", effect: "love" });
+      return message.reply({ body: "❌ Minimum bet is 100 coins." });
 
     const userData = await usersData.get(event.senderID);
 
     if (!userData || (userData.money || 0) < bet)
-      return message.reply({ body: "❌ You don't have enough coins.", effect: "love" });
+      return message.reply({ body: "❌ You don't have enough coins." });
 
     const crashPoint = Number((Math.random() * 9 + 1).toFixed(2));
     const cashOut = multipliers[Math.floor(Math.random() * multipliers.length)];
@@ -60,7 +60,7 @@ module.exports = {
 💥 Crash: ${crashPoint}x
 
 🎉 You won ${compact(reward)} coins!
-💰 Profit: ${compact(profit)} coins`, effect: "love" }
+💰 Profit: ${compact(profit)} coins` }
       );
     } else {
       money -= bet;
@@ -77,7 +77,7 @@ module.exports = {
 📈 Cash Out: ${cashOut}x
 💥 Crash: ${crashPoint}x
 
-💀 You lost ${compact(bet)} coins!`, effect: "love" }
+💀 You lost ${compact(bet)} coins!` }
       );
     }
   }

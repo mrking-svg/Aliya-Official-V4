@@ -17,18 +17,18 @@ module.exports = {
     const mode = String(args[0] || "").toLowerCase();
 
     if (mode !== "on" && mode !== "off") {
-      return api.sendMessage({ body: "Usage: antiout on | antiout off", effect: "love" }, threadID, event.messageID);
+      return api.sendMessage({ body: "Usage: antiout on | antiout off" }, threadID, event.messageID);
     }
 
     try {
       const threadData = await threadsData.get(threadID) || {};
       const data = { ...(threadData.data || {}), antiout: mode === "on" };
       await threadsData.set(threadID, { data });
-      return api.sendMessage({ body: `AntiOut ${mode === "on" ? "enabled" : "disabled"} successfully.`, effect: "love" }, threadID, event.messageID);
+      return api.sendMessage({ body: `AntiOut ${mode === "on" ? "enabled" : "disabled"} successfully.` }, threadID, event.messageID);
     }
     catch (error) {
       console.error("ANTIOUT", error);
-      return api.sendMessage({ body: "AntiOut could not be updated. Please try again.", effect: "love" }, threadID, event.messageID);
+      return api.sendMessage({ body: "AntiOut could not be updated. Please try again." }, threadID, event.messageID);
     }
   },
 
@@ -65,7 +65,7 @@ module.exports = {
       catch (e) { /* keep the default name */ }
 
       await api.addUserToGroup(userID, threadID);
-      return api.sendMessage({ body: `AntiOut: ${name} has been added back to the group.`, effect: "love" }, threadID);
+      return api.sendMessage({ body: `AntiOut: ${name} has been added back to the group.` }, threadID);
     }
     catch (error) {
       // A failed re-add must never break the other leave handlers.

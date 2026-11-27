@@ -129,7 +129,7 @@ module.exports = {
 
 				const value = args[index] === "on" ? true : args[index] === "off" ? false : null;
 				if (value === null)
-					return message.reply({ body: "⚠️ | Please specify 'on' or 'off'.", effect: "love" });
+					return message.reply({ body: "⚠️ | Please specify 'on' or 'off'." });
 
 				if (isSetNoti) {
 					config.hideNotiMessage.whiteListModeThread = !value;

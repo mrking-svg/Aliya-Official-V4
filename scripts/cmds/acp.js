@@ -49,7 +49,7 @@ module.exports.handleReply = async ({ handleReply, event, api }) => {
     form.doc_id = "4108254489275063";
   } else {
     return api.sendMessage(
-      { body: `⚠️ Please reply with:\n» add <number | all>\n» del <number | all>`, effect: "love" },
+      { body: `⚠️ Please reply with:\n» add <number | all>\n» del <number | all>` },
       event.threadID,
       event.messageID
     );
@@ -116,11 +116,11 @@ module.exports.onStart = async ({ event, api }) => {
       await api.httpPost("https://www.facebook.com/api/graphql/", form)
     ).data.viewer.friending_possibilities.edges;
   } catch (e) {
-    return api.sendMessage({ body: "❌ Could not load friend requests. Try again later.", effect: "love" }, event.threadID, event.messageID);
+    return api.sendMessage({ body: "❌ Could not load friend requests. Try again later." }, event.threadID, event.messageID);
   }
 
   if (!listRequest.length)
-    return api.sendMessage({ body: "📭 No pending friend requests.", effect: "love" }, event.threadID, event.messageID);
+    return api.sendMessage({ body: "📭 No pending friend requests." }, event.threadID, event.messageID);
 
   let msg = `${LINE}\n👥 𝗙𝗥𝗜𝗘𝗡𝗗 𝗥𝗘𝗤𝗨𝗘𝗦𝗧𝗦 (${listRequest.length})\n${LINE}\n`;
   let i = 0;

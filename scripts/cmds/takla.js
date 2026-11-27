@@ -111,7 +111,7 @@ module.exports = {
 
       if (!avtBuffer) {
         api.setMessageReaction("❌", messageID, (err) => {}, true);
-        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!" }, threadID, messageID);
       }
 
       // Precise Face Position (Covers face area; leaves top bald head visible)
@@ -149,7 +149,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       api.setMessageReaction("❌", messageID, (err) => {}, true);
-      return api.sendMessage({ body: `❌ | Error generating takla meme: ${error.message}`, effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: `❌ | Error generating takla meme: ${error.message}` }, threadID, messageID);
     }
   }
 };

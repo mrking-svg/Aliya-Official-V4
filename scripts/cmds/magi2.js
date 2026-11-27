@@ -34,12 +34,12 @@ module.exports = {
         const participants = threadInfo.participantIDs.filter(id => id !== senderID && id !== api.getCurrentUserID());
         
         if (participants.length === 0) {
-          return message.reply({ body: "❌ No other members found to pick randomly.", effect: "love" });
+          return message.reply({ body: "❌ No other members found to pick randomly." });
         }
         
         targetID = participants[Math.floor(Math.random() * participants.length)];
       } catch (e) {
-        return message.reply({ body: "❌ Failed to get group members. Please reply or mention someone.", effect: "love" });
+        return message.reply({ body: "❌ Failed to get group members. Please reply or mention someone." });
       }
     }
 
@@ -109,7 +109,7 @@ module.exports = {
       fs.unlink(filePath, () => {});
     } catch (err) {
       console.error("[MAGI ERROR]", err);
-      return message.reply({ body: "❌ Failed to generate the image. Please try again.", effect: "love" });
+      return message.reply({ body: "❌ Failed to generate the image. Please try again." });
     }
   }
 };

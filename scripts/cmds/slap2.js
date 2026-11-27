@@ -31,7 +31,7 @@ module.exports.onStart = async function ({ api, event, args }) {
   const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam";
   if (module.exports.config.credits !== obfuscatedAuthor) {
     return api.sendMessage(
-      { body: "You are not authorized to change the author name.", effect: "love" },
+      { body: "You are not authorized to change the author name." },
       event.threadID,
       event.messageID
     );
@@ -49,7 +49,7 @@ module.exports.onStart = async function ({ api, event, args }) {
     targetID = args[0];
   } else {
     return api.sendMessage(
-      { body: "❌ Mention, reply, or provide UID of the target.", effect: "love" },
+      { body: "❌ Mention, reply, or provide UID of the target." },
       threadID,
       messageID
     );
@@ -73,6 +73,6 @@ module.exports.onStart = async function ({ api, event, args }) {
     );
   } catch (e) {
     console.error(e);
-    api.sendMessage({ body: "🥹 Error! Contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, threadID, messageID);
+    api.sendMessage({ body: "🥹 Error! Contact 0xMr_King x ┃ Tanin Islam." }, threadID, messageID);
   }
 };

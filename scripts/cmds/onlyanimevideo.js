@@ -74,7 +74,7 @@ async function handleDriveSync(api, event) {
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ Error sync!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ Error sync!" }, threadID, messageID);
     }
 }
 
@@ -97,7 +97,7 @@ async function handleDriveMedia(api, event) {
             const fallbackMatches = [...htmlData.matchAll(/\/file\/d\/([a-zA-Z0-9_-]+)\/view/g)];
             if (fallbackMatches.length === 0) {
                 api.setMessageReaction("❌", messageID, () => {}, true);
-                return api.sendMessage({ body: "📁 Couldn't find any file😒!", effect: "love" }, threadID, messageID);
+                return api.sendMessage({ body: "📁 Couldn't find any file😒!" }, threadID, messageID);
             }
             fileId = fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)][1];
         } else {
@@ -132,7 +132,7 @@ async function handleDriveMedia(api, event) {
                     api.setMessageReaction("🔥", messageID, () => {}, true);
                 } else {
                     api.setMessageReaction("❌", messageID, () => {}, true);
-                    api.sendMessage({ body: "❌ ভিডিওটি পাঠাতে সমস্যা হয়েছে (সাইজ অনেক বড় হতে পারে)!", effect: "love" }, threadID, messageID);
+                    api.sendMessage({ body: "❌ ভিডিওটি পাঠাতে সমস্যা হয়েছে (সাইজ অনেক বড় হতে পারে)!" }, threadID, messageID);
                 }
             }, messageID);
         });
@@ -140,12 +140,12 @@ async function handleDriveMedia(api, event) {
         writer.on("error", (err) => {
             if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
             api.setMessageReaction("❌", messageID, () => {}, true);
-            api.sendMessage({ body: "❌ ভিডিও ডাউনলোড করতে সমস্যা হয়েছে।", effect: "love" }, threadID, messageID);
+            api.sendMessage({ body: "❌ ভিডিও ডাউনলোড করতে সমস্যা হয়েছে।" }, threadID, messageID);
         });
 
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        api.sendMessage({ body: "❌ ড্রাইভ থেকে ভিডিও লোড করতে ব্যর্থ হয়েছে।", effect: "love" }, threadID, messageID);
+        api.sendMessage({ body: "❌ ড্রাইভ থেকে ভিডিও লোড করতে ব্যর্থ হয়েছে।" }, threadID, messageID);
     }
 }

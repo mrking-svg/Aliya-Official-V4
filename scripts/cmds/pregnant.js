@@ -24,11 +24,11 @@ module.exports.onStart = async function ({ api, event, message, usersData }) {
       targetID = event.messageReply.senderID;
     }
 
-    if (!targetID) return message.reply({ body: "🤰 Tag or reply to someone!", effect: "love" });
+    if (!targetID) return message.reply({ body: "🤰 Tag or reply to someone!" });
 
     // Protect owner
     const ownerID = getOwnerID();
-    if (ownerID && String(targetID) === ownerID) return message.reply({ body: "🚫 𝗬𝗼𝘂 𝗱𝗲𝘀𝗲𝗿𝘃𝗲 𝘁𝗵𝗶𝘀,𝗻𝗼𝘁 𝗺𝘆 𝗼𝘄𝗻𝗲𝗿 😙", effect: "love" });
+    if (ownerID && String(targetID) === ownerID) return message.reply({ body: "🚫 𝗬𝗼𝘂 𝗱𝗲𝘀𝗲𝗿𝘃𝗲 𝘁𝗵𝗶𝘀,𝗻𝗼𝘁 𝗺𝘆 𝗼𝘄𝗻𝗲𝗿 😙" });
 
     const base = path.join(__dirname, "..", "resources");
     if (!fs.existsSync(base)) fs.mkdirSync(base);
@@ -94,6 +94,6 @@ module.exports.onStart = async function ({ api, event, message, usersData }) {
 
   } catch (err) {
     console.log(err);
-    message.reply({ body: "❌ Error generating pregnant meme.", effect: "love" });
+    message.reply({ body: "❌ Error generating pregnant meme." });
   }
 };

@@ -21,6 +21,6 @@ module.exports.config = {
 
 module.exports.onStart = async function({ api, event, args }) {
 	var emoji = args.join(" ")
-	if (!emoji) api.sendMessage({ body: "You have not entered Emoji 🐸", effect: "love" }, event.threadID, event.messageID)
-	else api.changeThreadEmoji(emoji, event.threadID, () => api.sendMessage({ body: `🔨 The bot successfully changed Emoji to: ${emoji}`, effect: "love" }, event.threadID, event.messageID));
+	if (!emoji) api.sendMessage({ body: "You have not entered Emoji 🐸" }, event.threadID, event.messageID)
+	else api.changeThreadEmoji(emoji, event.threadID, () => api.sendMessage({ body: `🔨 The bot successfully changed Emoji to: ${emoji}` }, event.threadID, event.messageID));
 };

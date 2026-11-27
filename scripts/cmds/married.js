@@ -34,7 +34,7 @@ module.exports.onStart = async function ({ event, api }) {
   }
 
   if (!targetID) {
-    return api.sendMessage({ body: "Please reply or mention someone......", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "Please reply or mention someone......" }, threadID, messageID);
   }
 
   try {
@@ -92,6 +92,6 @@ module.exports.onStart = async function ({ event, api }) {
       messageID
     );
   } catch (error) {
-    return api.sendMessage({ body: "API Error Call Boss SAHU", effect: "love" }, threadID, messageID);
+    return api.sendMessage({ body: "API Error Call Boss SAHU" }, threadID, messageID);
   }
 };

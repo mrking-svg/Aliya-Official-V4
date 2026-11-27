@@ -41,5 +41,5 @@ module.exports.onStart = async function ({ api, event, Threads, getText }) {
   tagadmin == null ? tagadmin = `true` : tagadmin = `${tagadmin}`;
   guard == null ? guard = `true` : guard = `${guard}`;
   antiout == null || antiout === false ? antiout = `false` : antiout = `${antiout}`;
-return api.sendMessage({ body: `ᅠᅠ☣️Table ☣️ \n\n\n🍄────•🦋• ────🍄\n❯ 🍉 Log: ${log}\n❯ 🍇 Rankup: ${rankup}\n❯ 🍓 Resend: ${resend}\n❯ 🥕 Tag admin: ${tagadmin}\n❯ 🍑 Antirobbery ${guard}\n❯ 🍒 Antiout: ${antiout}\n🍄────•🦋• ────🍄`, effect: "love" }, threadID, messageID);
+return api.sendMessage({ body: `ᅠᅠ☣️Table ☣️ \n\n\n🍄────•🦋• ────🍄\n❯ 🍉 Log: ${log}\n❯ 🍇 Rankup: ${rankup}\n❯ 🍓 Resend: ${resend}\n❯ 🥕 Tag admin: ${tagadmin}\n❯ 🍑 Antirobbery ${guard}\n❯ 🍒 Antiout: ${antiout}\n🍄────•🦋• ────🍄` }, threadID, messageID);
 }

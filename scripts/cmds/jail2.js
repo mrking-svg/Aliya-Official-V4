@@ -25,13 +25,13 @@ module.exports = {
      const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam";
      if (module.exports.config.author !== obfuscatedAuthor) {
      return api.sendMessage(
-     { body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID );
+     { body: "You are not authorized to change the author name." }, event.threadID, event.messageID );
    }
 
     const { threadID, messageID, messageReply, mentions } = event;
     let id2; if (messageReply) { id2 = messageReply.senderID; } else if (Object.keys(mentions).length > 0) {
     id2 = Object.keys(mentions)[0];  } else if (args[0]) {  id2 = args[0]; } else {
-    return api.sendMessage( { body: "baby, Mention, reply, or provide UID of the target.", effect: "love" }, threadID, messageID );
+    return api.sendMessage( { body: "baby, Mention, reply, or provide UID of the target." }, threadID, messageID );
   }
 
    try {
@@ -47,7 +47,7 @@ module.exports = {
     threadID, () => fs.unlinkSync(filePath),  messageID );
   } catch (err) {
     console.error(err);
-    api.sendMessage({ body: `🥹error, contact Kakashi.`, effect: "love" }, threadID, messageID);
+    api.sendMessage({ body: `🥹error, contact Kakashi.` }, threadID, messageID);
     }
   },
 };

@@ -39,7 +39,7 @@ module.exports = {
 		if (["on", "off"].includes(mode)) {
 			await threadsData.set(threadID, mode === "on", "settings.antiUnsend");
 			if (mode === "off") cache.delete(threadID);
-			return message.reply({ body: `Deleted-message recovery is now ${mode === "on" ? "ON" : "OFF"}.`, effect: "love" });
+			return message.reply({ body: `Deleted-message recovery is now ${mode === "on" ? "ON" : "OFF"}.` });
 		}
 
 		const enabled = await threadsData.get(threadID, "settings.antiUnsend", false);

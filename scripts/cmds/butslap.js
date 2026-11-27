@@ -24,13 +24,13 @@ module.exports = {
   onStart: async function ({ api, event, args }) {
     const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam";
     if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name." }, event.threadID, event.messageID);
     }
 
     const { threadID, messageID, messageReply, mentions, senderID } = event;
     const type = args[0];
 
-    if (!type) return api.sendMessage({ body: "Use: fun slap @tag", effect: "love" }, threadID, messageID);
+    if (!type) return api.sendMessage({ body: "Use: fun slap @tag" }, threadID, messageID);
 
     let id = senderID;
     let id2;
@@ -42,7 +42,7 @@ module.exports = {
     } else if (args[1]) {
       id2 = args[1];
     } else {
-      return api.sendMessage({ body: "Mention, reply, or provide UID of the target.", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "Mention, reply, or provide UID of the target." }, threadID, messageID);
     }
 
     try {
@@ -63,7 +63,7 @@ module.exports = {
       );
     } catch (err) {
       console.error(err);
-      api.sendMessage({ body: `🥹error, contact 0xMr_King x ┃ Tanin Islam.`, effect: "love" }, threadID, messageID);
+      api.sendMessage({ body: `🥹error, contact 0xMr_King x ┃ Tanin Islam.` }, threadID, messageID);
     }
   }
 };

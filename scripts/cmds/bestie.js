@@ -22,7 +22,7 @@ module.exports = {
       const mentions = ((Object.keys(event.mentions || {}).length) ? Object.keys(event.mentions || {}) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []));
       const id2 = mentions[0];
       if (!id2) {
-        return api.sendMessage({ body: "❌ | Please mention someone!", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ | Please mention someone!" }, event.threadID, event.messageID);
       }
 
       // Load avatars
@@ -83,7 +83,7 @@ module.exports = {
       });
     } catch (err) {
       console.error(err);
-      api.sendMessage({ body: "❌ | Something went wrong!", effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: "❌ | Something went wrong!" }, event.threadID, event.messageID);
     }
   }
 };

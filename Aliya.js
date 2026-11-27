@@ -1,13 +1,13 @@
 /**
  * ============================================================================
  * ALIYA OFFICIAL V4 - MASTER PRIMARY ENGINE
- * Maintained by 0xMr_King x ┃ Tanin Islam | Multi-Account Pool & Self-Healing Architecture
+ * Maintained by 0xMr_King x ┃ Tanin Islam | Single-Account Session & Self-Healing Architecture
  *
  * Exit codes (read by index.js):
  *   2 = planned restart (memory guard / scheduled / listener unstable)
- *   3 = every account failed -> index.js shows the offline page and retries
- *   4 = engine cannot run at all -> index.js switches to Wolf.js
- *   5 = account switched / account died -> immediate restart on the next account
+ *   3 = single account failed -> index.js shows the offline page and retries
+ *   4 = engine cannot run at all -> index.js retries with back-off
+ *   5 = state file changed -> quick restart with the same account
  *   6 = a npm package is missing -> index.js runs "npm install" and restarts
  * ============================================================================
  */
@@ -15,7 +15,7 @@
 
 const send = msg => { if (process.send) { try { process.send(msg); } catch (e) { /* supervisor gone */ } } };
 
-// A single broken command must NOT take the whole bot down (old code switched to Wolf.js on ANY error).
+// A single broken command must NOT take the whole bot down.
 const crashTimes = [];
 process.on("aliyaFacebookBlocked", where => {
 	console.error("[ALIYA] Facebook blocked login during " + where + ". Stopping all retries to protect the account.");
@@ -47,7 +47,7 @@ process.on("uncaughtException", error => {
 		return process.exit(6);
 	}
 
-	// crash loop guard: many errors in a short time -> restart the core (index.js applies back-off / Wolf failover)
+	// crash loop guard: many errors in a short time -> restart the core (index.js applies back-off)
 	const now = Date.now();
 	crashTimes.push(now);
 	while (crashTimes.length && now - crashTimes[0] > 60000) crashTimes.shift();
@@ -329,6 +329,6 @@ async function initGoogleServices() {
 
 (async () => {
 	initGoogleServices().catch(() => { });
-	console.log("\x1b[35m\x1b[1m👑 ALIYA V4 MASTER CORE\x1b[0m \x1b[90m|\x1b[0m \x1b[36mInitializing Multi-Account Login...\x1b[0m");
+	console.log("\x1b[35m\x1b[1m👑 ALIYA V4 MASTER CORE\x1b[0m \x1b[90m|\x1b[0m \x1b[36mInitializing Single-Account Login...\x1b[0m");
 	require("./bot/login/login.js");
 })();

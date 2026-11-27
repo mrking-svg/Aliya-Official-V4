@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const createFuncMessage = global.utils.message;
 const handlerCheckDB = require("./handlerCheckData.js");
-const approval = require("../../includes/approve");
 
 module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData) => {
 	const devFile = path.join(__dirname, "handlerEvents.dev.js");
@@ -23,15 +22,6 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
 		)
 			return;
 
-		// Group approval gate: the bot still joins every group and posts its
-		// connected message, but commands/chat only work after approval.
-		try {
-			const allowed = await approval.allowWithData(event, api, threadsData, globalData);
-			if (!allowed) return;
-		} catch (err) {
-			// A gate error must never take the bot offline.
-		}
-
 		const message = createFuncMessage(api, event);
 
 		// DB check/update
@@ -41,16 +31,6 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
 		const handlerChat = await handlerEvents(event, message);
 		if (!handlerChat)
 			return;
-
-		// Approval system
-		if(global.GoatBot.config?.approval){
-			const approvedtid = await globalData.get("approved", "data", {});
-			if (!approvedtid.approved) {
-				approvedtid.approved = [];
-				await globalData.set("approved", approvedtid, "data");
-			}
-			if (!approvedtid.approved.includes(event.threadID)) return;
-		}
 
 		const {
 			onAnyEvent, onFirstChat, onStart, onChat,

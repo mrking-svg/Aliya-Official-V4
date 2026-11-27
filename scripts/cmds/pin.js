@@ -60,7 +60,7 @@ module.exports = {
 
   onStart: async function ({ api, message, event, args }) {
     if (!args[0]) {
-      return message.reply({ body: "Please provide a search query! (Ex: pin anime wallpaper or pin nature -v)", effect: "love" });
+      return message.reply({ body: "Please provide a search query! (Ex: pin anime wallpaper or pin nature -v)" });
     }
 
     let isVideo = false;
@@ -76,7 +76,7 @@ module.exports = {
 
     const query = queryArgs.join(" ").trim();
     if (!query) {
-      return message.reply({ body: "Please provide a valid search keyword!", effect: "love" });
+      return message.reply({ body: "Please provide a valid search keyword!" });
     }
 
     api.setMessageReaction("🏯", event.messageID, () => {}, true);
@@ -179,7 +179,7 @@ module.exports = {
     } catch (error) {
       if (process.env.DEBUG_API) console.error("Pin Error:", error.message);
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply({ body: "Failed to fetch Pinterest media, please try again!", effect: "love" });
+      return message.reply({ body: "Failed to fetch Pinterest media, please try again!" });
     }
   }
 };

@@ -26,15 +26,15 @@ module.exports = {
     }
 
     if (!targetID) {
-      return message.reply({ body: "❗ Tag or reply to someone to turn them into a goru!", effect: "love" });
+      return message.reply({ body: "❗ Tag or reply to someone to turn them into a goru!" });
     }
 
     if (targetID === event.senderID) {
-      return message.reply({ body: "❗ Bro, why would you cow yourself?", effect: "love" });
+      return message.reply({ body: "❗ Bro, why would you cow yourself?" });
     }
 
     try {
-      const waitMsg = await message.reply({ body: "⌛️ Wait kor...", effect: "love" });
+      const waitMsg = await message.reply({ body: "⌛️ Wait kor..." });
 
       const fetchAvatar = async (uid) => {
         try {
@@ -150,7 +150,7 @@ module.exports = {
       setTimeout(() => fs.unlink(outputPath).catch(() => {}), 5000);
     } catch (err) {
       console.error("❌ Goru Command Error:", err);
-      return message.reply({ body: "⚠️ something wrong, trying again 🙂", effect: "love" });
+      return message.reply({ body: "⚠️ something wrong, trying again 🙂" });
     }
   },
 };

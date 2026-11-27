@@ -44,7 +44,7 @@ module.exports = {
 
 	onStart: async function ({ message, args, usersData, event, getLang, role }) {
 		if (role < 4) {
-			return message.reply({ body: "Only Bot Developers (Role 4) can use this command.", effect: "love" });
+			return message.reply({ body: "Only Bot Developers (Role 4) can use this command." });
 		}
 
 		if (!config.whiteListMode) {

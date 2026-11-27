@@ -16,7 +16,7 @@ module.exports = {
     const name = args.join(" ").toLowerCase().trim();
 
     if (!name) {
-      return message.reply({ body: "𓍢ִ໋🌸✧ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ Pᴏᴋᴇ́ᴍᴏɴ ɴᴀᴍᴇ! (ᴇ.ɢ. pokemon pikachu) ✧🌸𓍢ִ໋", effect: "love" });
+      return message.reply({ body: "𓍢ִ໋🌸✧ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ Pᴏᴋᴇ́ᴍᴏɴ ɴᴀᴍᴇ! (ᴇ.ɢ. pokemon pikachu) ✧🌸𓍢ִ໋" });
     }
 
     api.setMessageReaction("⏳", event.messageID, () => {}, true);
@@ -56,7 +56,7 @@ module.exports = {
 
     } catch (error) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply({ body: `𓍢ִ໋🌸✧ Pᴏᴋᴇ́ᴍᴏɴ "${name}" ɴᴏᴛ ғᴏᴜɴᴅ! Pʟᴇᴀsᴇ Cʜᴇᴄᴋ Sᴘᴇʟʟɪɴɢ. ✧🌸𓍢ִ໋`, effect: "love" });
+      return message.reply({ body: `𓍢ִ໋🌸✧ Pᴏᴋᴇ́ᴍᴏɴ "${name}" ɴᴏᴛ ғᴏᴜɴᴅ! Pʟᴇᴀsᴇ Cʜᴇᴄᴋ Sᴘᴇʟʟɪɴɢ. ✧🌸𓍢ִ໋` });
     }
   }
 };

@@ -29,66 +29,66 @@ module.exports = {
 
 		if (!mode || mode === "list" || mode === "view") {
 			if (!rules.length)
-				return message.reply({ body: `No group rules yet. Add one with ${prefix}rules add <rule>.`, effect: "love" });
-			return message.reply({ body: `Group rules:\n${rules.map((rule, i) => `${i + 1}. ${rule}`).join("\n")}`, effect: "love" });
+				return message.reply({ body: `No group rules yet. Add one with ${prefix}rules add <rule>.` });
+			return message.reply({ body: `Group rules:\n${rules.map((rule, i) => `${i + 1}. ${rule}`).join("\n")}` });
 		}
 
 		if (mode === "add" || mode === "-a") {
-			if (!needAdmin()) return message.reply({ body: "Only group admins can add rules.", effect: "love" });
+			if (!needAdmin()) return message.reply({ body: "Only group admins can add rules." });
 			const text = args.slice(1).join(" ").trim();
-			if (!text) return message.reply({ body: "Please provide the rule text.", effect: "love" });
+			if (!text) return message.reply({ body: "Please provide the rule text." });
 			rules.push(text);
 			await save();
-			return message.reply({ body: `Added rule ${rules.length}.`, effect: "love" });
+			return message.reply({ body: `Added rule ${rules.length}.` });
 		}
 
 		if (mode === "edit" || mode === "-e") {
-			if (!needAdmin()) return message.reply({ body: "Only group admins can edit rules.", effect: "love" });
+			if (!needAdmin()) return message.reply({ body: "Only group admins can edit rules." });
 			const index = Number(args[1]) - 1;
 			const text = args.slice(2).join(" ").trim();
 			if (!Number.isInteger(index) || index < 0 || !rules[index])
-				return message.reply({ body: `Rule ${args[1]} does not exist.`, effect: "love" });
-			if (!text) return message.reply({ body: "Please provide the new rule text.", effect: "love" });
+				return message.reply({ body: `Rule ${args[1]} does not exist.` });
+			if (!text) return message.reply({ body: "Please provide the new rule text." });
 			rules[index] = text;
 			await save();
-			return message.reply({ body: `Edited rule ${index + 1}.`, effect: "love" });
+			return message.reply({ body: `Edited rule ${index + 1}.` });
 		}
 
 		if (mode === "move" || mode === "-m") {
-			if (!needAdmin()) return message.reply({ body: "Only group admins can reorder rules.", effect: "love" });
+			if (!needAdmin()) return message.reply({ body: "Only group admins can reorder rules." });
 			const a = Number(args[1]) - 1;
 			const b = Number(args[2]) - 1;
 			if (!Number.isInteger(a) || !Number.isInteger(b) || !rules[a] || !rules[b])
-				return message.reply({ body: "Please give two existing rule numbers.", effect: "love" });
-			if (a === b) return message.reply({ body: "Both numbers are the same.", effect: "love" });
+				return message.reply({ body: "Please give two existing rule numbers." });
+			if (a === b) return message.reply({ body: "Both numbers are the same." });
 			[rules[a], rules[b]] = [rules[b], rules[a]];
 			await save();
-			return message.reply({ body: `Swapped rules ${a + 1} and ${b + 1}.`, effect: "love" });
+			return message.reply({ body: `Swapped rules ${a + 1} and ${b + 1}.` });
 		}
 
 		if (["delete", "del", "-d"].includes(mode)) {
-			if (!needAdmin()) return message.reply({ body: "Only group admins can delete rules.", effect: "love" });
+			if (!needAdmin()) return message.reply({ body: "Only group admins can delete rules." });
 			const index = Number(args[1]) - 1;
 			if (!Number.isInteger(index) || index < 0 || !rules[index])
-				return message.reply({ body: `Rule ${args[1]} does not exist.`, effect: "love" });
+				return message.reply({ body: `Rule ${args[1]} does not exist.` });
 			const removed = rules.splice(index, 1)[0];
 			await save();
-			return message.reply({ body: `Deleted rule ${index + 1}: ${removed}`, effect: "love" });
+			return message.reply({ body: `Deleted rule ${index + 1}: ${removed}` });
 		}
 
 		if (["remove", "reset", "-r"].includes(mode)) {
-			if (!needAdmin()) return message.reply({ body: "Only group admins can remove all rules.", effect: "love" });
+			if (!needAdmin()) return message.reply({ body: "Only group admins can remove all rules." });
 			await threadsData.set(threadID, [], "data.rules");
-			return message.reply({ body: "All group rules have been removed.", effect: "love" });
+			return message.reply({ body: "All group rules have been removed." });
 		}
 
 		if (!isNaN(mode)) {
 			const index = Number(mode) - 1;
 			return rules[index]
-				? message.reply({ body: `${index + 1}. ${rules[index]}`, effect: "love" })
-				: message.reply({ body: `Rule ${mode} does not exist.`, effect: "love" });
+				? message.reply({ body: `${index + 1}. ${rules[index]}` })
+				: message.reply({ body: `Rule ${mode} does not exist.` });
 		}
 
-		return message.reply({ body: `Unknown option "${mode}". Use ${prefix}rules for the command list.`, effect: "love" });
+		return message.reply({ body: `Unknown option "${mode}". Use ${prefix}rules for the command list.` });
 	}
 };

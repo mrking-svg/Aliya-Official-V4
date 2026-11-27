@@ -35,7 +35,7 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
  return api.sendMessage(
 { body: `╭${LINE}╮
 ┃ ❌ 𝐈𝐍𝐕𝐀𝐋𝐈𝐃 𝐍𝐔𝐌𝐁𝐄𝐑
-╰${LINE}╯`, effect: "love" }, threadID);
+╰${LINE}╯` }, threadID);
  }
 
  const idgr = handleReply.groupid[index];
@@ -59,7 +59,7 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ┃ ⏰ 𝐓𝐢𝐦𝐞 : ${time}
 ╰${LINE}╯
-   ${module.exports.config.credits}`, effect: "love" }, threadID);
+   ${module.exports.config.credits}` }, threadID);
  }
 
  if (["unban", "ub"].includes(action)) {
@@ -78,7 +78,7 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ┃ ⏰ 𝐓𝐢𝐦𝐞 : ${time}
 ╰${LINE}╯
-   ${module.exports.config.credits}`, effect: "love" }, threadID);
+   ${module.exports.config.credits}` }, threadID);
  }
 
  if (action === "del") {
@@ -92,7 +92,7 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ┃ ✔ 𝐃𝐚𝐭𝐚 𝐑𝐞𝐦𝐨𝐯𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲
 ╰${LINE}╯
-   ${module.exports.config.credits}`, effect: "love" }, threadID);
+   ${module.exports.config.credits}` }, threadID);
  }
 
  if (action === "out") {
@@ -101,7 +101,7 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
 ┃  👋 𝐋𝐄𝐀𝐕𝐈𝐍𝐆 𝐆𝐑𝐎𝐔𝐏
 ┣${THIN}
 ┃ 🔷 ${groupName}
-╰${LINE}╯`, effect: "love" },
+╰${LINE}╯` },
  idgr,
  () => api.removeUserFromGroup(api.getCurrentUserID(), idgr)
  );
@@ -113,21 +113,21 @@ module.exports.handleReply = async function ({ api, event, Threads, handleReply 
 ┃ 🔷 𝐍𝐚𝐦𝐞 : ${groupName}
 ┃ 🔰 𝐓𝐈𝐃  : ${idgr}
 ╰${LINE}╯
-   ${module.exports.config.credits}`, effect: "love" }, threadID);
+   ${module.exports.config.credits}` }, threadID);
  }
 
  return api.sendMessage(
 { body: `╭${LINE}╮
 ┃ ⚠️ 𝐔𝐧𝐤𝐧𝐨𝐰𝐧 𝐀𝐜𝐭𝐢𝐨𝐧
 ┃ ban | unban | del | out
-╰${LINE}╯`, effect: "love" }, threadID);
+╰${LINE}╯` }, threadID);
 
  } catch (e) {
  console.log(e);
  return api.sendMessage(
 { body: `╭${LINE}╮
 ┃ ❌ 𝐄𝐫𝐫𝐨𝐫 𝐎𝐜𝐜𝐮𝐫𝐫𝐞𝐝!
-╰${LINE}╯`, effect: "love" }, threadID);
+╰${LINE}╯` }, threadID);
  }
 };
 
@@ -155,7 +155,7 @@ module.exports.onStart = async function ({ api, event, args }) {
  return api.sendMessage(
 { body: `╭${LINE}╮
 ┃ ❌ 𝐍𝐨 𝐆𝐫𝐨𝐮𝐩 𝐅𝐨𝐮𝐧𝐝!
-╰${LINE}╯`, effect: "love" }, event.threadID);
+╰${LINE}╯` }, event.threadID);
  }
 
  threadList.sort((a, b) => b.count - a.count);

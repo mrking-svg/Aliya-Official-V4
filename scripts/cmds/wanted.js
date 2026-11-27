@@ -33,7 +33,7 @@ module.exports = {
 
       const apiBaseRes = await axios.get("https://raw.githubusercontent.com/Saim-x69x/sakura/main/ApiUrl.json");
       const apiBase = apiBaseRes.data?.apiv1;
-      if (!apiBase) return message.reply({ body: "❌ API base URL missing.", effect: "love" });
+      if (!apiBase) return message.reply({ body: "❌ API base URL missing." });
 
       const apiURL = `${apiBase}/api/wanted?url=${encodeURIComponent(avatarURL)}`;
       const imgPath = path.join(__dirname, "tmp", `${targetID}_wanted.png`);
@@ -50,7 +50,7 @@ module.exports = {
 
     } catch (err) {
       console.error(err);
-      message.reply({ body: "❌ Failed to generate wanted poster. Please try again later.", effect: "love" });
+      message.reply({ body: "❌ Failed to generate wanted poster. Please try again later." });
     }
   }
 };

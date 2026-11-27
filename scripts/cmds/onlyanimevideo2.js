@@ -80,7 +80,7 @@ async function handleDriveSync(api, event) {
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ 𝔖𝔶𝔫𝔠 𝔉𝔞𝔦𝔩𝔢𝔡! Drive Node Offline.", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ 𝔖𝔶𝔫𝔠 𝔉𝔞𝔦𝔩𝔢𝔡! Drive Node Offline." }, threadID, messageID);
     }
 }
 
@@ -103,7 +103,7 @@ async function handleDriveMedia(api, event) {
             const fallbackMatches = [...htmlData.matchAll(/\/file\/d\/([a-zA-Z0-9_-]+)\/view/g)];
             if (fallbackMatches.length === 0) {
                 api.setMessageReaction("❌", messageID, () => {}, true);
-                return api.sendMessage({ body: "❌ 𝔑𝔬 𝔐𝔢𝔡𝔦𝔞 𝔉𝔬𝔲𝔫𝔡 𝔦𝔫 ℭ𝔩𝔬𝔲𝔡!", effect: "love" }, threadID, messageID);
+                return api.sendMessage({ body: "❌ 𝔑𝔬 𝔐𝔢𝔡𝔦𝔞 𝔉𝔬𝔲𝔫𝔡 𝔦𝔫 ℭ𝔩𝔬𝔲𝔡!" }, threadID, messageID);
             }
             fileId = fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)][1];
         } else {
@@ -138,7 +138,7 @@ async function handleDriveMedia(api, event) {
                     api.setMessageReaction("☃️", messageID, () => {}, true);
                 } else {
                     api.setMessageReaction("❌", messageID, () => {}, true);
-                    api.sendMessage({ body: "❌ 𝔉𝔞𝔦𝔩𝔢𝔡 𝔱𝔬 𝔰𝔢𝔫𝔡 𝔳𝔦𝔡𝔢𝔬 (𝔉𝔦𝔩𝔢 𝔰𝔦𝔯𝔢 𝔱𝔬𝔬 𝔩𝔞𝔯𝔤𝔢)", effect: "love" }, threadID, messageID);
+                    api.sendMessage({ body: "❌ 𝔉𝔞𝔦𝔩𝔢𝔡 𝔱𝔬 𝔰𝔢𝔫𝔡 𝔳𝔦𝔡𝔢𝔬 (𝔉𝔦𝔩𝔢 𝔰𝔦𝔯𝔢 𝔱𝔬𝔬 𝔩𝔞𝔯𝔤𝔢)" }, threadID, messageID);
                 }
             }, messageID);
         });
@@ -146,13 +146,13 @@ async function handleDriveMedia(api, event) {
         writer.on("error", (err) => {
             if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
             api.setMessageReaction("❌", messageID, () => {}, true);
-            api.sendMessage({ body: "❌ 𝔇𝔬𝔯𝔫𝔩𝔬𝔞𝔡 𝔖𝔱𝔯𝔢𝔞𝔪 ℑ𝔫𝔱𝔢𝔯𝔯𝔲𝔭𝔱𝔢𝔡!", effect: "love" }, threadID, messageID);
+            api.sendMessage({ body: "❌ 𝔇𝔬𝔯𝔫𝔩𝔬𝔞𝔡 𝔖𝔱𝔯𝔢𝔞𝔪 ℑ𝔫𝔱𝔢𝔯𝔯𝔲𝔭𝔱𝔢𝔡!" }, threadID, messageID);
         });
 
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        api.sendMessage({ body: "❌ 𝔉𝔞𝔱𝔞𝔩 𝔈𝔯𝔯𝔬𝔯: 𝔇𝔯𝔦𝔳𝔢 ℭ𝔬𝔫𝔫𝔢监控 𝔉𝔞𝔦𝔩𝔢𝔡!", effect: "love" }, threadID, messageID);
+        api.sendMessage({ body: "❌ 𝔉𝔞𝔱𝔞𝔩 𝔈𝔯𝔯𝔬𝔯: 𝔇𝔯𝔦𝔳𝔢 ℭ𝔬𝔫𝔫𝔢监控 𝔉𝔞𝔦𝔩𝔢𝔡!" }, threadID, messageID);
     }
 }
 

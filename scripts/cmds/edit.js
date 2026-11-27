@@ -22,14 +22,14 @@ module.exports = {
 
       if (!prompt) {
         react("⚠️");
-        return api.sendMessage({ body: "⚠️ | Please provide text.", effect: "love" }, event.threadID);
+        return api.sendMessage({ body: "⚠️ | Please provide text." }, event.threadID);
       }
 
       const imageUrl = event.messageReply?.attachments?.[0]?.url;
 
       if (!imageUrl) {
         react("🖼️");
-        return api.sendMessage({ body: "🖼️ | Please reply to an image.", effect: "love" }, event.threadID);
+        return api.sendMessage({ body: "🖼️ | Please reply to an image." }, event.threadID);
       }
 
       react("⏳");
@@ -54,7 +54,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       react("❌");
-      api.sendMessage({ body: "❌ | Failed to process image.", effect: "love" }, event.threadID);
+      api.sendMessage({ body: "❌ | Failed to process image." }, event.threadID);
     }
   }
 };

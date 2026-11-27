@@ -46,7 +46,7 @@ module.exports = {
       const imgUrl = res.data?.data?.url;
 
       if (!imgUrl)
-        return message.reply({ body: "⚠️ ছবি পাওয়া যায়নি ভাই 😭 আবার চেষ্টা করো!", effect: "love" });
+        return message.reply({ body: "⚠️ ছবি পাওয়া যায়নি ভাই 😭 আবার চেষ্টা করো!" });
 
       const imgPath = path.join(__dirname, "tmp", `${event.senderID}_gf.jpg`);
       await downloadImage(imgUrl, imgPath);
@@ -62,7 +62,7 @@ module.exports = {
 
     } catch (err) {
       console.error("❌ Error:", err.message);
-      message.reply({ body: "⚠️ কিছু একটা গন্ডগোল হইছে ভাই 😭 পরে আবার চেষ্টা করো!", effect: "love" });
+      message.reply({ body: "⚠️ কিছু একটা গন্ডগোল হইছে ভাই 😭 পরে আবার চেষ্টা করো!" });
     }
   }
 };

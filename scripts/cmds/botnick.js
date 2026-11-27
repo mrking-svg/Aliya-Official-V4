@@ -15,7 +15,7 @@ module.exports = {
     const newNickname = args.join(" ").trim();
 
     if (!newNickname) {
-      return message.reply({ body: "[ BOT NICKNAME SYSTEM ]\n━━━━━━━━━━━━━━━━━━\nPlease provide a nickname.\nExample: /botnick Missqueen『 ᴀᴅᴅᴀ ᴠᴏʀᴘᴜʀ 』☁️🫧", effect: "love" });
+      return message.reply({ body: "[ BOT NICKNAME SYSTEM ]\n━━━━━━━━━━━━━━━━━━\nPlease provide a nickname.\nExample: /botnick Missqueen『 ᴀᴅᴅᴀ ᴠᴏʀᴘᴜʀ 』☁️🫧" });
     }
 
     try {
@@ -45,7 +45,7 @@ module.exports = {
 
     } catch (error) {
       console.log(error);
-      return message.reply({ body: "An error occurred while fetching group lists.", effect: "love" });
+      return message.reply({ body: "An error occurred while fetching group lists." });
     }
   }
 };

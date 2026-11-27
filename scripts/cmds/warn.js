@@ -58,61 +58,61 @@ module.exports = {
 				return `• ${name} (${user.userID}): ${count} warning${count === 1 ? "" : "s"}`;
 			}));
 			const lines = rows.filter(Boolean);
-			if (!lines.length) return message.reply({ body: `No ${mode === "listban" ? "banned" : "warned"} members.`, effect: "love" });
-			return message.reply({ body: `${mode === "listban" ? "Banned" : "Warned"} members:\n${lines.join("\n")}`, effect: "love" });
+			if (!lines.length) return message.reply({ body: `No ${mode === "listban" ? "banned" : "warned"} members.` });
+			return message.reply({ body: `${mode === "listban" ? "Banned" : "Warned"} members:\n${lines.join("\n")}` });
 		}
 
 		if (mode === "info" || mode === "check") {
 			const uid = targetFrom(event, args, event.senderID);
-			if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID.", effect: "love" });
+			if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID." });
 			const entry = warnList.find(user => String(user.userID) === String(uid));
 			const name = await usersData.getName(uid).catch(() => uid);
 			if (!entry || !(entry.list || []).length)
-				return message.reply({ body: `${name} (${uid}) has no warnings.`, effect: "love" });
+				return message.reply({ body: `${name} (${uid}) has no warnings.` });
 			const rows = entry.list.map((w, i) => `${i + 1}. ${w.reason || "No reason"} — ${w.dateTime}`);
-			return message.reply({ body: `Warnings for ${name} (${uid}):\n${rows.join("\n")}`, effect: "love" });
+			return message.reply({ body: `Warnings for ${name} (${uid}):\n${rows.join("\n")}` });
 		}
 
 		if (Number(role || 0) < 1)
-			return message.reply({ body: "Only group admins can manage warnings.", effect: "love" });
+			return message.reply({ body: "Only group admins can manage warnings." });
 
 		if (mode === "reset") {
 			await threadsData.set(threadID, [], "data.warn");
-			return message.reply({ body: "All warning data has been cleared.", effect: "love" });
+			return message.reply({ body: "All warning data has been cleared." });
 		}
 
 		if (mode === "unwarn" || mode === "unban") {
 			const uid = targetFrom(event, args, event.senderID);
-			if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID.", effect: "love" });
+			if (!uid || isNaN(uid)) return message.reply({ body: "Please tag a user, reply, or give a valid UID." });
 			const index = warnList.findIndex(user => String(user.userID) === String(uid));
-			if (index === -1) return message.reply({ body: `No warning data found for ${uid}.`, effect: "love" });
+			if (index === -1) return message.reply({ body: `No warning data found for ${uid}.` });
 
 			if (mode === "unban") {
 				if ((warnList[index].list || []).length < MAX_WARNS)
-					return message.reply({ body: `${uid} is not at the kick threshold.`, effect: "love" });
+					return message.reply({ body: `${uid} is not at the kick threshold.` });
 				warnList.splice(index, 1);
 				await save();
-				return message.reply({ body: `${uid} has been unbanned and all warnings were cleared.`, effect: "love" });
+				return message.reply({ body: `${uid} has been unbanned and all warnings were cleared.` });
 			}
 
 			const list = warnList[index].list || [];
 			if (!list.length) {
 				warnList.splice(index, 1);
 				await save();
-				return message.reply({ body: `${uid} has no warnings to remove.`, effect: "love" });
+				return message.reply({ body: `${uid} has no warnings to remove.` });
 			}
 			list.pop();
 			if (!list.length) warnList.splice(index, 1);
 			await save();
-			return message.reply({ body: `Removed the last warning from ${uid}. ${list.length} warning(s) remain.`, effect: "love" });
+			return message.reply({ body: `Removed the last warning from ${uid}. ${list.length} warning(s) remain.` });
 		}
 
 		if (mode === "warn") {
 			const uid = targetFrom(event, args, event.messageReply ? event.messageReply.senderID : null);
 			if (!uid || isNaN(uid))
-				return message.reply({ body: "Please tag a user, reply to their message, or give a valid UID.", effect: "love" });
+				return message.reply({ body: "Please tag a user, reply to their message, or give a valid UID." });
 			if (protectedUser(uid, api))
-				return message.reply({ body: "That user is protected and cannot be warned.", effect: "love" });
+				return message.reply({ body: "That user is protected and cannot be warned." });
 
 			const reason = args.slice(1).join(" ").trim() || "No reason given";
 			const now = new Date().toLocaleString("en-GB");
@@ -147,6 +147,6 @@ module.exports = {
 			);
 		}
 
-		return message.reply({ body: `Unknown option "${mode}". Use ${prefix}warn for the command list.`, effect: "love" });
+		return message.reply({ body: `Unknown option "${mode}". Use ${prefix}warn for the command list.` });
 	}
 };

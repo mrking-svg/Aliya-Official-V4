@@ -29,7 +29,7 @@ module.exports = {
     const qrData = extractData(args);
 
     if (!qrData) {
-      return message.reply({ body: "❌ Please provide text, link, or information to generate QR code.", effect: "love" });
+      return message.reply({ body: "❌ Please provide text, link, or information to generate QR code." });
     }
 
     message.reaction("⏳", event.messageID);
@@ -65,7 +65,7 @@ module.exports = {
       }
 
       console.error("QRGen Command Error:", error);
-      message.reply({ body: `❌ ${errorMessage}`, effect: "love" });
+      message.reply({ body: `❌ ${errorMessage}` });
     } finally {
       if (tempFilePath && fs.existsSync(tempFilePath)) {
           fs.unlinkSync(tempFilePath);

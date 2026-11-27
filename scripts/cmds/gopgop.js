@@ -41,7 +41,7 @@ module.exports = {
 
         const cfg = cfgRes.data;
         if (!cfg.success || !cfg.url) {
-          return message.reply({ body: `❌ API তে "${IMAGE_NAME}" config পাওয়া যায়নি!`, effect: "love" });
+          return message.reply({ body: `❌ API তে "${IMAGE_NAME}" config পাওয়া যায়নি!` });
         }
 
         templateUrl  = cfg.url;
@@ -50,7 +50,7 @@ module.exports = {
         msgTemplates = cfg.messages || [];
 
         if (!senderPos || !targetPos) {
-          return message.reply({ body: "❌ API তে position config নেই!", effect: "love" });
+          return message.reply({ body: "❌ API তে position config নেই!" });
         }
 
       } catch (e) {
@@ -74,7 +74,7 @@ module.exports = {
       }
 
       if (targetID === senderID) {
-        return message.reply({ body: "❌ নিজেকে নিজে ship করা যাবে না! 😂", effect: "love" });
+        return message.reply({ body: "❌ নিজেকে নিজে ship করা যাবে না! 😂" });
       }
 
       async function getAvatar(userID) {
@@ -96,8 +96,8 @@ module.exports = {
         getAvatar(targetID)
       ]);
 
-      if (!senderAvatarURL) return message.reply({ body: "❌ তোমার profile picture পাওয়া যায়নি!", effect: "love" });
-      if (!targetAvatarURL) return message.reply({ body: "❌ তার profile picture পাওয়া যায়নি!", effect: "love" });
+      if (!senderAvatarURL) return message.reply({ body: "❌ তোমার profile picture পাওয়া যায়নি!" });
+      if (!targetAvatarURL) return message.reply({ body: "❌ তার profile picture পাওয়া যায়নি!" });
 
       
       async function getName(userID) {

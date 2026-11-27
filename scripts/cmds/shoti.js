@@ -32,14 +32,14 @@ module.exports.onStart = async function ({ api, event }) {
 
    if (Array.isArray(data)) {
      if (data.length === 0) {
-       return api.sendMessage({ body: "❌ সরি জুয়েল বস কোনো ভিডিও পাওয়া যায়নি।", effect: "love" }, event.threadID, event.messageID);
+       return api.sendMessage({ body: "❌ সরি জুয়েল বস কোনো ভিডিও পাওয়া যায়নি।" }, event.threadID, event.messageID);
      }
      data = data[Math.floor(Math.random() * data.length)];
    }
 
    const videoUrl = data.shotiurl || data.url;
    if (!videoUrl) {
-     return api.sendMessage({ body: "❌ sorry Juwel API did not return a video URL.", effect: "love" }, event.threadID, event.messageID);
+     return api.sendMessage({ body: "❌ sorry Juwel API did not return a video URL." }, event.threadID, event.messageID);
    }
 
    const caption =
@@ -73,10 +73,10 @@ module.exports.onStart = async function ({ api, event }) {
 
    writer.on("error", (err) => {
      console.error("❌ sorry boss belal File write error:", err);
-     api.sendMessage({ body: "⚠️ সরি জুয়েল বস ভিডিও ফাইল সেভ করতে সমস্যা হয়েছে!", effect: "love" }, event.threadID, event.messageID);
+     api.sendMessage({ body: "⚠️ সরি জুয়েল বস ভিডিও ফাইল সেভ করতে সমস্যা হয়েছে!" }, event.threadID, event.messageID);
    });
  } catch (err) {
    console.error("❌ sorry Juwel Shoti API error:", err.message);
-   api.sendMessage({ body: "❌ সরি জুয়েল বস শটী ভিডিও আনতে সমস্যা হয়েছে। পরে চেষ্টা করুন।", effect: "love" }, event.threadID, event.messageID);
+   api.sendMessage({ body: "❌ সরি জুয়েল বস শটী ভিডিও আনতে সমস্যা হয়েছে। পরে চেষ্টা করুন।" }, event.threadID, event.messageID);
  }
 };

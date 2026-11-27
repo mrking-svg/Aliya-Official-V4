@@ -24,7 +24,7 @@ module.exports = {
       const title = args.join(" ") || name;
       const config = (await axios.get(`${API_BASE}/api/links/xnxx`, { timeout: 10000 })).data;
       if (!config || !config.url)
-        return api.sendMessage({ body: "❌ xnxx: API config unavailable.", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ xnxx: API config unavailable." }, event.threadID, event.messageID);
 
       const avatarUrl = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
       const target = `${config.url}?${config.imageParam}=${encodeURIComponent(avatarUrl)}&${config.titleParam}=${encodeURIComponent(title)}`;
@@ -36,7 +36,7 @@ module.exports = {
     }
     catch (error) {
       try { if (imgPath && fs.existsSync(imgPath)) fs.unlinkSync(imgPath); } catch (_e) {}
-      return api.sendMessage({ body: "❌ xnxx: image generate korra jayni. API offline.", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ xnxx: image generate korra jayni. API offline." }, event.threadID, event.messageID);
     }
   }
 };

@@ -125,7 +125,7 @@ module.exports = {
 
     } catch (err) {
       console.error("Uptime command error:", err);
-      return message.reply({ body: "❌ Error generating uptime status card!", effect: "love" });
+      return message.reply({ body: "❌ Error generating uptime status card!" });
     } finally {
       if (fs.existsSync(imagePath)) {
         try {

@@ -18,21 +18,21 @@ module.exports = {
 
     // 1. Economy Parsing
     const betInput = args[0];
-    if (!betInput) return message.reply({ body: ">🎀 ( 𝐒𝐥𝐨𝐭 𝐌𝐚𝐜𝐡𝐢𝐧𝐞 )\n━━━━━━━━━━━━━━━━━━\n⚠️ | 𝐁𝐚𝐛𝐲, 𝐞𝐧𝐭𝐞𝐫 𝐚𝐧 𝐚𝐦𝐨𝐮𝐧𝐭! (𝐄𝐱: 𝟏𝐌)", effect: "fire" });
+    if (!betInput) return message.reply({ body: ">🎀 ( 𝐒𝐥𝐨𝐭 𝐌𝐚𝐜𝐡𝐢𝐧𝐞 )\n━━━━━━━━━━━━━━━━━━\n⚠️ | 𝐁𝐚𝐛𝐲, 𝐞𝐧𝐭𝐞𝐫 𝐚𝐧 𝐚𝐦𝐨𝐮𝐧𝐭! (𝐄𝐱: 𝟏𝐌)" });
 
     const betAmount = parseSmartAmount(betInput);
 
     // 2. Bet Limit Check (Updated to 30M)
     const maxBet = 30000000; // ৩০,০০০,০০০
-    if (isNaN(betAmount) || betAmount <= 0) return message.reply({ body: "⚠️ | 𝐁𝐚𝐛𝐲, 𝐞𝐧𝐭𝐞𝐫 𝐚 𝐯𝐚𝐥𝐢𝐝 𝐚𝐦𝐨𝐮𝐧𝐭!", effect: "fire" });
-    if (betAmount > maxBet) return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐭𝐡𝐞 𝐦𝐚𝐱𝐢𝐦𝐮𝐦 𝐬𝐥𝐨𝐭 𝐥𝐢𝐦𝐢𝐭 𝐢𝐬 $${formatNumber(maxBet)}!`, effect: "fire" });
-    if (betAmount > money) return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐨𝐧𝐥𝐲 𝐡𝐚𝐯𝐞 $${formatNumber(money)}!`, effect: "fire" });
+    if (isNaN(betAmount) || betAmount <= 0) return message.reply({ body: "⚠️ | 𝐁𝐚𝐛𝐲, 𝐞𝐧𝐭𝐞𝐫 𝐚 𝐯𝐚𝐥𝐢𝐝 𝐚𝐦𝐨𝐮𝐧𝐭!" });
+    if (betAmount > maxBet) return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐭𝐡𝐞 𝐦𝐚𝐱𝐢𝐦𝐮𝐦 𝐬𝐥𝐨𝐭 𝐥𝐢𝐦𝐢𝐭 𝐢𝐬 $${formatNumber(maxBet)}!` });
+    if (betAmount > money) return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐨𝐧𝐥𝐲 𝐡𝐚𝐯𝐞 $${formatNumber(money)}!` });
 
     // 3. Per-user quota: 40 spins, refreshed 5 hours after the first spin of the window.
     const quota = global.utils.playQuotaStatus(userData.slotLimit);
     if (!quota.allowed) {
       const wait = global.utils.formatDuration(Math.ceil((quota.resetAt - Date.now()) / 1000));
-      return message.reply({ body: ">🎀 ( 𝐋𝐢𝐦𝐢𝐭 𝐑𝐞𝐚𝐜𝐡𝐞𝐝 )\n━━━━━━━━━━━━━━━━━━\n🚫 | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐡𝐚𝐯𝐞 𝐟𝐢𝐧𝐢𝐬𝐡𝐞𝐝 𝐲𝐨𝐮𝐫 𝟒𝟎 𝐬𝐩𝐢𝐧𝐬!\n⏳ | 𝐂𝐨𝐦𝐞 𝐛𝐚𝐜𝐤 𝐚𝐟𝐭𝐞𝐫 " + wait + ".", effect: "fire" });
+      return message.reply({ body: ">🎀 ( 𝐋𝐢𝐦𝐢𝐭 𝐑𝐞𝐚𝐜𝐡𝐞𝐝 )\n━━━━━━━━━━━━━━━━━━\n🚫 | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐡𝐚𝐯𝐞 𝐟𝐢𝐧𝐢𝐬𝐡𝐞𝐝 𝐲𝐨𝐮𝐫 𝟒𝟎 𝐬𝐩𝐢𝐧𝐬!\n⏳ | 𝐂𝐨𝐦𝐞 𝐛𝐚𝐜𝐤 𝐚𝐟𝐭𝐞𝐫 " + wait + "." });
     }
 
     // 4. Advanced Slot Logic (Win 23%, Loss 77%)
@@ -85,11 +85,11 @@ module.exports = {
     const footer = `\n━━━━━━━━━━━━━━━━━━\n🎟️ | 𝐒𝐩𝐢𝐧𝐬: ${quota.nextQuota.count}/𝟒𝟎\n• 𝐄𝐧𝐣𝐨𝐲 𝐛𝐛𝐲🐉 [ 💛 | 💛 | 💛 ]`;
 
     if (gameResult === "big_jackpot") {
-      return message.reply({ body: `${header}🔥 | 𝐁𝐈𝐆 𝐉𝐀𝐂𝐊𝐏𝐎𝐓!!! 🎉\n💰 | 𝐘𝐨𝐮 𝐰𝐨𝐧: $${formatNumber(betAmount * multiplier)} (5x)${rewardText}\n🎰 | [ ${s1} | ${s2} | ${s3} ]${footer}`, effect: "fire" });
+      return message.reply({ body: `${header}🔥 | 𝐁𝐈𝐆 𝐉𝐀𝐂𝐊𝐏𝐎𝐓!!! 🎉\n💰 | 𝐘𝐨𝐮 𝐰𝐨𝐧: $${formatNumber(betAmount * multiplier)} (5x)${rewardText}\n🎰 | [ ${s1} | ${s2} | ${s3} ]${footer}` });
     } else if (gameResult === "small_jackpot") {
-      return message.reply({ body: `${header}🏆 | 𝐒𝐌𝐀𝐋𝐋 𝐉𝐀𝐂𝐊𝐏𝐎𝐓! ✨\n💰 | 𝐘𝐨𝐮 𝐰𝐨𝐧: $${formatNumber(betAmount * multiplier)} (3x)${rewardText}\n🎰 | [ ${s1} | ${s2} | ${s3} ]${footer}`, effect: "fire" });
+      return message.reply({ body: `${header}🏆 | 𝐒𝐌𝐀𝐋𝐋 𝐉𝐀𝐂𝐊𝐏𝐎𝐓! ✨\n💰 | 𝐘𝐨𝐮 𝐰𝐨𝐧: $${formatNumber(betAmount * multiplier)} (3x)${rewardText}\n🎰 | [ ${s1} | ${s2} | ${s3} ]${footer}` });
     } else {
-      return message.reply({ body: `${header}💀 | 𝐘𝐨𝐮 𝐛𝐞𝐭: $${formatNumber(betAmount)}\n❌ | 𝐘𝐨𝐮 𝐥𝐨𝐬𝐭 everything!${rewardText}\n🎰 | [ ${s1} | ${s2} | ${s3} ]${footer}`, effect: "fire" });
+      return message.reply({ body: `${header}💀 | 𝐘𝐨𝐮 𝐛𝐞𝐭: $${formatNumber(betAmount)}\n❌ | 𝐘𝐨𝐮 𝐥𝐨𝐬𝐭 everything!${rewardText}\n🎰 | [ ${s1} | ${s2} | ${s3} ]${footer}` });
     }
   }
 };

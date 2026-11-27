@@ -44,7 +44,7 @@ module.exports = {
       if (api && typeof api.setMessageReaction === "function") {
         api.setMessageReaction("❌️", event.messageID, () => {}, true);
       }
-      return message.reply({ body: "❌ Failed to fetch time card, please try again!", effect: "love" });
+      return message.reply({ body: "❌ Failed to fetch time card, please try again!" });
     }
   }
 };

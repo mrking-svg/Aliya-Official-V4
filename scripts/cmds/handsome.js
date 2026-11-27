@@ -111,7 +111,7 @@ module.exports = {
 
       if (!avtBuffer) {
         api.setMessageReaction("❌", messageID, (err) => {}, true);
-        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ User-er Profile Picture load kora jayni!" }, threadID, messageID);
       }
 
       // Face position relative to the base photo (centered on head area)
@@ -149,7 +149,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       api.setMessageReaction("❌", messageID, (err) => {}, true);
-      return api.sendMessage({ body: `❌ | Error generating handsome meme: ${error.message}`, effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: `❌ | Error generating handsome meme: ${error.message}` }, threadID, messageID);
     }
   }
 };

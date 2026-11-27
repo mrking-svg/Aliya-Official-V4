@@ -17,7 +17,7 @@ module.exports = {
   onStart: async function ({ api, event, args }) {
     const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam"; 
     if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage({ body: "You are not authorized to change the author name.\n", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name.\n" }, event.threadID, event.messageID);
     }
     try {
       const baseURL = await mahmud();
@@ -25,7 +25,7 @@ module.exports = {
 
       if (!args[0]) {
         return api.sendMessage(
-          { body: "⚡ Usage:\n• tord truth\n• tord dare\n• tord add truth [question]\n• tord add dare [question]\n• tord list", effect: "love" },
+          { body: "⚡ Usage:\n• tord truth\n• tord dare\n• tord add truth [question]\n• tord add dare [question]\n• tord list" },
           event.threadID,
           event.messageID
         );
@@ -37,11 +37,11 @@ module.exports = {
         const type = args[1]?.toLowerCase();
         const question = args.slice(2).join(" ");
         if (!type || !question) {
-          return api.sendMessage({ body: "⚠️ | Use: tord add truth/dare [question]", effect: "love" }, event.threadID, event.messageID);
+          return api.sendMessage({ body: "⚠️ | Use: tord add truth/dare [question]" }, event.threadID, event.messageID);
         }
 
         const res = await axios.post(`${apiBase}/add`, { type, question });
-        return api.sendMessage({ body: `${res.data.message}`, effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: `${res.data.message}` }, event.threadID, event.messageID);
       }
 
       if (subCmd === "list") {
@@ -60,7 +60,7 @@ module.exports = {
       if (subCmd === "truth" || subCmd === "t") {
         const res = await axios.get(`${apiBase}?type=truth`);
         return api.sendMessage(
-          { body: `🎀 𝐁𝐚𝐛𝐲, 𝐘𝐨𝐮𝐫 𝐓𝐫𝐮𝐭𝐡:\n\n${res.data.question}`, effect: "love" },
+          { body: `🎀 𝐁𝐚𝐛𝐲, 𝐘𝐨𝐮𝐫 𝐓𝐫𝐮𝐭𝐡:\n\n${res.data.question}` },
           event.threadID,
           event.messageID
         );
@@ -69,16 +69,16 @@ module.exports = {
       if (subCmd === "dare" || subCmd === "d") {
         const res = await axios.get(`${apiBase}?type=dare`);
         return api.sendMessage(
-          { body: `🎀 𝐁𝐚𝐛𝐲, 𝐘𝐨𝐮𝐫 𝐃𝐚𝐫𝐞:\n\n${res.data.question}`, effect: "love" },
+          { body: `🎀 𝐁𝐚𝐛𝐲, 𝐘𝐨𝐮𝐫 𝐃𝐚𝐫𝐞:\n\n${res.data.question}` },
           event.threadID,
           event.messageID
         );
       }
 
-      return api.sendMessage({ body: "❌ | Invalid command.", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ | Invalid command." }, event.threadID, event.messageID);
     } catch (error) {
       console.error(error);
-      return api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam." }, event.threadID, event.messageID);
     }
   }
 };

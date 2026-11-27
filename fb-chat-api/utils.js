@@ -53,7 +53,6 @@ let request = require("request").defaults({
 const stream = require("stream");
 const querystring = require("querystring");
 const url = require("url");
-const { parseMessageMetadata } = require("./lib/messageMetadata");
 
 function setProxy(proxy) {
     request = require("request").defaults({
@@ -714,7 +713,6 @@ function formatDeltaMessage(m) {
         );
     }
 
-    const meta = parseMessageMetadata(md);
     return {
         type: "message",
         senderID: formatID(md.actorFbId.toString()),
@@ -725,16 +723,7 @@ function formatDeltaMessage(m) {
         mentions: mentions,
         timestamp: md.timestamp,
         isGroup: !!md.threadKey.threadFbId,
-        participantIDs: m.delta.participants,
-        // Message effects ("power ups") are encoded in messageMetadata, not in
-        // attachments. Expose them the same way the reference fca build does.
-        effect: meta.effect,
-        effectName: meta.effect ? meta.effect.name : null,
-        effectStyle: meta.effect ? meta.effect.styleId : null,
-        effectStyleName: meta.effect ? meta.effect.styleName : null,
-        effectEmoji: meta.effect ? meta.effect.emoji : null,
-        hasEffect: Boolean(meta.effect),
-        isAvatarEffect: Boolean(meta.effect && meta.effect.isAvatar)
+        participantIDs: m.delta.participants
     };
 }
 

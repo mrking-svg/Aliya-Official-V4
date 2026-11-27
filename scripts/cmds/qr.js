@@ -30,7 +30,7 @@ module.exports.onStart = async function ({ api, event, args }) {
 
   if (!text)
     return api.sendMessage(
-      { body: "❌ Please enter some text to generate QR!", effect: "love" },
+      { body: "❌ Please enter some text to generate QR!" },
       event.threadID,
       event.messageID
     );
@@ -84,6 +84,6 @@ module.exports.onStart = async function ({ api, event, args }) {
     );
   } catch (e) {
     console.error(e);
-    api.sendMessage({ body: "⚠️ Error generating QR code!", effect: "love" }, event.threadID, event.messageID);
+    api.sendMessage({ body: "⚠️ Error generating QR code!" }, event.threadID, event.messageID);
   }
 };

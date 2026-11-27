@@ -5,7 +5,7 @@ async function liner(api, event, args, message) {
     const prompt = args.join(" ").trim();
 
     if (!prompt) {
-      return message.reply({ body: "Please provide a prompt.", effect: "love" });
+      return message.reply({ body: "Please provide a prompt." });
     }
 
     const response = await getLinerResponse(prompt);
@@ -18,11 +18,11 @@ async function liner(api, event, args, message) {
         });
       });
     } else {
-      message.reply({ body: "No response from Liner.", effect: "love" });
+      message.reply({ body: "No response from Liner." });
     }
   } catch (error) {
     console.error("Error:", error);
-    message.reply({ body: "An error occurred while processing your request.", effect: "love" });
+    message.reply({ body: "An error occurred while processing your request." });
   }
 }
 

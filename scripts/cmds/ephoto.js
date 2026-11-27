@@ -140,16 +140,16 @@ module.exports = {
     const id = parseInt(parts[1]?.trim());
 
     if (!text || !id) {
-      return message.reply({ body: `⚠️ Usage: ${prefix}ephoto <text> - <id>\nExample: ${prefix}ephoto Saim - 27`, effect: "love" });
+      return message.reply({ body: `⚠️ Usage: ${prefix}ephoto <text> - <id>\nExample: ${prefix}ephoto Saim - 27` });
     }
 
     if (isNaN(id) || id < 1 || id > 100) {
       return message.reply(
-        { body: `❌ Invalid ID! Please use ID between 1–100.\nUse '${prefix}ephoto list' to check all available templates.`, effect: "love" }
+        { body: `❌ Invalid ID! Please use ID between 1–100.\nUse '${prefix}ephoto list' to check all available templates.` }
       );
     }
 
-    const loadingMsg = await message.reply({ body: `🎨 Generating Ephoto effect for “${text}” (ID: ${id})...`, effect: "love" });
+    const loadingMsg = await message.reply({ body: `🎨 Generating Ephoto effect for “${text}” (ID: ${id})...` });
 
     try {
       const githubRawUrl = "https://raw.githubusercontent.com/Saim-x69x/sakura/main/ApiUrl.json";
@@ -159,7 +159,7 @@ module.exports = {
 
       if (!res.data?.status || !res.data.result_url) {
         await api.unsendMessage(loadingMsg.messageID);
-        return message.reply({ body: "❌ Oops! Something went wrong. Please try again later.", effect: "love" });
+        return message.reply({ body: "❌ Oops! Something went wrong. Please try again later." });
       }
 
       await api.unsendMessage(loadingMsg.messageID);
@@ -169,7 +169,7 @@ module.exports = {
       });
     } catch (e) {
       await api.unsendMessage(loadingMsg.messageID);
-      return message.reply({ body: "❌ Oops! Something went wrong. Please try again later.", effect: "love" });
+      return message.reply({ body: "❌ Oops! Something went wrong. Please try again later." });
     }
   }
 };

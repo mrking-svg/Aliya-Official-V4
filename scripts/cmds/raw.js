@@ -31,7 +31,7 @@ module.exports = {
         if (args[0] === "-e") {
           const eventFile = args[1];
           if (!eventFile) {
-            return api.sendMessage({ body: "⚠ | Please provide a filename after -e.", effect: "love" }, event.threadID, event.messageID);
+            return api.sendMessage({ body: "⚠ | Please provide a filename after -e." }, event.threadID, event.messageID);
           }
           fileName = eventFile.endsWith(".js") ? eventFile : `${eventFile}.js`;
           filePath = path.resolve(__dirname, '../../scripts/events', fileName);
@@ -41,12 +41,12 @@ module.exports = {
         }
 
         if (!fs.existsSync(filePath)) {
-          return api.sendMessage({ body: `❌ File "${fileName}" not found in the directory!`, effect: "love" }, event.threadID, event.messageID);
+          return api.sendMessage({ body: `❌ File "${fileName}" not found in the directory!` }, event.threadID, event.messageID);
         }
         code = await fs.promises.readFile(filePath, "utf-8");
       } 
       else {
-        return api.sendMessage({ body: "⚠ | Please reply with code OR provide a file name.", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "⚠ | Please reply with code OR provide a file name." }, event.threadID, event.messageID);
       }
 
       const baseUrl = "https://aliya-official-v4.vercel.app";
@@ -57,7 +57,7 @@ module.exports = {
       }, { timeout: 15000 });
 
       if (!response.data || !response.data.success) {
-        return api.sendMessage({ body: "⚠️ Server refused to save the file.", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "⚠️ Server refused to save the file." }, event.threadID, event.messageID);
       }
 
       const fileId = response.data.fileId;
@@ -69,7 +69,7 @@ module.exports = {
 
     } catch (err) {
       console.error("❌ RAW Error Details:", err?.response?.data || err.message);
-      return api.sendMessage({ body: `⚠️ Failed to create RAW link.\nError: ${err.message}`, effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: `⚠️ Failed to create RAW link.\nError: ${err.message}` }, event.threadID, event.messageID);
     }
   }
 };

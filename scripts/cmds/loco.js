@@ -114,7 +114,7 @@ async function handleDriveSync(api, event) {
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ Error sync!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ Error sync!" }, threadID, messageID);
     }
 }
 
@@ -128,7 +128,7 @@ async function handleDriveMedia(api, event) {
 
         if (!files || files.length === 0) {
             api.setMessageReaction("❌", messageID, () => {}, true);
-            return api.sendMessage({ body: "📁 Couldn't find any file😒!", effect: "love" }, threadID, messageID);
+            return api.sendMessage({ body: "📁 Couldn't find any file😒!" }, threadID, messageID);
         }
 
         const selected = files[Math.floor(Math.random() * files.length)];
@@ -144,13 +144,13 @@ async function handleDriveMedia(api, event) {
             if (!err) {
                 api.setMessageReaction("🔥", messageID, () => {}, true);
             } else {
-                api.sendMessage({ body: "❌ ভিডিওটি পাঠাতে সমস্যা হয়েছে (সাইজ অনেক বড় হতে পারে)!", effect: "love" }, threadID, messageID);
+                api.sendMessage({ body: "❌ ভিডিওটি পাঠাতে সমস্যা হয়েছে (সাইজ অনেক বড় হতে পারে)!" }, threadID, messageID);
             }
         }, messageID);
 
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ ড্রাইভ থেকে ভিডিও লোড করতে ব্যর্থ হয়েছে।", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ ড্রাইভ থেকে ভিডিও লোড করতে ব্যর্থ হয়েছে।" }, threadID, messageID);
     }
         }

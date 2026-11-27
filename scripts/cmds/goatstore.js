@@ -325,7 +325,7 @@ async function animateInstall(api, threadID, name) {
     { label: "Registering command",  pct: 100, delay: 600 },
   ];
   const info = await api.sendMessage(
-    { body: `📦 Installing ${name}...\n\n◖ Fetching package info...\n[░░░░░░░░░░] 0%`, effect: "love" },
+    { body: `📦 Installing ${name}...\n\n◖ Fetching package info...\n[░░░░░░░░░░] 0%` },
     threadID
   );
   for (let i = 0; i < steps.length; i++) {
@@ -345,7 +345,7 @@ async function animateUpload(api, threadID, name) {
     { label: "Finalizing registration",   pct: 100, delay: 500 },
   ];
   const info = await api.sendMessage(
-    { body: `📤 Uploading ${name}...\n\n◖ Preparing upload...\n[░░░░░░░░░░] 0%`, effect: "love" },
+    { body: `📤 Uploading ${name}...\n\n◖ Preparing upload...\n[░░░░░░░░░░] 0%` },
     threadID
   );
   for (let i = 0; i < steps.length; i++) {
@@ -400,9 +400,9 @@ async function doInstall(api, threadID, id, forceKind = null) {
     );
   }
 
-  if (!cmd) return api.sendMessage({ body: `❌ Command not found for ID: ${id}`, effect: "love" }, threadID);
+  if (!cmd) return api.sendMessage({ body: `❌ Command not found for ID: ${id}` }, threadID);
   if (!cmd.code && !cmd.pastebin_url)
-    return api.sendMessage({ body: "❌ Command has no code or Pastebin link stored.", effect: "love" }, threadID);
+    return api.sendMessage({ body: "❌ Command has no code or Pastebin link stored." }, threadID);
 
   const isEvent = forceKind ? forceKind === "event" : cmd.kind === "event";
 
@@ -423,7 +423,7 @@ async function doInstall(api, threadID, id, forceKind = null) {
 
   if (code) {
     try { new Function(code); }
-    catch (err) { return api.sendMessage({ body: `❌ Syntax error in remote code:\n${err.message}`, effect: "love" }, threadID); }
+    catch (err) { return api.sendMessage({ body: `❌ Syntax error in remote code:\n${err.message}` }, threadID); }
   }
 
   const displayName = cmd.name || `gs_${id}`;
@@ -446,7 +446,7 @@ async function doInstall(api, threadID, id, forceKind = null) {
     fs.writeFileSync(filePath, code, "utf-8");
   } catch (err) {
     if (pid) api.unsendMessage(pid).catch(() => {});
-    return api.sendMessage({ body: `❌ Failed to write file:\n${err.message}`, effect: "love" }, threadID);
+    return api.sendMessage({ body: `❌ Failed to write file:\n${err.message}` }, threadID);
   }
 
   const load = isEvent ? { success: false } : autoloadCommand(filePath);
@@ -479,10 +479,10 @@ async function doInstall(api, threadID, id, forceKind = null) {
 async function doUpload(api, threadID, filePath, kind = "command") {
   let code;
   try { code = fs.readFileSync(filePath, "utf8"); }
-  catch (err) { return api.sendMessage({ body: `❌ Read failed:\n${err.message}`, effect: "love" }, threadID); }
+  catch (err) { return api.sendMessage({ body: `❌ Read failed:\n${err.message}` }, threadID); }
 
   try { new Function(code); }
-  catch (err) { return api.sendMessage({ body: `❌ Syntax Error:\n${err.message}`, effect: "love" }, threadID); }
+  catch (err) { return api.sendMessage({ body: `❌ Syntax Error:\n${err.message}` }, threadID); }
 
   const { name, author, description, category, version } = extractMeta(code, path.basename(filePath, ".js"), true);
 
@@ -509,7 +509,7 @@ async function doUpload(api, threadID, filePath, kind = "command") {
     if (result.error) {
       if (pid) api.unsendMessage(pid).catch(() => {});
       return api.sendMessage(
-        { body: `⚠️ Upload Failed!\n╭─‣ Name : ${name}\n├‣ Error : ${result.error}\n╰────────────◊`, effect: "love" },
+        { body: `⚠️ Upload Failed!\n╭─‣ Name : ${name}\n├‣ Error : ${result.error}\n╰────────────◊` },
         threadID
       );
     }
@@ -554,7 +554,7 @@ async function doUpload(api, threadID, filePath, kind = "command") {
 
     if (pid) api.unsendMessage(pid).catch(() => {});
     api.sendMessage(
-      { body: `❌ Store API Call Failed!\n├‣ Error : ${err.message || "Unknown error"}\n╰────────────◊\n💡 Check network or store backend.`, effect: "love" },
+      { body: `❌ Store API Call Failed!\n├‣ Error : ${err.message || "Unknown error"}\n╰────────────◊\n💡 Check network or store backend.` },
       threadID
     );
   }
@@ -748,7 +748,7 @@ async function sendListPage(api, threadID, senderID, category, page, limit, pref
   try {
     const all  = await apiSearch("", category);
     const { items, total, totalPages } = paginateArray(all, page, limit);
-    if (!items.length) return api.sendMessage({ body: "❌ No commands found for this page.", effect: "love" }, threadID);
+    if (!items.length) return api.sendMessage({ body: "❌ No commands found for this page." }, threadID);
 
     const label = category ? `📂 Category: ${category}` : "📂 All Commands";
     let msg = `${label} — Page ${page}/${totalPages} (${total} total)\n\n`;
@@ -766,7 +766,7 @@ async function sendListPage(api, threadID, senderID, category, page, limit, pref
       global.GoatBot.onReply.set(sent.messageID, h);
       global.GoatBot.onReaction.set(sent.messageID, h);
     }
-  } catch (_) { api.sendMessage({ body: "❌ List API error.", effect: "love" }, threadID); }
+  } catch (_) { api.sendMessage({ body: "❌ List API error." }, threadID); }
 }
 
 function searchTitle(query, category, kind, author) {
@@ -781,7 +781,7 @@ async function sendSearchPage(api, threadID, senderID, query, category, page, li
     const all  = await apiSearch(query, category, 0, kind, author);
     const { items, total, totalPages } = paginateArray(all, page, limit);
     if (!items.length)
-      return api.sendMessage({ body: `❌ No results${query ? ` for "${query}"` : author ? ` for author "${author}"` : ""}.`, effect: "love" }, threadID);
+      return api.sendMessage({ body: `❌ No results${query ? ` for "${query}"` : author ? ` for author "${author}"` : ""}.` }, threadID);
 
     const title = searchTitle(query, category, kind, author);
     let msg = `${title} (${total} found)\n\n`;
@@ -797,7 +797,7 @@ async function sendSearchPage(api, threadID, senderID, query, category, page, li
     };
     global.GoatBot.onReply.set(sent.messageID, h);
     if (totalPages > 1) global.GoatBot.onReaction.set(sent.messageID, h);
-  } catch (_) { api.sendMessage({ body: "❌ Search API error.", effect: "love" }, threadID); }
+  } catch (_) { api.sendMessage({ body: "❌ Search API error." }, threadID); }
 }
 
 async function renderListInto(category, page, limit) {
@@ -916,10 +916,10 @@ module.exports = {
       const id = rawId.replace(/^#/, "");
       try {
         await apiDelete(id);
-        return api.sendMessage({ body: `🗑️ Deleted! ID: ${rawId}`, effect: "love" }, threadID);
+        return api.sendMessage({ body: `🗑️ Deleted! ID: ${rawId}` }, threadID);
       } catch (err) {
         const e = err.response?.data?.error || err.message;
-        return api.sendMessage({ body: `❌ Delete failed: ${e}`, effect: "love" }, threadID);
+        return api.sendMessage({ body: `❌ Delete failed: ${e}` }, threadID);
       }
     }
 
@@ -930,7 +930,7 @@ module.exports = {
     if (!match) return;
     const newPage = parseInt(match[1]);
     if (newPage < 1 || newPage > totalPages)
-      return api.sendMessage({ body: `❌ Page must be between 1 and ${totalPages}.`, effect: "love" }, threadID);
+      return api.sendMessage({ body: `❌ Page must be between 1 and ${totalPages}.` }, threadID);
 
     api.unsendMessage(Reply.messageID).catch(() => {});
     const prefix = getPrefix(event.threadData);
@@ -947,7 +947,7 @@ module.exports = {
     const { mode, query, category, kind = "", author = "", page, totalPages, limit, senderID, messageID, editCount = 0 } = Reaction;
     if (String(userID) !== String(senderID)) return;
     if (page >= totalPages)
-      return api.sendMessage({ body: "✅ Already on the last page.", effect: "love" }, threadID);
+      return api.sendMessage({ body: "✅ Already on the last page." }, threadID);
 
     const nextPage = page + 1;
     try {
@@ -955,7 +955,7 @@ module.exports = {
         ? await renderListInto(category, nextPage, limit)
         : await renderSearchInto(query, category, nextPage, limit, kind, author);
 
-      if (!rendered) return api.sendMessage({ body: "❌ No results for this page.", effect: "love" }, threadID);
+      if (!rendered) return api.sendMessage({ body: "❌ No results for this page." }, threadID);
 
       if (editCount >= CONFIG.MAX_EDITS_PER_MESSAGE) {
         const sent = await api.sendMessage(rendered.text, threadID);
@@ -982,7 +982,7 @@ module.exports = {
     const { threadID, senderID } = event;
 
     if (!isAllowed(senderID))
-      return api.sendMessage({ body: "❌ You are not allowed to use this command.", effect: "love" }, threadID, event.messageID);
+      return api.sendMessage({ body: "❌ You are not allowed to use this command." }, threadID, event.messageID);
 
     const prefix = getPrefix(threadData || event?.threadData);
     const sub    = args[0]?.toLowerCase() || null;
@@ -1004,7 +1004,7 @@ module.exports = {
     if (sub === "n" || sub === "notification") {
       const updates = await getTodayUpdates();
       if (!updates.length)
-        return api.sendMessage({ body: "📅 No new commands today.", effect: "love" }, threadID);
+        return api.sendMessage({ body: "📅 No new commands today." }, threadID);
       let msg = `📂 Today's New Commands\n━━━━━━━━━━━━\n`;
       updates.forEach(c =>
         msg += `╭─‣ ${c.name}\n├‣ ID: ${displayId(c)}\n├‣ Author: ${c.author}\n╰────────────◊\n\n`
@@ -1013,10 +1013,10 @@ module.exports = {
     }
 
     if (sub === "sync") {
-      api.sendMessage({ body: "🔄 Starting manual sync...", effect: "love" }, threadID);
+      api.sendMessage({ body: "🔄 Starting manual sync..." }, threadID);
       try {
         const r = await runAutoSync();
-        if (r.busy) return api.sendMessage({ body: "⏳ A sync is already running — try again in a moment.", effect: "love" }, threadID);
+        if (r.busy) return api.sendMessage({ body: "⏳ A sync is already running — try again in a moment." }, threadID);
         api.sendMessage(
           `✅ Sync complete.\n` +
           `╭─‣ New : ${r.uploaded}\n` +
@@ -1028,7 +1028,7 @@ module.exports = {
           threadID
         );
       } catch (err) {
-        api.sendMessage({ body: `❌ Sync failed: ${err.message}`, effect: "love" }, threadID);
+        api.sendMessage({ body: `❌ Sync failed: ${err.message}` }, threadID);
       }
       return;
     }
@@ -1046,7 +1046,7 @@ module.exports = {
       const action = args[1]?.toLowerCase();
       if (action === "install") {
         const id = args[2];
-        if (!id) return api.sendMessage({ body: `❌ Usage: ${prefix}gs event install <id>`, effect: "love" }, threadID);
+        if (!id) return api.sendMessage({ body: `❌ Usage: ${prefix}gs event install <id>` }, threadID);
         return doInstall(api, threadID, id, "event");
       }
 
@@ -1056,27 +1056,27 @@ module.exports = {
 
     if (sub === "install") {
       const id = args[1];
-      if (!id) return api.sendMessage({ body: `❌ Usage: ${prefix}gs install <id>`, effect: "love" }, threadID);
+      if (!id) return api.sendMessage({ body: `❌ Usage: ${prefix}gs install <id>` }, threadID);
       return doInstall(api, threadID, id, null);
     }
 
     if (sub === "like") {
       const rawId = args[1];
-      if (!rawId) return api.sendMessage({ body: `❌ Usage: ${prefix}gs like <id>`, effect: "love" }, threadID);
+      if (!rawId) return api.sendMessage({ body: `❌ Usage: ${prefix}gs like <id>` }, threadID);
       const id = rawId.replace(/^#/, "");
       try {
         const res = await apiLike(id, getVisitorId());
         if (res.liked)
-          return api.sendMessage({ body: `❤️ Liked! Total likes: ${res.likes}`, effect: "love" }, threadID);
+          return api.sendMessage({ body: `❤️ Liked! Total likes: ${res.likes}` }, threadID);
         else
-          return api.sendMessage({ body: `💔 Unliked. Total likes: ${res.likes}`, effect: "love" }, threadID);
-      } catch (_) { return api.sendMessage({ body: "❌ Like API error.", effect: "love" }, threadID); }
+          return api.sendMessage({ body: `💔 Unliked. Total likes: ${res.likes}` }, threadID);
+      } catch (_) { return api.sendMessage({ body: "❌ Like API error." }, threadID); }
     }
 
     if (sub === "trend" || sub === "trending") {
       try {
         const list = await apiTrending(8);
-        if (!list.length) return api.sendMessage({ body: "❌ No trending commands yet.", effect: "love" }, threadID);
+        if (!list.length) return api.sendMessage({ body: "❌ No trending commands yet." }, threadID);
         let msg = `🔥 Top Trending Commands 🔥\n\n`;
         list.forEach((cmd, i) => {
           msg +=
@@ -1088,7 +1088,7 @@ module.exports = {
             `╰────────────◊\n\n`;
         });
         return api.sendMessage(msg.trim(), threadID);
-      } catch (_) { return api.sendMessage({ body: "❌ Trending API error.", effect: "love" }, threadID); }
+      } catch (_) { return api.sendMessage({ body: "❌ Trending API error." }, threadID); }
     }
 
     if (sub === "upload" || sub === "update") {
@@ -1113,21 +1113,21 @@ module.exports = {
         if (fs.existsSync(path.join(dir, fileName)))           { filePath = path.join(dir, fileName); break; }
         if (fs.existsSync(path.join(dir, fileName + ".js")))   { filePath = path.join(dir, fileName + ".js"); break; }
       }
-      if (!filePath) return api.sendMessage({ body: `❌ File not found: "${fileName}"`, effect: "love" }, threadID);
+      if (!filePath) return api.sendMessage({ body: `❌ File not found: "${fileName}"` }, threadID);
       return doUpload(api, threadID, filePath, kind);
     }
 
     if (sub === "rawlink" || sub === "raw") {
       const id = args[1];
-      if (!id) return api.sendMessage({ body: `❌ Usage: ${prefix}gs rawlink <id>`, effect: "love" }, threadID);
+      if (!id) return api.sendMessage({ body: `❌ Usage: ${prefix}gs rawlink <id>` }, threadID);
 
-      const loadMsg = await api.sendMessage({ body: `⏳ Fetching raw link for ID: ${id}...`, effect: "love" }, threadID);
+      const loadMsg = await api.sendMessage({ body: `⏳ Fetching raw link for ID: ${id}...` }, threadID);
 
       try {
         const cmd = await apiGetOne(id);
         if (!cmd) {
           api.unsendMessage(loadMsg.messageID).catch(() => {});
-          return api.sendMessage({ body: `❌ Command not found for ID: ${id}`, effect: "love" }, threadID);
+          return api.sendMessage({ body: `❌ Command not found for ID: ${id}` }, threadID);
         }
 
         if (cmd.pastebin_url) {
@@ -1143,7 +1143,7 @@ module.exports = {
 
         if (!cmd.code) {
           api.unsendMessage(loadMsg.messageID).catch(() => {});
-          return api.sendMessage({ body: "❌ This command has no code stored.", effect: "love" }, threadID);
+          return api.sendMessage({ body: "❌ This command has no code stored." }, threadID);
         }
 
         const rawUrl = await getRawLink(cmd);
@@ -1170,32 +1170,32 @@ module.exports = {
         );
       } catch (err) {
         api.unsendMessage(loadMsg.messageID).catch(() => {});
-        return api.sendMessage({ body: `❌ Error: ${err.message}${err.status ? ` (HTTP ${err.status})` : ""}`, effect: "love" }, threadID);
+        return api.sendMessage({ body: `❌ Error: ${err.message}${err.status ? ` (HTTP ${err.status})` : ""}` }, threadID);
       }
     }
 
     if (sub === "delete") {
       const rawId = args[1];
-      if (!rawId) return api.sendMessage({ body: `❌ Usage: ${prefix}gs delete <id>`, effect: "love" }, threadID);
+      if (!rawId) return api.sendMessage({ body: `❌ Usage: ${prefix}gs delete <id>` }, threadID);
       const id = rawId.replace(/^#/, "");
       try {
         await apiDelete(id);
-        return api.sendMessage({ body: `🗑️ Deleted! ID: ${rawId}`, effect: "love" }, threadID);
+        return api.sendMessage({ body: `🗑️ Deleted! ID: ${rawId}` }, threadID);
       } catch (err) {
         const e = err.response?.data?.error || err.message;
-        return api.sendMessage({ body: `❌ Delete failed: ${e}`, effect: "love" }, threadID);
+        return api.sendMessage({ body: `❌ Delete failed: ${e}` }, threadID);
       }
     }
 
     if (sub === "author") {
       const authorName = args.slice(1).join(" ");
-      if (!authorName) return api.sendMessage({ body: `❌ Usage: ${prefix}gs author <name>`, effect: "love" }, threadID);
+      if (!authorName) return api.sendMessage({ body: `❌ Usage: ${prefix}gs author <name>` }, threadID);
       return sendSearchPage(api, threadID, senderID, "", "", 1, 5, prefix, "", authorName);
     }
 
     if (sub === "search" || sub === "find") {
       const q = args.slice(1).join(" ").trim();
-      if (!q) return api.sendMessage({ body: `❌ Usage: ${prefix}gs search <name / author / id>`, effect: "love" }, threadID);
+      if (!q) return api.sendMessage({ body: `❌ Usage: ${prefix}gs search <name / author / id>` }, threadID);
       return sendSearchPage(api, threadID, senderID, q, "", 1, 5, prefix);
     }
 
@@ -1203,7 +1203,7 @@ module.exports = {
       const cat = args[1]?.toLowerCase();
       if (!CONFIG.CATEGORIES.includes(cat))
         return api.sendMessage(
-          { body: `❌ Usage: ${prefix}gs cat <${CONFIG.CATEGORIES.join("|")}>`, effect: "love" },
+          { body: `❌ Usage: ${prefix}gs cat <${CONFIG.CATEGORIES.join("|")}>` },
           threadID
         );
       return sendListPage(api, threadID, senderID, cat, 1, 8, prefix);
@@ -1211,7 +1211,7 @@ module.exports = {
 
     if (sub === "events" || sub === "event") {
       const list = await apiSearch("", "", 0, "event").catch(() => []);
-      if (!list.length) return api.sendMessage({ body: "❌ No events stored yet.", effect: "love" }, threadID);
+      if (!list.length) return api.sendMessage({ body: "❌ No events stored yet." }, threadID);
       let msg = `⚡ Events (${list.length} total)\n\n`;
       list.slice(0, 10).forEach(cmd => { msg += renderCmdRow(cmd); });
       if (list.length > 10) msg += `…and ${list.length - 10} more. Use ${prefix}gs search <name> to find a specific one.`;
@@ -1219,7 +1219,7 @@ module.exports = {
     }
     if (sub === "commands") {
       const list = await apiSearch("", "", 0, "command").catch(() => []);
-      if (!list.length) return api.sendMessage({ body: "❌ No commands stored yet.", effect: "love" }, threadID);
+      if (!list.length) return api.sendMessage({ body: "❌ No commands stored yet." }, threadID);
       let msg = `🧩 Commands (${list.length} total)\n\n`;
       list.slice(0, 10).forEach(cmd => { msg += renderCmdRow(cmd); });
       if (list.length > 10) msg += `…and ${list.length - 10} more. Use ${prefix}gs search <name> to find a specific one.`;
@@ -1231,7 +1231,7 @@ module.exports = {
     if (looksLikeId) {
       try {
         const cmd = await apiGetOne(query.replace(/^#/, ""));
-        if (!cmd) return api.sendMessage({ body: `❌ Command not found for ID: ${query}`, effect: "love" }, threadID);
+        if (!cmd) return api.sendMessage({ body: `❌ Command not found for ID: ${query}` }, threadID);
         const cmdMongoId = cmd._id || cmd.id;
 
         let rawLine;
@@ -1263,7 +1263,7 @@ module.exports = {
         return api.sendMessage(msg.trim(), threadID);
       } catch (err) {
         return api.sendMessage(
-          { body: `❌ Details fetch error.\n╭─‣ ID : ${query}\n├‣ Reason : ${err.message}${err.status ? ` (HTTP ${err.status})` : ""}\n╰────────────◊`, effect: "love" },
+          { body: `❌ Details fetch error.\n╭─‣ ID : ${query}\n├‣ Reason : ${err.message}${err.status ? ` (HTTP ${err.status})` : ""}\n╰────────────◊` },
           threadID
         );
       }

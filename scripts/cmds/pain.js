@@ -20,7 +20,7 @@ module.exports = {
       const myData = users.find((user) => user.id === event.senderID);
       if (!myData || !myData.gender) {
         return api.sendMessage(
-          { body: "⚠ Could not determine your gender.", effect: "love" },
+          { body: "⚠ Could not determine your gender." },
           event.threadID,
           event.messageID
         );
@@ -39,7 +39,7 @@ module.exports = {
         );
       } else {
         return api.sendMessage(
-          { body: "⚠ Your gender is undefined. Cannot find a match.", effect: "love" },
+          { body: "⚠ Your gender is undefined. Cannot find a match." },
           event.threadID,
           event.messageID
         );
@@ -47,7 +47,7 @@ module.exports = {
 
       if (matchCandidates.length === 0) {
         return api.sendMessage(
-          { body: "❌ No suitable match found in the group.", effect: "love" },
+          { body: "❌ No suitable match found in the group." },
           event.threadID,
           event.messageID
         );

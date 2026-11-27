@@ -26,7 +26,7 @@ module.exports = {
 
     // 🔒 ANTI-EDIT CHECK
     if (!verifyAuthor(this.config.author)) {
-      return message.reply({ body: "❌ This file has been modified illegally. Author mismatch detected!", effect: "love" });
+      return message.reply({ body: "❌ This file has been modified illegally. Author mismatch detected!" });
     }
 
     const { threadID, messageID, mentions, messageReply } = event;
@@ -43,7 +43,7 @@ module.exports = {
     }
 
     if (!targetID) {
-      return message.reply({ body: "আরে মামা, কাউরে মেনশন দে বা রিপ্লাই দে! 🪙😂", effect: "love" });
+      return message.reply({ body: "আরে মামা, কাউরে মেনশন দে বা রিপ্লাই দে! 🪙😂" });
     }
 
     try {
@@ -122,7 +122,7 @@ module.exports = {
 
     } catch (e) {
       console.error("FOKIR ERROR:", e);
-      return message.reply({ body: "মামা ফকিরটা পালাইছে! আবার ট্রাই কর ❌", effect: "love" });
+      return message.reply({ body: "মামা ফকিরটা পালাইছে! আবার ট্রাই কর ❌" });
     }
   }
 };

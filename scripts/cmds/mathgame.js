@@ -50,7 +50,7 @@ module.exports = {
         onStart: async function ({ api, event, getLang }) {
                 const authorName = "0xMr_King x ┃ Tanin Islam"; 
                 if (this.config.author !== authorName) {
-                        return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
+                        return api.sendMessage({ body: "You are not authorized to change the author name." }, event.threadID, event.messageID);
                 }
                 
                 try {
@@ -58,7 +58,7 @@ module.exports = {
                         const res = await axios.get(`${apiUrl}/api/math`);
                         const quiz = res.data?.data || res.data;
 
-                        if (!quiz) return api.sendMessage({ body: "× No math quiz available baby.", effect: "love" }, event.threadID, event.messageID);
+                        if (!quiz) return api.sendMessage({ body: "× No math quiz available baby." }, event.threadID, event.messageID);
 
                         const { question, correctAnswer, options } = quiz;
                         const { a, b, c, d } = options;

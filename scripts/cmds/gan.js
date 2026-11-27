@@ -44,7 +44,7 @@ module.exports = {
     ];
 
     if (songLinks.length === 0) {
-      return api.sendMessage({ body: "❌ Nᴏ sᴏɴɢs ᴄᴏᴜʟᴅ ʙᴇ ғᴏᴜɴᴅ!", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "❌ Nᴏ sᴏɴɢs ᴄᴏᴜʟᴅ ʙᴇ ғᴏᴜɴᴅ!" }, threadID, messageID);
     }
 
     // ⏳ React for loading
@@ -86,12 +86,12 @@ module.exports = {
 
       writer.on("error", (err) => {
         console.error("Error writing file:", err);
-        api.sendMessage({ body: "❌ Fᴀɪʟᴇᴅ ᴛᴏ sᴇɴᴅ sᴏɴɢ!", effect: "love" }, threadID, messageID);
+        api.sendMessage({ body: "❌ Fᴀɪʟᴇᴅ ᴛᴏ sᴇɴᴅ sᴏɴɢ!" }, threadID, messageID);
       });
 
     } catch (err) {
       console.error("Download error:", err);
-      api.sendMessage({ body: "⚠️ Fᴀɪʟᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ sᴏɴɢ!", effect: "love" }, threadID, messageID);
+      api.sendMessage({ body: "⚠️ Fᴀɪʟᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ sᴏɴɢ!" }, threadID, messageID);
     }
   }
 };

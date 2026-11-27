@@ -20,14 +20,14 @@ module.exports = {
   onStart: async function ({ api, event }) {
     const obfuscatedAuthor = "0xMr_King x ┃ Tanin Islam"; 
     if (module.exports.config.author !== obfuscatedAuthor) {
-      return api.sendMessage({ body: "You are not authorized to change the author name.", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "You are not authorized to change the author name." }, event.threadID, event.messageID);
     }
     
     try {
       const apiUrl = await mahmud();
       const res = await axios.get(`${apiUrl}/api/album/mahmud/videos/onepiece?userID=${event.senderID}`);
       if (!res.data.success || !res.data.videos.length)
-        return api.sendMessage({ body: "❌ | No onepiece videos found.", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "❌ | No onepiece videos found." }, event.threadID, event.messageID);
 
       const url = res.data.videos[Math.floor(Math.random() * res.data.videos.length)];
       const filePath = path.join(__dirname, "temp_video.mp4");
@@ -50,11 +50,11 @@ module.exports = {
       });
 
       writer.on("error", () => {
-        api.sendMessage({ body: "❌ | Download error.", effect: "love" }, event.threadID, event.messageID);
+        api.sendMessage({ body: "❌ | Download error." }, event.threadID, event.messageID);
       });
     } catch (e) {
       console.error("ERROR:", e);
-      api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam.", effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: "🥹error, contact 0xMr_King x ┃ Tanin Islam." }, event.threadID, event.messageID);
     }
   }
 };

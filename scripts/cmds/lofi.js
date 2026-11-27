@@ -100,7 +100,7 @@ async function handleDriveSync(api, event, usersData) {
     const isVip = await checkVIP(usersData, senderID);
     if (!isVip) {
         return api.sendMessage(
-            { body: "• ❌ 𝑻𝒉𝒊𝒔 𝒄𝒐𝒎𝒎𝒂𝒏𝒅 𝒊𝒔 𝒐𝒏𝒍𝒚 𝒇𝒐𝒓 👑 𝑽𝑰𝑷 𝒖𝒔𝒆𝒓𝒔!\n\n📌 𝑼𝒔𝒆 {𝒑}𝒗𝒊𝒑 𝒕𝒐 𝒄𝒉𝒆𝒄𝒌 𝒗𝒊𝒑 𝒑𝒓𝒊𝒄𝒆𝒔 𝒂𝒏𝒅 𝒔𝒖𝒃𝒔𝒄𝒓𝒊𝒃𝒆.", effect: "love" },
+            { body: "• ❌ 𝑻𝒉𝒊𝒔 𝒄𝒐𝒎𝒎𝒂𝒏𝒅 𝒊𝒔 𝒐𝒏𝒍𝒚 𝒇𝒐𝒓 👑 𝑽𝑰𝑷 𝒖𝒔𝒆𝒓𝒔!\n\n📌 𝑼𝒔𝒆 {𝒑}𝒗𝒊𝒑 𝒕𝒐 𝒄𝒉𝒆𝒄𝒌 𝒗𝒊𝒑 𝒑𝒓𝒊𝒄𝒆𝒔 𝒂𝒏𝒅 𝒔𝒖𝒃𝒔𝒄𝒓𝒊𝒃𝒆." },
             threadID,
             messageID
         );
@@ -134,7 +134,7 @@ async function handleDriveSync(api, event, usersData) {
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ Error sync!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ Error sync!" }, threadID, messageID);
     }
 }
 
@@ -144,7 +144,7 @@ async function handleDriveMedia(api, event, usersData) {
     const isVip = await checkVIP(usersData, senderID);
     if (!isVip) {
         return api.sendMessage(
-            { body: "• ❌ 𝑻𝒉𝒊𝒔 𝒄𝒐𝒎𝒎𝒂𝒏𝒅 𝒊𝒔 𝒐𝒏𝒍𝒚 𝒇𝒐𝒓 👑 𝑽𝑰𝑷 𝒖𝒔𝒆𝒓𝒔!\n\n📌 𝑼𝒔𝒆 𝒗𝒊𝒑 𝒕𝒐 𝒄𝒉𝒆𝒄𝒌 𝒗𝒊𝒑 𝒑𝒓𝒊𝒄𝒆𝒔 𝒂𝒏𝒅 𝒔𝒖𝒃𝒔𝒄𝒓𝒊𝒃𝒆.", effect: "love" },
+            { body: "• ❌ 𝑻𝒉𝒊𝒔 𝒄𝒐𝒎𝒎𝒂𝒏𝒅 𝒊𝒔 𝒐𝒏𝒍𝒚 𝒇𝒐𝒓 👑 𝑽𝑰𝑷 𝒖𝒔𝒆𝒓𝒔!\n\n📌 𝑼𝒔𝒆 𝒗𝒊𝒑 𝒕𝒐 𝒄𝒉𝒆𝒄𝒌 𝒗𝒊𝒑 𝒑𝒓𝒊𝒄𝒆𝒔 𝒂𝒏𝒅 𝒔𝒖𝒃𝒔𝒄𝒓𝒊𝒃𝒆." },
             threadID,
             messageID
         );
@@ -157,7 +157,7 @@ async function handleDriveMedia(api, event, usersData) {
 
         if (!files || files.length === 0) {
             api.setMessageReaction("❌", messageID, () => {}, true);
-            return api.sendMessage({ body: "📁 Couldn't find any file😒!", effect: "love" }, threadID, messageID);
+            return api.sendMessage({ body: "📁 Couldn't find any file😒!" }, threadID, messageID);
         }
 
         const selected = files[Math.floor(Math.random() * files.length)];
@@ -175,13 +175,13 @@ async function handleDriveMedia(api, event, usersData) {
             if (!err) {
                 api.setMessageReaction("🎶", messageID, () => {}, true);
             } else {
-                api.sendMessage({ body: "❌ ভিডিওটি পাঠাতে সমস্যা হয়েছে (সাইজ অনেক বড় হতে পারে)!", effect: "love" }, threadID, messageID);
+                api.sendMessage({ body: "❌ ভিডিওটি পাঠাতে সমস্যা হয়েছে (সাইজ অনেক বড় হতে পারে)!" }, threadID, messageID);
             }
         }, messageID);
 
     } catch (err) {
         console.error(err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ ড্রাইভ থেকে ভিডিও লোড করতে ব্যর্থ হয়েছে।", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ ড্রাইভ থেকে ভিডিও লোড করতে ব্যর্থ হয়েছে।" }, threadID, messageID);
     }
 }

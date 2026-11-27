@@ -53,7 +53,7 @@ module.exports = {
 
       const profile = response.data?.data;
       if (!profile || typeof profile !== "object") {
-        return message.reply({ body: "❌ No profile data found for this user.", effect: "love" });
+        return message.reply({ body: "❌ No profile data found for this user." });
       }
 
       const name = profile.name || "Facebook User";
@@ -66,7 +66,7 @@ module.exports = {
 ᥫ᭡ U ID : ${profile.userId || query}`;
 
       if (!images.length) {
-        return message.reply({ body: `${caption}\n\n⚠️ Profile or cover image not accessible.`, effect: "love" });
+        return message.reply({ body: `${caption}\n\n⚠️ Profile or cover image not accessible.` });
       }
 
       return message.reply({
@@ -76,9 +76,9 @@ module.exports = {
     } catch (error) {
       console.error("[pfp]", error.message);
       if (["ECONNABORTED", "ETIMEDOUT"].includes(error.code)) {
-        return message.reply({ body: "⚠️ Request timed out. Please try again.", effect: "love" });
+        return message.reply({ body: "⚠️ Request timed out. Please try again." });
       }
-      return message.reply({ body: "❌ Could not fetch profile picture/cover. Please try again.", effect: "love" });
+      return message.reply({ body: "❌ Could not fetch profile picture/cover. Please try again." });
     }
   }
 };

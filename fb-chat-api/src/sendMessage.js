@@ -1,7 +1,6 @@
 "use strict";
 
 var utils = require("../utils");
-const { resolveEffect } = require("../lib/effects");
 // @NethWs3Dev
 
 var allowedProperties = {
@@ -13,9 +12,6 @@ var allowedProperties = {
   body: true,
   mentions: true,
   location: true,
-  effect: true,
-  messageEffect: true,
-  effectViaHttp: true,
 };
 
 module.exports = function (defaultFuncs, api, ctx) {
@@ -226,20 +222,6 @@ module.exports = function (defaultFuncs, api, ctx) {
     cb();
   }
 
-  function handleEffect(msg, form, callback, cb) {
-    // Send the power-up through the normal HTTP form: that keeps the real
-    // messageID for replies and avoids the MQTT socket flood of the old path.
-    const effect = resolveEffect(msg.effect || msg.messageEffect);
-    if (!effect) return cb();
-
-    const effectId = effect.legacyId || effect.styleId;
-    form["message_effects[0][effect_id]"] = effectId;
-    form["message_effects[0][effect_unified_id]"] = effect.styleId;
-    form["message_effects[0][effect_type]"] = effect.effectType;
-    form["message_effects[0][effect_name]"] = effect.styleName;
-    cb();
-  }
-
   function handleEmoji(msg, form, callback, cb) {
     if (msg.emojiSize != null && msg.emoji == null) {
       return callback({ error: "emoji property is empty" });
@@ -443,13 +425,11 @@ module.exports = function (defaultFuncs, api, ctx) {
 
     handleLocation(msg, form, callback, () =>
       handleSticker(msg, form, callback, () =>
-        handleEffect(msg, form, callback, () =>
-          handleAttachment(msg, form, callback, () =>
-            handleUrl(msg, form, callback, () =>
-              handleEmoji(msg, form, callback, () =>
-                handleMention(msg, form, callback, () =>
-                  send(form, threadID, messageAndOTID, callback, isGroup)
-                )
+        handleAttachment(msg, form, callback, () =>
+          handleUrl(msg, form, callback, () =>
+            handleEmoji(msg, form, callback, () =>
+              handleMention(msg, form, callback, () =>
+                send(form, threadID, messageAndOTID, callback, isGroup)
               )
             )
           )

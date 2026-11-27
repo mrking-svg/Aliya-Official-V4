@@ -37,41 +37,41 @@ module.exports = {
 			const split = String(body || "").split(/\s+/).slice(2).join(" ").split("=>");
 			const key = (split[0] || "").trim().toLowerCase();
 			const content = split.slice(1).join("=>").trim();
-			if (!key || !content) return message.reply({ body: `Usage: ${prefix}shortcut add <key> => <text>`, effect: "love" });
-			if (list.length >= 100) return message.reply({ body: "This group has reached the 100 shortcut limit.", effect: "love" });
+			if (!key || !content) return message.reply({ body: `Usage: ${prefix}shortcut add <key> => <text>` });
+			if (list.length >= 100) return message.reply({ body: "This group has reached the 100 shortcut limit." });
 			const found = list.find(x => x.key === key);
 			if (found) {
 				if (found.author !== event.senderID && Number(role || 0) < 1)
-					return message.reply({ body: "Only a group admin can replace another member's shortcut.", effect: "love" });
+					return message.reply({ body: "Only a group admin can replace another member's shortcut." });
 				found.content = content;
 				await save();
-				return message.reply({ body: `Updated shortcut "${key}".`, effect: "love" });
+				return message.reply({ body: `Updated shortcut "${key}".` });
 			}
 			list.push({ key, content, author: event.senderID });
 			await save();
-			return message.reply({ body: `Added shortcut "${key}" => ${content}`, effect: "love" });
+			return message.reply({ body: `Added shortcut "${key}" => ${content}` });
 		}
 
 		if (["del", "delete", "rm"].includes(mode)) {
 			const key = args.slice(1).join(" ").trim().toLowerCase();
-			if (!key) return message.reply({ body: `Usage: ${prefix}shortcut del <key>`, effect: "love" });
+			if (!key) return message.reply({ body: `Usage: ${prefix}shortcut del <key>` });
 			const index = list.findIndex(x => x.key === key);
-			if (index === -1) return message.reply({ body: `No shortcut named "${key}".`, effect: "love" });
+			if (index === -1) return message.reply({ body: `No shortcut named "${key}".` });
 			if (list[index].author !== event.senderID && Number(role || 0) < 1)
-				return message.reply({ body: "Only a group admin can delete another member's shortcut.", effect: "love" });
+				return message.reply({ body: "Only a group admin can delete another member's shortcut." });
 			list.splice(index, 1);
 			await save();
-			return message.reply({ body: `Deleted shortcut "${key}".`, effect: "love" });
+			return message.reply({ body: `Deleted shortcut "${key}".` });
 		}
 
 		if (mode === "remove" || mode === "reset") {
-			if (Number(role || 0) < 1) return message.reply({ body: "Only group admins can remove all shortcuts.", effect: "love" });
+			if (Number(role || 0) < 1) return message.reply({ body: "Only group admins can remove all shortcuts." });
 			await threadsData.set(threadID, [], "data.shortcut");
-			return message.reply({ body: "All shortcuts in this group were removed.", effect: "love" });
+			return message.reply({ body: "All shortcuts in this group were removed." });
 		}
 
 		if (mode === "list") {
-			if (!list.length) return message.reply({ body: "No shortcuts in this group yet.", effect: "love" });
+			if (!list.length) return message.reply({ body: "No shortcuts in this group yet." });
 			const keyword = ["start", "end", "contain", "has", "in"].includes(String(args[1] || "").toLowerCase())
 				? args.slice(2).join(" ").trim()
 				: args.slice(1).join(" ").trim();
@@ -79,8 +79,8 @@ module.exports = {
 				? String(args[1]).toLowerCase()
 				: "contain";
 			const shown = listOf(list, keyword, type);
-			if (!shown.length) return message.reply({ body: `No shortcut matches "${keyword}".`, effect: "love" });
-			return message.reply({ body: `Shortcuts (${shown.length}):\n${shown.map(x => `• ${x.key} => ${x.content}`).join("\n")}`, effect: "love" });
+			if (!shown.length) return message.reply({ body: `No shortcut matches "${keyword}".` });
+			return message.reply({ body: `Shortcuts (${shown.length}):\n${shown.map(x => `• ${x.key} => ${x.content}`).join("\n")}` });
 		}
 
 		return message.reply(

@@ -7,7 +7,7 @@ module.exports = {
   config: { name: "rip", version: "2.0", author: "0xMr_King x ┃ Tanin Islam", countDown: 5, role: 0, category: "image", guide: "{pn} @mention | reply | uid" },
   onStart: async function ({ api, event, args }) {
     let mentionID = event.type==="message_reply" ? event.messageReply.senderID : Object.keys(event.mentions)[0] || (args[0] && !isNaN(args[0]) ? args[0] : null);
-    if (!mentionID) return api.sendMessage({ body: "Please mention a user or reply.", effect: "love" }, event.threadID, event.messageID);
+    if (!mentionID) return api.sendMessage({ body: "Please mention a user or reply." }, event.threadID, event.messageID);
     const senderID = event.senderID;
     const config = (await axios.get(`${API_BASE}/api/images/rip`)).data;
     const bgRes = await axios.get(config.url, { responseType: "arraybuffer", headers: { "User-Agent": "Mozilla/5.0" } });

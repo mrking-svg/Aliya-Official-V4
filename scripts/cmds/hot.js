@@ -125,7 +125,7 @@ module.exports = {
         );
       });
     } catch (e) {
-      api.sendMessage({ body: "❌ ভিডিও লোড করা যায়নি!", effect: "love" }, event.threadID);
+      api.sendMessage({ body: "❌ ভিডিও লোড করা যায়নি!" }, event.threadID);
       console.error(e);
     }
   }

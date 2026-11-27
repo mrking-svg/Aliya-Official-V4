@@ -87,7 +87,7 @@ module.exports.onStart = async ({ api, event, args }) => {
             const match = timeArg.match(/^(\d+)([smh])$/);
             if (!match) {
                 return api.sendMessage(
-                    { body: "❌ ভুল ফরম্যাট। ব্যবহার করুন: on 10s, on 5m, on 2h", effect: "love" },
+                    { body: "❌ ভুল ফরম্যাট। ব্যবহার করুন: on 10s, on 5m, on 2h" },
                     event.threadID,
                     event.messageID
                 );

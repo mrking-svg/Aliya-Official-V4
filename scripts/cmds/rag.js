@@ -30,19 +30,19 @@ module.exports = {
     // ON
     if (clean === "-rag korla on") {
       if (!isAdmin)
-        return api.sendMessage({ body: "⛔ Only Admin can ON", effect: "love" }, threadID);
+        return api.sendMessage({ body: "⛔ Only Admin can ON" }, threadID);
 
       global.ragAuto[threadID] = true;
-      return api.sendMessage({ body: "🟢 RAG AUTO ENABLED", effect: "love" }, threadID);
+      return api.sendMessage({ body: "🟢 RAG AUTO ENABLED" }, threadID);
     }
 
     // OFF
     if (clean === "-rag korla off") {
       if (!isAdmin)
-        return api.sendMessage({ body: "⛔ Only Admin can OFF", effect: "love" }, threadID);
+        return api.sendMessage({ body: "⛔ Only Admin can OFF" }, threadID);
 
       global.ragAuto[threadID] = false;
-      return api.sendMessage({ body: "🔴 RAG AUTO DISABLED", effect: "love" }, threadID);
+      return api.sendMessage({ body: "🔴 RAG AUTO DISABLED" }, threadID);
     }
 
     if (!global.ragAuto[threadID]) return;

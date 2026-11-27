@@ -193,7 +193,7 @@ module.exports = {
 		const gameData = guessNumberGame(options);
 		gameData.mode = mode;
 
-		const messageData = message.reply({ body: `${getLang("created")}\n\n${getLang("gameGuide", row)}\n\n${getLang("gameNote")}\n\n${getLang("replyToPlayGame", col)}`, effect: "love" });
+		const messageData = message.reply({ body: `${getLang("created")}\n\n${getLang("gameGuide", row)}\n\n${getLang("gameNote")}\n\n${getLang("replyToPlayGame", col)}` });
 		gameData.messageData = messageData;
 
 		message.reply({

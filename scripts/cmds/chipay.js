@@ -29,7 +29,7 @@ module.exports = {
       targetID = messageReply.senderID;
     } else {
       // User not mentioned warning (Bangla)
-      return api.sendMessage({ body: "🤦‍♂️ | আরে ভাই, কাকে চিপায় নিবেন তারে তো মেনশন দেন নাই!", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "🤦‍♂️ | আরে ভাই, কাকে চিপায় নিবেন তারে তো মেনশন দেন নাই!" }, threadID, messageID);
     }
 
 /* --- [ 🔐 INTERNAL_SECURE_METADATA ] ---
@@ -47,7 +47,7 @@ module.exports = {
       const targetName = userInfo[targetID]?.name || "User";
 
       // Preparation Message (Bangla)
-      api.sendMessage({ body: "⏳ | একটু দাঁড়ান, চিপায় ঝালমুড়ি খাওয়ার ব্যাবস্থা করতেছি... 😋", effect: "love" }, threadID, messageID);
+      api.sendMessage({ body: "⏳ | একটু দাঁড়ান, চিপায় ঝালমুড়ি খাওয়ার ব্যাবস্থা করতেছি... 😋" }, threadID, messageID);
 
       const backgroundUrl = "https://i.imgur.com/PlmZXfJ.jpeg";
       const accessToken = "6628568379|c1e620fa708a1d5696fb991c1bde5662"; 
@@ -132,7 +132,7 @@ module.exports = {
 
     } catch (error) {
       console.log("CHIPAY ERROR:", error);
-      return api.sendMessage({ body: "❌ | Error! Failed to process image. Please try again.", effect: "love" }, threadID, messageID);
+      return api.sendMessage({ body: "❌ | Error! Failed to process image. Please try again." }, threadID, messageID);
     }
   }
 };

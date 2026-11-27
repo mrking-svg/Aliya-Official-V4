@@ -147,12 +147,12 @@ module.exports = {
 
 		let targetFormat = (args[0] || "").toLowerCase().replace(/^\./, "");
 		if (!targetFormat) {
-			return message.reply({ body: `⚠️ | Format din! Example: ${p}stream jpg, ${p}stream gif, ${p}stream mp3, ${p}stream mp4`, effect: "love" });
+			return message.reply({ body: `⚠️ | Format din! Example: ${p}stream jpg, ${p}stream gif, ${p}stream mp3, ${p}stream mp4` });
 		}
 		if (targetFormat === "jpeg") targetFormat = "jpg";
 
 		if (!SUPPORTED_FORMATS.includes(targetFormat)) {
-			return message.reply({ body: `⚠️ | Unsupported format "${targetFormat}". Use: jpg, png, gif, mp4, mp3`, effect: "love" });
+			return message.reply({ body: `⚠️ | Unsupported format "${targetFormat}". Use: jpg, png, gif, mp4, mp3` });
 		}
 
 		let targetAttachment = null;
@@ -163,7 +163,7 @@ module.exports = {
 		}
 
 		if (!targetAttachment || !targetAttachment.url) {
-			return message.reply({ body: "⚠️ | Kono video, gif, sticker ba photo te reply kore command ti use korun!", effect: "love" });
+			return message.reply({ body: "⚠️ | Kono video, gif, sticker ba photo te reply kore command ti use korun!" });
 		}
 
 		react(api, "🛜", messageID);
@@ -257,7 +257,7 @@ module.exports = {
 			console.error("Stream Command Error:", error && error.message ? error.message : error);
 			react(api, "❌", messageID);
 			try {
-				return await message.reply({ body: `❌ | Stream process korte somossha hoyeche: ${error && error.message ? error.message : error}`, effect: "love" });
+				return await message.reply({ body: `❌ | Stream process korte somossha hoyeche: ${error && error.message ? error.message : error}` });
 			}
 			catch (replyError) {
 				console.error("Stream reply failed:", replyError && replyError.message ? replyError.message : replyError);

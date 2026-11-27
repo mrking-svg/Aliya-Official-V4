@@ -15,14 +15,14 @@ module.exports = {
     try {
       // Check if the user replied to someone
       if (!event.messageReply || !event.messageReply.senderID) {
-        return message.reply({ body: "⚠️ Kono user-er message-e reply diye tag command use koro!\nJemon: `tag Hello Aliya 🐇🌸`", effect: "love" });
+        return message.reply({ body: "⚠️ Kono user-er message-e reply diye tag command use koro!\nJemon: `tag Hello Aliya 🐇🌸`" });
       }
 
       const targetUserID = event.messageReply.senderID;
       const customText = args.join(" ");
 
       if (!customText) {
-        return message.reply({ body: "⚠️ Sathi ke ki message dite chao seta lekho!\nJemon: `tag Hello Aliya 🐇🌸`", effect: "love" });
+        return message.reply({ body: "⚠️ Sathi ke ki message dite chao seta lekho!\nJemon: `tag Hello Aliya 🐇🌸`" });
       }
 
       if (api && typeof api.setMessageReaction === "function") {
@@ -51,7 +51,7 @@ module.exports = {
       if (api && typeof api.setMessageReaction === "function") {
         api.setMessageReaction("❌️", event.messageID, () => {}, true);
       }
-      return message.reply({ body: "❌ Failed to tag user, please try again!", effect: "love" });
+      return message.reply({ body: "❌ Failed to tag user, please try again!" });
     }
   }
 };

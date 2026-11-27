@@ -19,7 +19,7 @@ module.exports = {
 
   onStart: async function ({ message, args, role, prefix }) {
     if (role < 4) {
-      return message.reply({ body: "⚙️ 🌸 Only Bot Developers (Role 4) can test NPM packages!", effect: "love" });
+      return message.reply({ body: "⚙️ 🌸 Only Bot Developers (Role 4) can test NPM packages!" });
     }
 
     const pkgName = args[0];
@@ -40,7 +40,7 @@ module.exports = {
 
     // 1. Basic Import & Version Test
     if (!customCode) {
-      return message.reply({ body: `⏳ Testing package loading: \`${pkgName}\`...`, effect: "love" }, () => {
+      return message.reply({ body: `⏳ Testing package loading: \`${pkgName}\`...` }, () => {
         try {
           const loadedModule = require(pkgName);
           let pkgVersion = "Unknown";
@@ -66,26 +66,26 @@ module.exports = {
 
           return message.reply(resultMsg);
         } catch (err) {
-          return message.reply({ body: `❌ [ Package Test Failed ]\n\n\`\`\`text\n${err.message}\n\`\`\``, effect: "love" });
+          return message.reply({ body: `❌ [ Package Test Failed ]\n\n\`\`\`text\n${err.message}\n\`\`\`` });
         }
       });
     }
 
     // 2. Custom Execution Test with Code
-    return message.reply({ body: `⏳ Executing test script for \`${pkgName}\`...`, effect: "love" }, async () => {
+    return message.reply({ body: `⏳ Executing test script for \`${pkgName}\`...` }, async () => {
       try {
         const pkg = require(pkgName);
         
         const out = (data) => {
           let strData = typeof data !== "string" ? require("util").inspect(data, { depth: 2 }) : data;
-          return message.reply({ body: `🧪 [ Test Output ]\n\n\`\`\`javascript\n${strData}\n\`\`\``, effect: "love" });
+          return message.reply({ body: `🧪 [ Test Output ]\n\n\`\`\`javascript\n${strData}\n\`\`\`` });
         };
 
         const testAsync = new Function("pkg", pkgName, "out", "require", `return (async () => { ${customCode} })();`);
         await testAsync(pkg, pkg, out, require);
 
       } catch (err) {
-        return message.reply({ body: `❌ [ Code Execution Error ]\n\n\`\`\`text\n${err.stack || err.message || err}\n\`\`\``, effect: "love" });
+        return message.reply({ body: `❌ [ Code Execution Error ]\n\n\`\`\`text\n${err.stack || err.message || err}\n\`\`\`` });
       }
     });
   }

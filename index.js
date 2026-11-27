@@ -13,34 +13,30 @@
 //   2. Starts Aliya.js (main engine) with an IPC channel and understands its
 //      exit codes (table below). It restarts the bot after ANY exit, with a
 //      smart back-off, so the server never stays off by accident.
-//   3. If Aliya.js has a big problem (cannot run, syntax error, crash loop),
-//      it starts Wolf.js (safe-mode engine) and tries Aliya.js again later.
-//   4. When every account failed, it shows the "Restarting / Offline" page,
-//      retries with back-off, and retries instantly when you edit a cookie file.
+//   3. Uses exactly one Facebook account from account.txt: no rotation, no fallback engine.
+//   4. When that account is unavailable, it shows the "Restarting / Offline" page,
+//      retries with back-off, and retries instantly when account.txt changes.
 //   5. Detects a frozen bot (no heartbeat) and kills + restarts it.
 //   6. Installs missing npm packages by itself (first boot and exit code 6).
 //
-// Exit codes (same table in Aliya.js and Wolf.js):
+// Exit codes (same table in Aliya.js):
 //   0  clean exit              -> restart in 1s
-//   1  crash                   -> restart with back-off, Wolf.js after repeated crashes
+//   1  crash                   -> restart with back-off on the same single account
 //   2  planned restart         -> restart in 1s (memory guard, schedule, MQTT unstable)
-//   3  every account failed    -> offline page, retry with back-off / on cookie edit
-//   4  engine cannot run       -> switch to Wolf.js immediately
-//   5  account dead / switched -> restart in 1s on the next account
+//   3  single account failed   -> offline page, retry with back-off / on account.txt edit
+//   4  engine cannot run       -> retry with back-off on the same engine
+//   5  state file changed      -> restart in 1s with the same account
 //   6  npm package missing     -> npm install, then restart
-//   7  fast restart requested  -> restart in 0.5s (admin account switch / Wolf hand-back)
+//   7  fast restart requested  -> restart in 0.5s
 //
-// IPC messages from the bot (upper/lower case both accepted): HEARTBEAT, READY, POOL,
-// ACCOUNT_CONNECTED, ALL_ACCOUNTS_FAILED, ENGINE_HANDBACK, ACCOUNT_SWITCH_REQUEST.
+// IPC messages from the bot: HEARTBEAT, READY, ACCOUNT_CONNECTED, ALL_ACCOUNTS_FAILED, ACCOUNT_SWITCH_REQUEST.
 //
 // Optional environment variables:
 //   PORT                     public port (default 8080)
 //   ALIYA_NO_PROXY=1         the bot owns the public port itself
 //   ALIYA_MAX_MEM_MB         Node heap cap (default 60% of the real memory limit)
 //   ALIYA_RSS_LIMIT_MB       bot restarts itself above this RSS (default 85%)
-//   ALIYA_WOLF_AFTER         quick crashes in a row before Wolf.js (default 4)
-//   ALIYA_WOLF_RETRY_MS      how long Wolf.js runs before trying Aliya.js again (default 900000)
-//   ALIYA_OFFLINE_DELAYS_S   retry delays when all accounts failed (default 1800,3600,7200,21600)
+//   ALIYA_OFFLINE_DELAYS_S   retry delays when the single account is unavailable (default 1800,3600,7200,21600)
 //   ALIYA_HEARTBEAT_TIMEOUT_MS  freeze limit (default 120000)
 //   ALIYA_SELF_URL           public URL used for the keep-awake ping (auto-detected on Render/Railway/Replit)
 //   ALIYA_SELF_PING=0        disable the keep-awake ping
@@ -59,7 +55,6 @@ const path = require("path");
 const ROOT = __dirname;
 const PKG_VERSION = require("./package.json").version;
 const MAIN_FILE = "Aliya.js";
-const WOLF_FILE = "Wolf.js";
 const SYNTAX_CHECK_FILES = [
 	MAIN_FILE,
 	path.join("bot", "login", "login.js"),
@@ -87,8 +82,6 @@ const HEARTBEAT_TIMEOUT_MS = envMs("ALIYA_HEARTBEAT_TIMEOUT_MS", 120000);
 // A child that is alive but never sends READY is stuck in login/loading. Kill it
 // instead of leaving the server in "starting" forever.
 const STARTUP_TIMEOUT_MS = envMs("ALIYA_STARTUP_TIMEOUT_MS", 6 * 60 * 1000);
-const WOLF_AFTER = Math.max(1, envMs("ALIYA_WOLF_AFTER", 4));
-const WOLF_RETRY_MS = envMs("ALIYA_WOLF_RETRY_MS", 15 * 60 * 1000);
 const ACCOUNT_POLL_MS = envMs("ALIYA_ACCOUNT_POLL_MS", 5000);
 const FREEZE_CHECK_MS = Math.max(200, envMs("ALIYA_FREEZE_CHECK_MS", 15000));
 // A rejected/blocked session must not be retried every few minutes: each
@@ -109,7 +102,6 @@ const BANNER = `
 
 // ───────────────────────────── state ───────────────────────────── //
 
-let mode = "main";               // "main" = Aliya.js, "wolf" = Wolf.js
 let child = null;
 let childStartedAt = 0;
 let botPort = null;              // private port of the running bot (null = not running)
@@ -119,25 +111,20 @@ let shuttingDown = false;
 let starting = false;
 let installing = false;
 let restartTimer = null;
-let wolfTimer = null;
 let offlinePoll = null;
-let switchTarget = null;         // "main" | "wolf" while we are stopping the child on purpose
 let launchCount = 0;
-let failStreak = 0;              // quick crashes in a row (not counting account switches)
-let accountSwitches = 0;
+let failStreak = 0;              // quick crashes in a row (not counting state reloads)
+let stateReloads = 0;
 let totalCrashes = 0;
 let ready = false;               // the running child logged in and finished loading
 let gotHeartbeat = false;
 let lastHeartbeat = 0;
 let lastTick = Date.now();
-let activeAccount = null;
-let lastPool = null;
 let lastOfflineReason = "";
-let offline = null;              // null = fine, object = all accounts failed
-let wolfSince = 0;
+let offline = null;              // null = fine, object = single account unavailable
 let lastExitInfo = "none yet";
 let nextRestartAt = 0;
-const switchTimes = [];
+const stateReloadTimes = []
 const npmTries = [];
 
 // ───────────────────────────── helpers ───────────────────────────── //
@@ -198,22 +185,16 @@ const HEAP_MB = Number(process.env.ALIYA_MAX_MEM_MB) || Math.min(4096, Math.max(
 // The bot restarts itself cleanly above this RSS (see Aliya.js memory guard).
 const RSS_LIMIT_MB = envMs("ALIYA_RSS_LIMIT_MB", Math.min(6144, Math.max(256, Math.floor(MEM_LIMIT_MB * 0.85))));
 
-// All account files: account.txt, account2.txt ... (and account.dev.txt)
+// Single account state file.
 function accountSnapshot() {
 	try {
-		return fs.readdirSync(ROOT)
-			.filter(f => /^account\d*(\.dev)?\.txt$/.test(f))
-			.sort()
-			.map(f => {
-				const st = fs.statSync(path.join(ROOT, f));
-				return `${f}:${st.size}:${Math.floor(st.mtimeMs)}`;
-			})
-			.join("|");
+		const st = fs.statSync(path.join(ROOT, "account.txt"));
+		return `${st.size}:${Math.floor(st.mtimeMs)}`;
 	}
 	catch (e) { return ""; }
 }
 
-// Pool info from the bot goes to the public /health page, so cookies and secrets are stripped.
+// Health info from the bot goes to the public /health page, so cookies and secrets are stripped.
 const SECRET_KEY = /cookie|appstate|token|password|secret|^value$|^xs$|c_user|session/i;
 const SECRET_TEXT = /c_user=|xs=|EAAA[A-Za-z0-9]/;
 function sanitize(v, depth = 0) {
@@ -237,18 +218,6 @@ function sanitize(v, depth = 0) {
 	return undefined;
 }
 
-function poolRows(pool) {
-	let list = [];
-	if (Array.isArray(pool)) list = pool;
-	else if (pool && typeof pool === "object")
-		list = Object.entries(pool).map(([k, v]) => (v && typeof v === "object" && !Array.isArray(v)) ? { name: k, ...v } : { name: k, status: v });
-	return list.slice(0, 10).map(item => {
-		if (item && typeof item === "object")
-			return Object.values(item).filter(x => ["string", "number", "boolean"].includes(typeof x)).map(String).join("  |  ");
-		return String(item);
-	}).filter(Boolean);
-}
-
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
 
 function renderPage({ heading, color, message, rows = [], refresh = 10 }) {
@@ -262,17 +231,8 @@ function currentPage() {
 		return renderPage({
 			heading: "Aliya Bot Server Restarting / Offline",
 			color: "#ff4d6d",
-			message: "All accounts (account.txt to account5.txt) failed or are suspended. The bot retries automatically, and immediately after you update a cookie file.",
-			rows: poolRows(lastPool)
-		});
-	}
-	if (mode === "wolf") {
-		return renderPage({
-			heading: "Aliya Safe Mode (Wolf)",
-			color: "#ffb703",
-			message: "The main engine had a problem, so the safe-mode engine is keeping the bot online. The main engine is retried automatically.",
-			rows: poolRows(lastPool),
-			refresh: 15
+			message: "The single Facebook account in account.txt is not available. The bot retries automatically, and immediately after you update the state file.",
+			rows: ["State file: account.txt"]
 		});
 	}
 	return renderPage({ heading: "ALIYA V4", color: "#4cc9f0", message: "Bot is starting. This page refreshes by itself.", refresh: 5 });
@@ -282,7 +242,7 @@ function stateName() {
 	if (offline && !ready) return "offline";
 	if (!botPort && useProxy) return "starting";
 	if (!ready) return "starting";
-	return mode === "wolf" ? "safe-mode" : "online";
+	return "online";
 }
 
 // ─────────────────────── public server (health + proxy) ─────────────────────── //
@@ -305,15 +265,14 @@ function handleHealth(res) {
 	res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
 	res.end(JSON.stringify({
 		status: stateName(),
-		engine: mode === "wolf" ? WOLF_FILE : MAIN_FILE,
-		activeAccount,
-		accounts: sanitize(lastPool) || null,
-		offlineReason: offline && !ready ? (lastOfflineReason || "all accounts failed") : undefined,
+		engine: MAIN_FILE,
+		account: "account.txt",
+		offlineReason: offline && !ready ? (lastOfflineReason || "single account unavailable") : undefined,
 		nextRetryInSec: nextRestartAt ? Math.max(0, Math.ceil((nextRestartAt - Date.now()) / 1000)) : 0,
 		restartPending: nextRestartAt > Date.now(),
 		launches: launchCount,
 		crashes: totalCrashes,
-		accountSwitches,
+		stateReloads,
 		lastExit: lastExitInfo,
 		uptime: formatUptime(process.uptime()),
 		uptimeSec: Math.floor(process.uptime()),
@@ -325,7 +284,7 @@ function handleHealth(res) {
 }
 
 function proxyHttp(req, res) {
-	// While every account is dead the engine's own pages mean nothing: show ours.
+	// While the single account is unavailable the engine's own pages mean nothing: show ours.
 	if ((offline && !ready) && isPageRequest(req)) return sendFallback(req, res);
 	if (!botPort) return sendFallback(req, res);
 	const upstream = http.request(
@@ -435,11 +394,7 @@ async function ensureDependencies() {
 	await runNpmInstall("node_modules not found");
 }
 
-// ─────────────────────── engine selection (Aliya / Wolf) ─────────────────────── //
-
-function wolfAvailable() {
-	return fileOk(WOLF_FILE);
-}
+// ─────────────────────── engine selection (single engine) ─────────────────────── //
 
 function checkMainFiles() {
 	if (!fileOk(MAIN_FILE)) return { ok: false, reason: `${MAIN_FILE} is missing` };
@@ -454,43 +409,7 @@ function checkMainFiles() {
 	return { ok: true };
 }
 
-function enterWolf(reason) {
-	if (!wolfAvailable()) {
-		log("WOLF", `${WOLF_FILE} is not available (${reason}). Staying on ${MAIN_FILE} with backoff.`);
-		return false;
-	}
-	mode = "wolf";
-	wolfSince = Date.now();
-	log("WOLF", `Switching to ${WOLF_FILE} (${reason}). ${MAIN_FILE} is retried in ${WOLF_RETRY_MS >= 120000 ? Math.round(WOLF_RETRY_MS / 60000) + " min" : Math.round(WOLF_RETRY_MS / 1000) + " s"}.`);
-	if (wolfTimer) clearTimeout(wolfTimer);
-	wolfTimer = setTimeout(tryMainAgain, WOLF_RETRY_MS);
-	return true;
-}
-
-function leaveWolfTimer() {
-	if (wolfTimer) { clearTimeout(wolfTimer); wolfTimer = null; }
-}
-
-function tryMainAgain() {
-	wolfTimer = null;
-	if (shuttingDown || mode !== "wolf") return;
-	const check = checkMainFiles();
-	if (!check.ok) {
-		log("WOLF", `${MAIN_FILE} is still broken (${check.reason}). Staying in safe mode.`);
-		wolfTimer = setTimeout(tryMainAgain, WOLF_RETRY_MS);
-		return;
-	}
-	log("WOLF", `${MAIN_FILE} looks healthy again. Switching back from ${WOLF_FILE}...`);
-	requestSwitch("main");
-}
-
 // Stops the running child on purpose and starts the other engine afterwards.
-function requestSwitch(target) {
-	if (!isChildRunning()) { mode = target; if (target === "main") leaveWolfTimer(); return; }
-	switchTarget = target;
-	stopChild();
-}
-
 function stopChild() {
 	if (!isChildRunning()) return;
 	const c = child;
@@ -499,22 +418,9 @@ function stopChild() {
 }
 
 function resolveRunTarget() {
-	if (mode === "main") {
-		const check = checkMainFiles();
-		if (check.ok) return MAIN_FILE;
-		if (wolfAvailable() && enterWolf(check.reason)) {
-			return WOLF_FILE;
-		}
-		log("ERROR", `Main engine problem and ${WOLF_FILE} is missing: ${check.reason}`);
-		return MAIN_FILE; // let node print the real error; back-off protects the host
-	}
-	if (!wolfAvailable()) {
-		log("WOLF", `${WOLF_FILE} not found. Going back to ${MAIN_FILE}.`);
-		mode = "main";
-		leaveWolfTimer();
-		return MAIN_FILE;
-	}
-	return WOLF_FILE;
+	const check = checkMainFiles();
+	if (!check.ok) log("ERROR", `Main engine problem: ${check.reason}. Retrying ${MAIN_FILE} with back-off.`);
+	return MAIN_FILE;
 }
 
 // ───────────────────────────── bot process ───────────────────────────── //
@@ -564,7 +470,6 @@ async function startBot() {
 				PORT: String(privatePort),
 				ALIYA_PUBLIC_PORT: String(publicPort),
 				ALIYA_SUPERVISED: "1",
-				ALIYA_MODE: mode,
 				ALIYA_RSS_LIMIT_MB: String(RSS_LIMIT_MB)
 			}
 		});
@@ -586,42 +491,27 @@ async function startBot() {
 
 function handleChildMessage(m) {
 	if (!m || typeof m !== "object") return;
-	// Aliya.js sends upper case, older Wolf builds sent lower case. Accept both.
 	const type = String(m.type || m.Type || "").toUpperCase();
 	switch (type) {
 		case "HEARTBEAT":
 			gotHeartbeat = true;
 			lastHeartbeat = Date.now();
 			break;
-		case "POOL":
-			lastPool = sanitize(m.pool) || null;
-			if (m.active !== undefined) activeAccount = typeof m.active === "string" ? m.active : null;
-			break;
 		case "ACCOUNT_CONNECTED":
-			activeAccount = typeof m.account === "string" ? m.account : activeAccount;
-			log("ACCOUNT", `Connected with ${activeAccount || "an account"}`);
+			log("ACCOUNT", "Connected with the single Facebook account in account.txt");
 			break;
 		case "READY":
 			ready = true;
 			offline = null;
 			stopOfflinePoll();
-			if (typeof m.account === "string") activeAccount = m.account;
-			if (m.pool) lastPool = sanitize(m.pool);
-			log("READY", `Bot is online${activeAccount ? " on " + activeAccount : ""}.`);
+			log("READY", "Bot is online with the single Facebook account in account.txt.");
 			break;
 		case "ALL_ACCOUNTS_FAILED":
-			lastPool = sanitize(m.pool) || lastPool;
-			lastOfflineReason = typeof m.reason === "string" ? m.reason.slice(0, 200) : "all accounts failed";
+			lastOfflineReason = typeof m.reason === "string" ? m.reason.slice(0, 200) : "single account unavailable";
 			if (!offline) offline = { since: Date.now(), attempt: -1, snapshot: accountSnapshot() };
 			break;
-		case "ENGINE_HANDBACK":
-			log("ENGINE", `${mode === "wolf" ? WOLF_FILE : MAIN_FILE} asked for the main engine.`);
-			if (mode === "wolf") requestSwitch("main");
-			else { switchTarget = mode; stopChild(); }
-			break;
 		case "ACCOUNT_SWITCH_REQUEST":
-			log("ACCOUNT", "Account switch requested by an admin. Restarting quickly...");
-			switchTarget = mode;
+			log("ACCOUNT", "State reload requested. Restarting the same single account...");
 			stopChild();
 			break;
 		default:
@@ -638,23 +528,10 @@ function handleChildExit(targetFile, code, signal) {
 	log("EXIT", `${targetFile} stopped | code ${code} | signal ${signal} | ran ${formatUptime(ranMs / 1000)}`);
 	if (shuttingDown) return;
 
-	// planned engine switch (Wolf <-> Aliya)
-	if (switchTarget) {
-		const target = switchTarget;
-		switchTarget = null;
-		mode = target;
-		if (target === "main") {
-			leaveWolfTimer();
-			failStreak = Math.max(0, WOLF_AFTER - 2); // two more quick crashes send us back to Wolf
-		}
-		else failStreak = 0;
-		return scheduleRestart(500);
-	}
-
 	switch (code) {
 		case 3: return handleAllAccountsFailed();
 		case 4: return handleCannotRun(targetFile);
-		case 5: return handleAccountSwitch();
+		case 5: return handleStateReload();
 		case 6: return handleMissingPackage(ranMs);
 		case 7: return handleQuickRestart(targetFile);
 		case 2:
@@ -675,56 +552,37 @@ function handleCrash(ranMs) {
 	let delay = ranMs >= STABLE_AFTER_MS
 		? QUICK_RESTART_MS
 		: Math.min(MAX_BACKOFF_MS, BASE_BACKOFF_MS * 2 ** (failStreak - 1));
-
-	if (mode === "main" && wolfAvailable() && failStreak >= WOLF_AFTER && ranMs < STABLE_AFTER_MS) {
-		if (enterWolf(`${failStreak} quick crashes in a row`)) {
-			failStreak = 0;
-			delay = QUICK_RESTART_MS;
-		}
-	}
 	log("AUTO_HEAL", `Bot ended unexpectedly (quick-crash streak ${failStreak}). Server stays ON.`);
 	scheduleRestart(delay);
 }
 
 function handleCannotRun(targetFile) {
-	if (mode === "main" && wolfAvailable()) {
-		enterWolf(`${targetFile} reported that it cannot run`);
-		failStreak = 0;
-		return scheduleRestart(QUICK_RESTART_MS);
-	}
-	log("ERROR", `${targetFile} cannot run and there is no other engine to use. Retrying with back-off.`);
-	if (mode === "wolf") { mode = "main"; leaveWolfTimer(); }
+	log("ERROR", `${targetFile} cannot run. Retrying with back-off on the same single account.`);
 	totalCrashes++;
 	failStreak++;
 	scheduleRestart(Math.min(MAX_BACKOFF_MS, BASE_BACKOFF_MS * 2 ** Math.min(failStreak, 8)));
 }
 
-// Code 7: the child asked for a fast restart (admin account switch, Wolf
-// handing back, manual rotate). It is a planned action, never a crash.
+// Code 7: the child asked for a fast restart. It is a planned action, never a crash.
 function handleQuickRestart(targetFile) {
 	failStreak = 0;
 	log("RECOVERY", `${targetFile} requested a fast restart. Server stays ON.`);
-	if (mode === "wolf") {
-		mode = "main";
-		leaveWolfTimer();
-	}
 	return scheduleRestart(500, true);
 }
 
-function handleAccountSwitch() {
-	accountSwitches++;
+function handleStateReload() {
+	stateReloads++;
 	failStreak = 0;
 	const t = Date.now();
-	switchTimes.push(t);
-	while (switchTimes.length && t - switchTimes[0] > 10 * 60 * 1000) switchTimes.shift();
-	// Back off harder when accounts keep failing/switching (blocked cookies, checkpoints, etc.)
-	const n = switchTimes.length;
+	stateReloadTimes.push(t);
+	while (stateReloadTimes.length && t - stateReloadTimes[0] > 10 * 60 * 1000) stateReloadTimes.shift();
+	const n = stateReloadTimes.length;
 	const delay = n <= 1 ? 5000
 		: n <= 3 ? 15000
 		: n <= 6 ? 60000
 		: n <= 10 ? 180000
 		: 300000;
-	log("ACCOUNT", `Account changed or lost. Restarting on the next account in ${Math.round(delay / 1000)}s...`);
+	log("ACCOUNT", `State file changed or lost. Restarting the same single account in ${Math.round(delay / 1000)}s...`);
 	scheduleRestart(delay);
 }
 
@@ -741,7 +599,7 @@ async function handleMissingPackage(ranMs) {
 	scheduleRestart(QUICK_RESTART_MS, true);
 }
 
-// All accounts failed: offline page + retry with back-off, or at once when a cookie file changes.
+// Single account unavailable: offline page + retry with back-off, or at once when account.txt changes.
 function handleAllAccountsFailed() {
 	const prev = offline;
 	offline = {
@@ -751,7 +609,7 @@ function handleAllAccountsFailed() {
 	};
 	failStreak = 0;
 	const delay = OFFLINE_DELAYS_MS[Math.min(offline.attempt, OFFLINE_DELAYS_MS.length - 1)];
-	log("OFFLINE", `All accounts failed or are suspended. Offline page is live. Retry in ${Math.round(delay / 1000)}s, or instantly when you edit an account file.`);
+	log("OFFLINE", `Single account unavailable. Offline page is live. Retry in ${Math.round(delay / 1000)}s, or instantly when you update account.txt.`);
 	startOfflinePoll();
 	scheduleRestart(delay, true);
 }
@@ -763,7 +621,7 @@ function startOfflinePoll() {
 		if (isChildRunning() || installing) return;
 		const snap = accountSnapshot();
 		if (snap !== offline.snapshot) {
-			log("OFFLINE", "An account file was changed. Retrying now...");
+			log("OFFLINE", "account.txt was updated. Retrying now...");
 			offline.snapshot = snap;
 			offline.attempt = -1;
 			scheduleRestart(0, true);
@@ -817,7 +675,7 @@ setInterval(() => {
 }, FREEZE_CHECK_MS);
 
 // Login/loading hang: the process is alive and sends heartbeats but never said READY.
-// Kill it so recovery can put it on the next account instead of hanging forever.
+// Kill it so recovery can restart the same single account instead of hanging forever.
 setInterval(() => {
 	if (!isChildRunning() || ready || shuttingDown) return;
 	if (Date.now() - childStartedAt < STARTUP_TIMEOUT_MS) return;
@@ -828,7 +686,7 @@ setInterval(() => {
 
 // A status line in the logs every 10 minutes.
 setInterval(() => {
-	log("STATUS", `${stateName()} | engine ${mode === "wolf" ? WOLF_FILE : MAIN_FILE} | account ${activeAccount || "-"} | launches ${launchCount} | switches ${accountSwitches} | up ${formatUptime(process.uptime())} | ${Math.round(process.memoryUsage().rss / 1048576)}MB`);
+	log("STATUS", `${stateName()} | engine ${MAIN_FILE} | account.txt | launches ${launchCount} | state reloads ${stateReloads} | up ${formatUptime(process.uptime())} | ${Math.round(process.memoryUsage().rss / 1048576)}MB`);
 }, 10 * 60 * 1000);
 
 // Keep-awake ping for free hosts that sleep without incoming traffic (Render free, Replit).
@@ -865,7 +723,6 @@ function shutdown(signal) {
 	log("SHUTDOWN", `${signal} received. Cleaning up...`);
 	if (restartTimer) clearTimeout(restartTimer);
 	nextRestartAt = 0;
-	leaveWolfTimer();
 	stopOfflinePoll();
 	if (publicServer) try { publicServer.close(); } catch (e) { /* ignore */ }
 

@@ -132,7 +132,7 @@ async function handleSync(api, event) {
     } catch (err) {
         console.error("Sync Error:", err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ 𝖲𝗈𝗆𝖾𝗍𝗁𝗂𝗇𝗀 𝗐𝖾𝗇𝗍 𝗐𝗋𝗈𝗇𝗀 𝖽𝗎𝗋𝗂𝗇𝗀 𝗌𝗒𝗇𝖼!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ 𝖲𝗈𝗆𝖾𝗍𝗁𝗂𝗇𝗀 𝗐𝖾𝗇𝗍 𝗐𝗋𝗈𝗇𝗀 𝖽𝗎𝗋𝗂𝗇𝗀 𝗌𝗒𝗇𝖼!" }, threadID, messageID);
     }
 }
 
@@ -146,7 +146,7 @@ async function sendDriveMedia(api, event, type) {
 
         if (!allFiles || allFiles.length === 0) {
             api.setMessageReaction("❌", messageID, () => {}, true);
-            return api.sendMessage({ body: "📁 𝖭𝗈 𝗆𝖾𝖽𝗂𝖺 𝖿𝗈𝗎𝗇𝖽 𝗂𝗇 𝗍𝗁𝗂𝗌 𝖽𝗋𝗂𝗏𝖾 𝖿𝗈𝗅𝖽𝖾𝗋!", effect: "love" }, threadID, messageID);
+            return api.sendMessage({ body: "📁 𝖭𝗈 𝗆𝖾𝖽𝗂𝖺 𝖿𝗈𝗎𝗇𝖽 𝗂𝗇 𝗍𝗁𝗂𝗌 𝖽𝗋𝗂𝗏𝖾 𝖿𝗈𝗅𝖽𝖾𝗋!" }, threadID, messageID);
         }
 
         let filteredFiles = allFiles.filter(f => {
@@ -185,6 +185,6 @@ async function sendDriveMedia(api, event, type) {
     } catch (err) {
         console.error("Meme Media Error:", err);
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ 𝖲𝗈𝗆𝖾𝗍𝗁𝗂𝗇𝗀 𝗐𝖾𝗇𝗍 𝗐𝗋𝗈𝗇𝗀 𝖽𝗎𝗋𝗂𝗇𝗀 𝗌𝗒𝗇𝖼!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ 𝖲𝗈𝗆𝖾𝗍𝗁𝗂𝗇𝗀 𝗐𝖾𝗇𝗍 𝗐𝗋𝗈𝗇𝗀 𝖽𝗎𝗋𝗂𝗇𝗀 𝗌𝗒𝗇𝖼!" }, threadID, messageID);
     }
         }

@@ -47,7 +47,7 @@ module.exports = {
     } catch (err) {
       console.error("❌ Calculator command error:", err.message);
       return message.reply(
-        { body: "❌ Failed to generate calculator image.\n💬 Contact author for help: https://m.me/ye.bi.nobi.tai.244493", effect: "love" }
+        { body: "❌ Failed to generate calculator image.\n💬 Contact author for help: https://m.me/ye.bi.nobi.tai.244493" }
       );
     }
   }

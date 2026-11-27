@@ -24,15 +24,15 @@ module.exports = {
 
 	onStart: async function ({ message, event, args, usersData, threadsData, api, commandName, prefix }) {
 		const body = textOf(args);
-		if (!body) return message.reply({ body: `Please write your message. Usage: ${prefix}callad <message>`, effect: "love" });
+		if (!body) return message.reply({ body: `Please write your message. Usage: ${prefix}callad <message>` });
 
 		const cfg = global.GoatBot.config;
 		const adminIDs = (cfg.adminBot || []).map(String);
-		if (!adminIDs.length) return message.reply({ body: "No bot admin is configured.", effect: "love" });
+		if (!adminIDs.length) return message.reply({ body: "No bot admin is configured." });
 
 		const uid = String(event.senderID);
 		const last = cooldown.get(uid) || 0;
-		if (Date.now() - last < 60000) return message.reply({ body: "Please wait one minute before sending another report.", effect: "love" });
+		if (Date.now() - last < 60000) return message.reply({ body: "Please wait one minute before sending another report." });
 		cooldown.set(uid, Date.now());
 
 		const name = await usersData.getName(uid).catch(() => uid);
@@ -73,7 +73,7 @@ module.exports = {
 			}
 		}
 
-		return message.reply({ body: `Sent your feedback to ${sent} admin(s).${failed ? ` Failed: ${failed}.` : ""}`, effect: "love" });
+		return message.reply({ body: `Sent your feedback to ${sent} admin(s).${failed ? ` Failed: ${failed}.` : ""}` });
 	},
 
 	onReply: async function ({ message, event, api, args, Reply, usersData, commandName, prefix }) {
@@ -83,11 +83,11 @@ module.exports = {
 			const admins = (global.GoatBot.config.adminBot || []).map(String);
 			if (!admins.includes(String(event.senderID))) return;
 			const body = args.join(" ").trim();
-			if (!body) return message.reply({ body: "Write a reply first.", effect: "love" });
+			if (!body) return message.reply({ body: "Write a reply first." });
 
 			try {
 				const out = await api.sendMessage(
-					{ body: `📍 Reply from admin ${event.senderID}:\n\n${body}\n\nReply to this message to continue.`, effect: "love" },
+					{ body: `📍 Reply from admin ${event.senderID}:\n\n${body}\n\nReply to this message to continue.` },
 					Reply.threadID,
 					undefined,
 					Reply.messageIDSender
@@ -101,19 +101,19 @@ module.exports = {
 						messageIDSender: event.messageID,
 						author: Reply.senderUID
 					});
-				return message.reply({ body: "Your reply was delivered.", effect: "love" });
+				return message.reply({ body: "Your reply was delivered." });
 			} catch (e) {
-				return message.reply({ body: `Could not deliver the reply: ${e.message}`, effect: "love" });
+				return message.reply({ body: `Could not deliver the reply: ${e.message}` });
 			}
 		}
 
 		if (String(event.senderID) !== String(Reply.author)) return;
 		const body = args.join(" ").trim();
-		if (!body) return message.reply({ body: "Write a reply first.", effect: "love" });
+		if (!body) return message.reply({ body: "Write a reply first." });
 
 		try {
 			const out = await api.sendMessage(
-				{ body: `📝 Reply from user ${event.senderID}:\n\n${body}\n\nReply to this message to continue.`, effect: "love" },
+				{ body: `📝 Reply from user ${event.senderID}:\n\n${body}\n\nReply to this message to continue.` },
 				Reply.adminID,
 				undefined,
 				Reply.messageIDSender
@@ -127,9 +127,9 @@ module.exports = {
 					messageIDSender: event.messageID,
 					author: Reply.adminID
 				});
-			return message.reply({ body: "Your reply was delivered to the admin.", effect: "love" });
+			return message.reply({ body: "Your reply was delivered to the admin." });
 		} catch (e) {
-			return message.reply({ body: `Could not deliver the reply: ${e.message}`, effect: "love" });
+			return message.reply({ body: `Could not deliver the reply: ${e.message}` });
 		}
 	}
 };

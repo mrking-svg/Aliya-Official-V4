@@ -22,7 +22,7 @@ module.exports = {
   onStart: async function ({ api, event }) {
     const mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []));
     if (mention.length === 0) {
-      return api.sendMessage({ body: "❌ You need to tag someone to wish!", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "❌ You need to tag someone to wish!" }, event.threadID, event.messageID);
     }
 
     const taggedUserName = event.mentions[mention[0]].replace('@', '');
@@ -36,10 +36,10 @@ module.exports = {
       if (data.status === "success") {
         api.sendMessage(data.response, event.threadID, event.messageID);
       } else {
-        api.sendMessage({ body: "❌ Failed to send the birthday wish. Please try again later.", effect: "love" }, event.threadID, event.messageID);
+        api.sendMessage({ body: "❌ Failed to send the birthday wish. Please try again later." }, event.threadID, event.messageID);
       }
     } catch (err) {
-      api.sendMessage({ body: `❌ Something went wrong: ${err.message}`, effect: "love" }, event.threadID, event.messageID);
+      api.sendMessage({ body: `❌ Something went wrong: ${err.message}` }, event.threadID, event.messageID);
     }
   },
 };

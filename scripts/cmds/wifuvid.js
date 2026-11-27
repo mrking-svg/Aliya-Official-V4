@@ -115,7 +115,7 @@ async function handleDriveSync(api, event) {
         return api.sendMessage(report, threadID, messageID);
     } catch (err) {
         api.setMessageReaction("❌", messageID, () => {}, true);
-        return api.sendMessage({ body: "❌ Sync failed!", effect: "love" }, threadID, messageID);
+        return api.sendMessage({ body: "❌ Sync failed!" }, threadID, messageID);
     }
 }
 
@@ -127,7 +127,7 @@ async function handleDriveMedia(api, event) {
         const files = await fetchFolderFiles(false);
         if (!files || files.length === 0) {
             api.setMessageReaction("❌", messageID, () => {}, true);
-            return api.sendMessage({ body: "📁 Couldn't find any file!", effect: "love" }, threadID, messageID);
+            return api.sendMessage({ body: "📁 Couldn't find any file!" }, threadID, messageID);
         }
 
         const randomFile = files[Math.floor(Math.random() * files.length)];
@@ -145,11 +145,11 @@ async function handleDriveMedia(api, event) {
                 api.setMessageReaction("🍃", messageID, () => {}, true);
             } else {
                 api.setMessageReaction("❌", messageID, () => {}, true);
-                api.sendMessage({ body: "❌ Failed to send the video (file size might be too large)!", effect: "love" }, threadID, messageID);
+                api.sendMessage({ body: "❌ Failed to send the video (file size might be too large)!" }, threadID, messageID);
             }
         }, messageID);
     } catch (err) {
         api.setMessageReaction("❌", messageID, () => {}, true);
-        api.sendMessage({ body: "❌ Failed to load video from Google Drive.", effect: "love" }, threadID, messageID);
+        api.sendMessage({ body: "❌ Failed to load video from Google Drive." }, threadID, messageID);
     }
 }

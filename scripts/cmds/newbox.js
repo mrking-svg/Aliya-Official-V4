@@ -26,5 +26,5 @@ module.exports.onStart = async function({ api, Users, args, event }) {
  var groupTitle = main.slice(main.indexOf("|") +2)
  for (var i = 0; i < Object.keys(event.mentions).length; i++)
 id.push(Object.keys(event.mentions)[i]);
- api.createNewGroup(id, groupTitle,() => {api.sendMessage({ body: `Has created a group ${groupTitle} success`, effect: "love" }, event.threadID)})
+ api.createNewGroup(id, groupTitle,() => {api.sendMessage({ body: `Has created a group ${groupTitle} success` }, event.threadID)})
 }

@@ -66,7 +66,7 @@ ${adminListText}
         return message.reply(infoText);
       }
     } catch (error) {
-      return message.reply({ body: "❌ Unable to fetch group information!", effect: "love" });
+      return message.reply({ body: "❌ Unable to fetch group information!" });
     }
   }
 };

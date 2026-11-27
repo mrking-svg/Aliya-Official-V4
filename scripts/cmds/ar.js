@@ -37,11 +37,11 @@ module.exports.onStart = async ({ api, event, args }) => {
     lang = global.config.language;
   }
   return request(encodeURI(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ar&dt=t&q=${translateThis}`), (err, response, body) => {
-    if (err) return api.sendMessage({ body: "An error has occurred!", effect: "love" }, event.threadID, event.messageID);
+    if (err) return api.sendMessage({ body: "An error has occurred!" }, event.threadID, event.messageID);
     var retrieve = JSON.parse(body);
     var text = '';
     retrieve[0].forEach(item => (item[0]) ? text += item[0] : '');
     var fromLang = (retrieve[2] === retrieve[8][0][0]) ? retrieve[2] : retrieve[8][0][0]
-    api.sendMessage({ body: `${text}`, effect: "love" }, event.threadID, event.messageID);
+    api.sendMessage({ body: `${text}` }, event.threadID, event.messageID);
   });
       }

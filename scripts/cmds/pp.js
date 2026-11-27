@@ -32,7 +32,7 @@ module.exports = {
         const uid = await api.getUID(args[0]);
         uids.push(uid);
       } catch (e) {
-        return api.sendMessage({ body: "⚠️ 𝙄𝙣𝙫𝙖𝙡𝙞𝙙 𝙁𝙖𝙘𝙚𝙗𝙤𝙤𝙠 𝙥𝙧𝙤𝙛𝙞𝙡𝙚 𝙡𝙞𝙣𝙠\~", effect: "love" }, event.threadID, event.messageID);
+        return api.sendMessage({ body: "⚠️ 𝙄𝙣𝙫𝙖𝙡𝙞𝙙 𝙁𝙖𝙘𝙚𝙗𝙤𝙤𝙠 𝙥𝙧𝙤𝙛𝙞𝙡𝙚 𝙡𝙞𝙣𝙠\~" }, event.threadID, event.messageID);
       }
     } else if (args[0] && /^\d+$/.test(args[0])) {
       uids.push(args[0]);
@@ -66,7 +66,7 @@ module.exports = {
     }
 
     if (attachments.length === 0) {
-      return api.sendMessage({ body: "⚠️ 𝙁𝙖𝙞𝙡𝙚𝙙 𝙩𝙤 𝙛𝙚𝙩𝙘𝙝 𝙖𝙣𝙮 𝙥𝙧𝙤𝙛𝙞𝙡𝙚 𝙥𝙞𝙘𝙩𝙪𝙧𝙚\~", effect: "love" }, event.threadID, event.messageID);
+      return api.sendMessage({ body: "⚠️ 𝙁𝙖𝙞𝙡𝙚𝙙 𝙩𝙤 𝙛𝙚𝙩𝙘𝙝 𝙖𝙣𝙮 𝙥𝙧𝙤𝙛𝙞𝙡𝙚 𝙥𝙞𝙘𝙩𝙪𝙧𝙚\~" }, event.threadID, event.messageID);
     }
 
     let body = "";

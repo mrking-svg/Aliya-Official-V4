@@ -359,7 +359,7 @@ module.exports.onStart = async ({ api, event }) => {
 
   if (!uid)
     return api.sendMessage(
-      { body: "⚠️ যাকে সাসপেন্ড করবেন তার মেসেজে রিপ্লাই করে লিখুন: suspend", effect: "love" },
+      { body: "⚠️ যাকে সাসপেন্ড করবেন তার মেসেজে রিপ্লাই করে লিখুন: suspend" },
       threadID,
       messageID
     );
@@ -404,7 +404,7 @@ module.exports.onStart = async ({ api, event }) => {
     removeWait();
     cleanup(file);
     return api.sendMessage(
-      { body: `❌ ছবি বানানো যায়নি\n${error.message}`, effect: "love" },
+      { body: `❌ ছবি বানানো যায়নি\n${error.message}` },
       threadID,
       messageID
     );

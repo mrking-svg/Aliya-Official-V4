@@ -34,21 +34,21 @@ var mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions
 			var sender = content.slice(0, content.lastIndexOf(" "));
 			var expSet = content.substring(content.lastIndexOf(" ") + 1);
     			if (args[0]=='me'){
-    			 return api.sendMessage({ body: `Curved bar changes your exp ${expSet} ️🥇`, effect: "love" }, event.threadID, async() => {await Currencies.setData(event.senderID, {exp: parseInt(expSet)})}, event.messageID);
+    			 return api.sendMessage({ body: `Curved bar changes your exp ${expSet} ️🥇` }, event.threadID, async() => {await Currencies.setData(event.senderID, {exp: parseInt(expSet)})}, event.messageID);
 			}
 			else if(args[0]=="del"){
 if (args[1] == 'me'){
 			var s = event.senderID;
 			const expme =(await Currencies.getData(event.senderID)).exp;
-			api.sendMessage({ body: `✅Removed all your exp\nThe number of exp to remove is ${expme}.`, effect: "love" }, event.threadID, async() => {await Currencies.setData(event.senderID, {exp: parseInt(kong)})});
+			api.sendMessage({ body: `✅Removed all your exp\nThe number of exp to remove is ${expme}.` }, event.threadID, async() => {await Currencies.setData(event.senderID, {exp: parseInt(kong)})});
 		}	
 		else if (((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : [])).length == 1) {
 var mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : []));
 		const expdel = (await Currencies.getData(mention)).exp;
-		api.sendMessage({ body: `✅Removed all exp of ${event.mentions[mention].replace("@", "")}\nThe number of exp to remove is ${expdel}.`, effect: "love" }, event.threadID, async() => {await Currencies.setData(mention, {exp: parseInt(kong)})});
+		api.sendMessage({ body: `✅Removed all exp of ${event.mentions[mention].replace("@", "")}\nThe number of exp to remove is ${expdel}.` }, event.threadID, async() => {await Currencies.setData(mention, {exp: parseInt(kong)})});
 		}
 		
-		else return	api.sendMessage({ body: "wrong syntax", effect: "love" }, event.threadID, event.messageID);
+		else return	api.sendMessage({ body: "wrong syntax" }, event.threadID, event.messageID);
 		}
 			else if (((Object.keys(event.mentions).length) ? Object.keys(event.mentions) : (event.messageReply && event.messageReply.senderID ? [event.messageReply.senderID] : [])).length == 1) {
 			return api.sendMessage({
@@ -63,10 +63,10 @@ var mention = ((Object.keys(event.mentions).length) ? Object.keys(event.mentions
 		var id = args[1];
 		var cut = args[2];
 		let nameeee = (await Users.getData(id)).name
-		   return api.sendMessage({ body: `Changed 's exp ${nameeee} to ${cut}`, effect: "love" }, event.threadID, async() => {await Currencies.setData(id, {exp: parseInt(cut)})}, event.messageID);
+		   return api.sendMessage({ body: `Changed 's exp ${nameeee} to ${cut}` }, event.threadID, async() => {await Currencies.setData(id, {exp: parseInt(cut)})}, event.messageID);
 
 		}
 else {
-	api.sendMessage({ body: "wrong syntax", effect: "love" }, event.threadID, event.messageID)
+	api.sendMessage({ body: "wrong syntax" }, event.threadID, event.messageID)
 	}
 }

@@ -61,7 +61,7 @@ module.exports.onStart = async function({ api, event, args }) {
 	const axios = global.nodemodule["axios"];
 	let pathImg = __dirname + '/cache/trump.png';
 	var text = args.join(" ");
-	if (!text) return api.sendMessage({ body: "Enter the content of the comment on the board", effect: "love" }, threadID, messageID);
+	if (!text) return api.sendMessage({ body: "Enter the content of the comment on the board" }, threadID, messageID);
 	let getPorn = (await axios.get(`https://i.postimg.cc/gJCXgKv4/zucc.jpg`, { responseType: 'arraybuffer' })).data;
 	fs.writeFileSync(pathImg, Buffer.from(getPorn, 'utf-8'));
 	let baseImage = await loadImage(pathImg);

@@ -53,7 +53,7 @@ module.exports = {
 		const { senderID } = event;
 		if (usersData && typeof usersData.get === "function") global.dailyUsersData = usersData;
 		if (rolling.has(senderID))
-			return message.reply({ body: "⏳ | 𝐁𝐚𝐛𝐲, 𝐰𝐚𝐢𝐭 𝐟𝐨𝐫 𝐲𝐨𝐮𝐫 𝐥𝐚𝐬𝐭 𝐫𝐨𝐥𝐥!", effect: "love" });
+			return message.reply({ body: "⏳ | 𝐁𝐚𝐛𝐲, 𝐰𝐚𝐢𝐭 𝐟𝐨𝐫 𝐲𝐨𝐮𝐫 𝐥𝐚𝐬𝐭 𝐫𝐨𝐥𝐥!" });
 
 		rolling.add(senderID);
 		try {
@@ -80,16 +80,16 @@ module.exports = {
 
 			const betAmount = parseSmartAmount(betInput);
 			if (!Number.isFinite(betAmount) || betAmount <= 0)
-				return message.reply({ body: "⚠️ | 𝐁𝐚𝐛𝐲, 𝐞𝐧𝐭𝐞𝐫 𝐚 𝐯𝐚𝐥𝐢𝐝 𝐚𝐦𝐨𝐮𝐧𝐭!", effect: "love" });
+				return message.reply({ body: "⚠️ | 𝐁𝐚𝐛𝐲, 𝐞𝐧𝐭𝐞𝐫 𝐚 𝐯𝐚𝐥𝐢𝐝 𝐚𝐦𝐨𝐮𝐧𝐭!" });
 			if (betAmount < MIN_BET || betAmount > MAX_BET)
-				return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐛𝐞𝐭 𝐥𝐢𝐦𝐢𝐭 𝐢𝐬 $${formatNumber(MIN_BET)} - $${formatNumber(MAX_BET)}!`, effect: "love" });
+				return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐛𝐞𝐭 𝐥𝐢𝐦𝐢𝐭 𝐢𝐬 $${formatNumber(MIN_BET)} - $${formatNumber(MAX_BET)}!` });
 			if (betAmount > money)
-				return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐨𝐧𝐥𝐲 𝐡𝐚𝐯𝐞 $${formatNumber(money)}!`, effect: "love" });
+				return message.reply({ body: `❌ | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐨𝐧𝐥𝐲 𝐡𝐚𝐯𝐞 $${formatNumber(money)}!` });
 
 			const quota = global.utils.playQuotaStatus(userData.diceLimit);
 			if (!quota.allowed) {
 				const wait = global.utils.formatDuration(Math.ceil((quota.resetAt - Date.now()) / 1000));
-				return message.reply({ body: `>🎲 ( 𝐋𝐢𝐦𝐢𝐭 𝐑𝐞𝐚𝐜𝐡𝐞𝐝 )\n━━━━━━━━━━━━━━━━━━\n🚫 | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐡𝐚𝐯𝐞 𝐟𝐢𝐧𝐢𝐬𝐡𝐞𝐝 𝐲𝐨𝐮𝐫 𝟒𝟎 𝐫𝐨𝐥𝐥𝐬!\n⏳ | 𝐂𝐨𝐦𝐞 𝐛𝐚𝐜𝐤 𝐚𝐟𝐭𝐞𝐫 ${wait}.`, effect: "love" });
+				return message.reply({ body: `>🎲 ( 𝐋𝐢𝐦𝐢𝐭 𝐑𝐞𝐚𝐜𝐡𝐞𝐝 )\n━━━━━━━━━━━━━━━━━━\n🚫 | 𝐁𝐚𝐛𝐲, 𝐲𝐨𝐮 𝐡𝐚𝐯𝐞 𝐟𝐢𝐧𝐢𝐬𝐡𝐞𝐝 𝐲𝐨𝐮𝐫 𝟒𝟎 𝐫𝐨𝐥𝐥𝐬!\n⏳ | 𝐂𝐨𝐦𝐞 𝐛𝐚𝐜𝐤 𝐚𝐟𝐭𝐞𝐫 ${wait}.` });
 			}
 
 			const isWin = Math.random() < WIN_RATE;

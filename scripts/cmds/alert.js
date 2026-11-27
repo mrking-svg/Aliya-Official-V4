@@ -18,7 +18,7 @@ module.exports = {
   },
 
   onStart: async function ({ message, args }) {
-    if (!args.length) return message.reply({ body: "❌ | Please provide text.\nExample: .alert Warning!", effect: "love" });
+    if (!args.length) return message.reply({ body: "❌ | Please provide text.\nExample: .alert Warning!" });
 
     const text = encodeURIComponent(args.join(" "));
 
@@ -40,7 +40,7 @@ module.exports = {
 
     } catch (err) {
       console.error(err);
-      message.reply({ body: "❌ | Failed to generate alert image.", effect: "love" });
+      message.reply({ body: "❌ | Failed to generate alert image." });
     }
   }
 };
