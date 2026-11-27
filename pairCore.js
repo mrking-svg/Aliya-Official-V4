@@ -8,6 +8,7 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 const { convert: convertStyle } = require('./textEngine.js');
+const profileMedia = require('./profileMedia.js');
 
 const AVATAR_TOKEN = '6628568379%7Cc1e620fa708a1d5696fb991c1bde5662';
 const IMAGE_TIMEOUT = 8000;
@@ -71,6 +72,20 @@ async function loadImageSafe(url) {
 		return await loadImage(Buffer.from(res.data));
 	}
 	catch (_e) { return null; }
+}
+
+// Profile pictures come from the same stalk API that pfp.js uses.
+// Falls back to the old Graph URL if that API has no usable image.
+async function loadProfileAvatar(id) {
+	try {
+		const urls = await profileMedia.getImageUrls(id);
+		for (const url of urls) {
+			const img = await loadImageSafe(url);
+			if (img) return img;
+		}
+	}
+	catch (_e) { /* fall through */ }
+	return loadImageSafe(avatarUrl(id));
 }
 
 function gradient(ctx, width, height, from, to) {
@@ -168,8 +183,8 @@ async function run({ api, event, style, usersData }) {
 		else gradient(ctx, width, height, style.from || '#ff9a9e', style.to || '#fad0c4');
 
 		const [imgOne, imgTwo] = await Promise.all([
-			loadImageSafe(avatarUrl(event.senderID)),
-			loadImageSafe(avatarUrl(match.id))
+			loadProfileAvatar(event.senderID),
+			loadProfileAvatar(match.id)
 		]);
 
 		if (typeof style.drawAvatars === 'function')
@@ -207,6 +222,6 @@ async function run({ api, event, style, usersData }) {
 }
 
 module.exports = {
-	resolveGender, pickMatch, convertName, loadImageSafe,
+	resolveGender, pickMatch, convertName, loadImageSafe, loadProfileAvatar,
 	gradient, drawAvatar, avatarUrl, run
 };

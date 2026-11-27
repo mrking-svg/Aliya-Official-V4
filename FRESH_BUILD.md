@@ -46,8 +46,9 @@ This directory is a clean copy of the audited Bot1 tree (no git history, no `nod
 
 - 570+ commands/aliases, economy `k/m/b/t`, `word.js` 2k, daily full clear 20M, bold balance, real bank + `bank top`, quiz games.
 - Messenger effects removed from `fb-chat-api` (`lib/effects.js`, `lib/messageMetadata.js`, `sendMessage.js`, parsed effect fields in `utils.js`) and all `effect: "love"/"fire"` fields stripped from commands.
-- Removed Render-incompatible commands: `avatar.js`, `song.js`, `songfinder.js`, `music.js`, `audio.js`.
+- Removed Render-incompatible commands: `avatar.js`, `song.js`, `music.js`, `audio.js`. `songfinder.js` is kept for song-name lookup.
 - Typing indicator is response-time only: it starts when `api.sendMessage()` sends any text/image/video/audio/file response and stops when delivery finishes. No command/reply/reaction typing loops.
+- All pair commands share `pairCore.js`; avatars come from `profileMedia.js`, the same stalk API used by `pfp.js`, with the old Graph URL as fallback.
 - Islamic commands and non-working image commands stay deleted.
 - pre-existing duplicate `pp` is left unchanged.
 - `config.json`, `account.txt`, `.gitkeep`, deploy files are visible/tracked; `node_modules/` ignored.

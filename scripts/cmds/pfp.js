@@ -1,22 +1,4 @@
-const axios = require("axios");
-
-const API_URL = "https://stalk-six.vercel.app/api/stalk";
-
-const getImages = async (profile) => {
-  const urls = [profile.profilePictureUrl, profile.coverPhotoUrl].filter(
-    (url, index, all) => Boolean(url && url.trim()) && all.indexOf(url) === index
-  );
-  
-  const results = await Promise.all(
-    urls.map((url) =>
-      axios
-        .get(url, { responseType: "stream", timeout: 10000 })
-        .then((response) => response.data)
-        .catch(() => null)
-    )
-  );
-  return results.filter(Boolean);
-};
+const { getProfile, getImages } = require("../../profileMedia.js");
 
 module.exports = {
   config: {
@@ -46,12 +28,7 @@ module.exports = {
         query = input;
       }
 
-      const response = await axios.get(API_URL, {
-        params: { userId: String(query) },
-        timeout: 15000
-      });
-
-      const profile = response.data?.data;
+      const profile = await getProfile(query);
       if (!profile || typeof profile !== "object") {
         return message.reply({ body: "❌ No profile data found for this user." });
       }
