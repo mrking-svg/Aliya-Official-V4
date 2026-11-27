@@ -228,6 +228,13 @@ function buildAPI(globalOptions, html, jar, diagnostics = {}) {
     //if (noMqttData) api.htmlData = noMqttData;
     require('fs').readdirSync(__dirname + '/src/').filter(v => v.endsWith('.js')).forEach(v => { api[v.replace('.js', '')] = require(`./src/${v}`)(utils.makeDefaults(html, userID, ctx), api, ctx); });
     api.listen = api.listenMqtt;
+    // Real listener shutdown. Without this the bot's stopListening() helper
+    // was a no-op, so every retry/hourly restart left the old socket alive.
+    api.stopListening = function (cb) {
+        try { if (ctx && typeof ctx.stopListenMqtt === "function") ctx.stopListenMqtt(); }
+        catch (e) { /* best effort */ }
+        if (typeof cb === "function") { try { cb(); } catch (e) { /* ignore */ } }
+    };
     return {
         ctx,
         defaultFuncs,

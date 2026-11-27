@@ -127,6 +127,8 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       clearTimeout(rTimeout);
       rTimeout = null;
     }
+    // Mark this as a controlled close so end() cannot re-enter the error path.
+    reconnecting = true;
     if (mqttClient) {
       mqttClient.unsubscribe("/webrtc");
       mqttClient.unsubscribe("/rtc_multi");
@@ -138,9 +140,13 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       });
     }
   }
+  // Expose a real stop function so the bot replaces a listener instead of
+  // stacking a second one on top of the old socket.
+  ctx.stopListenMqtt = stopListening;
   mqttClient.on('error', function(err) {
     // Controlled reconnect: this socket is already being replaced.
     if (reconnecting) return;
+    utils.warn("MQTT socket error: " + (err && (err.message || err.code) || err));
     try { stopListening(); }
     catch (e) { utils.error("listenMqtt stopListening", e); }
     if (ctx.globalOptions.autoReconnect) {

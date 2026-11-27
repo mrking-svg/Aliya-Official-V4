@@ -704,6 +704,16 @@ function stopListening(keyListen) {
 // }
 
 async function startBot(loginWithEmail) {
+	// A new login owns the listener now. Drop any retry from the old session so
+	// it cannot open a second socket with stale cookies.
+	if (global.__aliyaListenerRetryTimer) {
+		clearTimeout(global.__aliyaListenerRetryTimer);
+		global.__aliyaListenerRetryTimer = null;
+	}
+	if (global.__aliyaReadyResetTimer) {
+		clearTimeout(global.__aliyaReadyResetTimer);
+		global.__aliyaReadyResetTimer = null;
+	}
 	console.log(colors.hex("#f5ab00")(createLine("START LOGGING IN", true)));
 	const currentVersion = require("../../package.json").version;
 	const tooOldVersion = (await axios.get("https://raw.githubusercontent.com/ntkhang03/Goat-Bot-V2-Storage/main/tooOldVersions.txt")).data || "0.0.0";
@@ -1074,7 +1084,46 @@ async function startBot(loginWithEmail) {
 			// process whenever no callback arrived, which killed healthy bots.
 			// Only a real checkpoint/suspension may switch accounts (handled below).
 			let mqttReadyOnce = false;
+			let listenerRetryAttempt = 0;
+			function cancelListenerRetry() {
+				if (global.__aliyaListenerRetryTimer) {
+					clearTimeout(global.__aliyaListenerRetryTimer);
+					global.__aliyaListenerRetryTimer = null;
+				}
+			}
+			// Reconnect with backoff. Hammering the MQTT endpoint every 15s keeps
+			// Facebook's rate limiter hot and the bot never recovers.
+			function scheduleListenerRetry(reason) {
+				if (global.__aliyaListenerRetryTimer) return;
+				const delay = Math.min(10000 * Math.pow(2, listenerRetryAttempt), 300000);
+				listenerRetryAttempt++;
+				log.warn("LISTEN_MQTT", `Listener retry #${listenerRetryAttempt} in ${Math.round(delay / 1000)}s (${reason}).`);
+				global.__aliyaListenerRetryTimer = setTimeout(() => {
+					global.__aliyaListenerRetryTimer = null;
+					try { api.stopListening?.(); } catch (_e) { /* best effort */ }
+					try {
+						global.GoatBot.Listening = api.listenMqtt(createCallBackListen());
+						log.master("LISTEN_MQTT", "Listener restart requested with the existing session");
+					}
+					catch (err) {
+						log.err("LISTEN_MQTT", "Failed to restart listener", err);
+						scheduleListenerRetry("restart failed");
+					}
+				}, delay);
+				if (typeof global.__aliyaListenerRetryTimer.unref === "function")
+					global.__aliyaListenerRetryTimer.unref();
+			}
 			function markMqttReady() {
+				cancelListenerRetry();
+				// Only a connection that survives a full minute resets the
+				// backoff. Otherwise connect-then-drop loops stay at 10s.
+				if (global.__aliyaReadyResetTimer) clearTimeout(global.__aliyaReadyResetTimer);
+				global.__aliyaReadyResetTimer = setTimeout(() => {
+					global.__aliyaReadyResetTimer = null;
+					listenerRetryAttempt = 0;
+				}, 60000);
+				if (typeof global.__aliyaReadyResetTimer.unref === "function")
+					global.__aliyaReadyResetTimer.unref();
 				if (mqttReadyOnce) return;
 				mqttReadyOnce = true;
 				log.info("MQTT", "Facebook listener is connected. Bot can receive messages.");
@@ -1120,56 +1169,12 @@ async function startBot(loginWithEmail) {
 						if (global.GoatBot.config.autoRestartWhenListenMqttError)
 							process.exit(2);
 						else {
-							// log.dev("ACCOUNT LOCKED, start relogin...");
-							// await stopListening();
-							// log.dev("STOP LISTENING SUCCESS");
+							// Neutralize the old callback so a late socket event from
+							// the dead listener cannot start a second retry loop.
 							const keyListen = Object.keys(callbackListenTime).pop();
 							if (callbackListenTime[keyListen])
 								callbackListenTime[keyListen] = () => { };
-							const cookieString = appState.map(i => i.key + "=" + i.value).join("; ");
-							// log.dev("GET COOKIE SUCCESS");
-							// log.dev(cookieString);
-
-							let times = 5;
-
-							const spin = createOraDots(getText('login', 'retryCheckLiveCookie', times));
-							const countTimes = setInterval(() => {
-								times--;
-								if (times == 0)
-									times = 5;
-								spin.text = getText('login', 'retryCheckLiveCookie', times);
-							}, 1000);
-
-							if (intervalCheckLiveCookieAndRelogin == false) {
-								intervalCheckLiveCookieAndRelogin = true;
-								let checks = 0;
-								const interval = setInterval(async () => {
-									checks++;
-									let cookieIsLive = false;
-									try { cookieIsLive = await checkLiveCookie(cookieString, facebookAccount.userAgent); }
-									catch (e) { cookieIsLive = false; }
-
-									// A dropped MQTT stream usually does NOT mean the cookie is dead.
-									// Facebook also changes the mbasic HTML, so checkLiveCookie can lie.
-									// Retry the listener directly after a few failed checks.
-									if (!cookieIsLive && checks < 3) return;
-
-									clearInterval(interval);
-									clearInterval(countTimes);
-									intervalCheckLiveCookieAndRelogin = false;
-									const keyListen = Date.now();
-									isSendNotiErrorMessage = false;
-									try {
-										global.GoatBot.Listening = api.listenMqtt(createCallBackListen(keyListen));
-										log.master("LISTEN_MQTT", cookieIsLive
-											? "Cookie live - restarting listener"
-											: "MQTT dropped - retrying listener with existing cookies");
-									}
-									catch (err) {
-										log.err("LISTEN_MQTT", "Failed to restart listener", err);
-									}
-								}, 5000);
-							}
+							scheduleListenerRetry(authLost ? "auth" : "transport");
 						}
 						return;
 					}
