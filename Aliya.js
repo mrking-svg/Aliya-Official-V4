@@ -17,7 +17,16 @@ const send = msg => { if (process.send) { try { process.send(msg); } catch (e) {
 
 // A single broken command must NOT take the whole bot down (old code switched to Wolf.js on ANY error).
 const crashTimes = [];
-process.on("unhandledRejection", error => console.error("[ALIYA_UNHANDLED_REJECTION]", error && error.message ? error.message : error));
+process.on("unhandledRejection", error => {
+	const text = String((error && (error.message || error.error)) || error || "");
+	console.error("[ALIYA_UNHANDLED_REJECTION]", text);
+	// Facebook blocked the session: stop immediately. Extra API calls or
+	// listener restarts only extend the restriction and can destroy the ID.
+	if (/blocked login|facebook blocked login/i.test(text)) {
+		console.error("[ALIYA] Facebook blocked the session. Stopping all retries to protect the account.");
+		process.exit(3);
+	}
+});
 process.on("uncaughtException", error => {
 	console.error("[ALIYA_UNCAUGHT_EXCEPTION]", error && error.stack ? error.stack : error);
 
