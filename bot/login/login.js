@@ -789,7 +789,18 @@ async function startBot(loginWithEmail) {
 						const backup = require("./stateBackup");
 						const currentRaw = fs.readFileSync(dirAccount, "utf8");
 						const backupRaw = fs.existsSync(backup.BACKUP) ? fs.readFileSync(backup.BACKUP, "utf8") : "";
-						if (backupRaw && backupRaw !== currentRaw && backup.isValidState(backupRaw)) {
+						// Only restore the backup when it belongs to the SAME
+						// Facebook account. Restoring another account's cookies
+						// would silently rotate accounts, which is forbidden.
+						const userId = raw => {
+							try {
+								const hit = JSON.parse(raw).find(x => x && x.key === "c_user");
+								return hit ? String(hit.value) : "";
+							}
+							catch (_) { return ""; }
+						};
+						const sameAccount = userId(currentRaw) && userId(currentRaw) === userId(backupRaw);
+						if (backupRaw && backupRaw !== currentRaw && backup.isValidState(backupRaw) && sameAccount) {
 							writeFileSync(dirAccount, backupRaw);
 							latestChangeContentAccount = fs.statSync(dirAccount).mtimeMs;
 							log.warn("LOGIN FACEBOOK", "Restored last-known-good FB state. Restarting.");
