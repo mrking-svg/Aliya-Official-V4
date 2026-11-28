@@ -247,6 +247,8 @@ module.exports = {
 
       if (await sendConnect(api, targetThread)) done.push(index);
       else failed.push(`${label(item, index)} (bot could not message this group)`);
+      // Avoid a burst of group messages that looks like spam to Facebook.
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     if (failed.length === 0)

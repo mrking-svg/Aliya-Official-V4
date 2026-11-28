@@ -1073,6 +1073,11 @@ async function startBot(loginWithEmail) {
 			let sessionCheckBusy = false;
 			let sessionMisses = 0;
 			let sessionRecheckTimer = null;
+			// A 5-minute profile API probe was itself hitting Facebook's rate
+			// limiter on otherwise healthy sessions. Only check the account when
+			// MQTT has been quiet for a long time (idle sessions may still be dead).
+			let lastMqttTrafficAt = Date.now();
+			const SESSION_IDLE_PROBE_MS = 30 * 60 * 1000;
 			async function checkSessionLive(stopWatchdog) {
 				if (sessionCheckBusy) return;
 				sessionCheckBusy = true;
@@ -1109,7 +1114,10 @@ async function startBot(loginWithEmail) {
 				log.err("SESSION", "Facebook session is logged out/invalidated. Stopping the bot process.");
 				process.exit(3);
 			}
-			const sessionWatchdog = setInterval(() => checkSessionLive(false), 5 * 60 * 1000);
+			const sessionWatchdog = setInterval(() => {
+				if (Date.now() - lastMqttTrafficAt < SESSION_IDLE_PROBE_MS) return;
+				checkSessionLive(false);
+			}, 60 * 1000);
 			if (sessionWatchdog.unref) sessionWatchdog.unref();
 
 			// ——————————————————————————————————————————————————— //
@@ -1164,6 +1172,7 @@ async function startBot(loginWithEmail) {
 			// Only REAL traffic (not a bare "ready" event) may clear the backoff.
 			// A connect-then-drop loop used to reset the timer and hammer Facebook.
 			function markMqttTraffic() {
+				lastMqttTrafficAt = Date.now();
 				if (global.__aliyaReadyResetTimer) clearTimeout(global.__aliyaReadyResetTimer);
 				global.__aliyaReadyResetTimer = setTimeout(() => {
 					global.__aliyaReadyResetTimer = null;

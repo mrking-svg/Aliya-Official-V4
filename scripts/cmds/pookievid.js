@@ -4,6 +4,28 @@ const axios = require("axios");
 
 const FOLDER_ID = "1b8YEL1AW0HsErePZjiyY-D_-XkXu8xMi";
 
+// Facebook flags rapid bursts of large media sends as abuse (error 1357001).
+// Keep one video per user every 30s and a global 8s gap between sends.
+const USER_COOLDOWN_MS = 30 * 1000;
+const GLOBAL_COOLDOWN_MS = 8 * 1000;
+const lastUserUse = new Map();
+let lastGlobalUse = 0;
+
+function cooldownLeft(event) {
+    const now = Date.now();
+    const uid = String(event.senderID || "");
+    const userLast = Number(lastUserUse.get(uid) || 0);
+    const left = Math.max(
+        USER_COOLDOWN_MS - (now - userLast),
+        GLOBAL_COOLDOWN_MS - (now - lastGlobalUse)
+    );
+    if (left > 0) return Math.ceil(left / 1000);
+    lastUserUse.set(uid, now);
+    lastGlobalUse = now;
+    if (lastUserUse.size > 1000) lastUserUse.delete(lastUserUse.keys().next().value);
+    return 0;
+}
+
 module.exports.config = {
     name: "pookievid",
     aliases: ["pookie", "pookie-vid"],
@@ -80,6 +102,14 @@ async function handleDriveSync(api, event) {
 
 async function handleDriveMedia(api, event) {
     const { threadID, messageID } = event;
+
+    const wait = cooldownLeft(event);
+    if (wait > 0) {
+        api.setMessageReaction("⏳", messageID, () => {}, true);
+        return api.sendMessage({
+            body: `❌ একসাথে অনেক ভিডিও চাইছেন 🐇 ${wait} সেকেন্ড পরে আবার চেষ্টা করুন।`
+        }, threadID, messageID);
+    }
 
     try {
         api.setMessageReaction("🛜", messageID, () => {}, true);
