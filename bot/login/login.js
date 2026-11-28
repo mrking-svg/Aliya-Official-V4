@@ -250,7 +250,10 @@ function checkAndTrimString(string) {
 
 function filterKeysAppState(appState) {
 	if (!Array.isArray(appState)) return [];
-	return appState.filter(item => item && item.key && item.value !== undefined);
+	// Keep only real session cookies. Sakura uses this exact allowlist; the
+	// extra dbln/wd/vpd/ps_l/ps_n entries in a pasted state are stale browser
+	// cookies with flattened domain/path and can invalidate a fresh login.
+	return appState.filter(item => item && item.key && ["c_user", "xs", "datr", "fr", "sb", "i_user"].includes(item.key));
 }
 
 global.responseUptimeCurrent = responseUptimeSuccess;
@@ -298,6 +301,13 @@ function writeOwnAppState(state, why) {
 	const clean = filterKeysAppState(state);
 	if (!clean.length) return false;
 	const raw = JSON.stringify(clean, null, 2);
+	// Do not touch mtime when Facebook returned the same cookies we already
+	// have. A needless rewrite looks like an external state change to the
+	// watcher and can trigger an unnecessary process restart.
+	try {
+		if (fs.existsSync(dirAccount) && sameAppState(raw, fs.readFileSync(dirAccount, "utf-8"))) return false;
+	}
+	catch (_) {}
 	changeFbStateByCode = true;
 	selfWriteUntil = Date.now() + 5000;
 	try {
@@ -943,11 +953,19 @@ async function startBot(loginWithEmail) {
 				log.err("ERROR", "Can't get notifications data");
 				process.exit();
 			}
-			// No account.txt writes by the bot itself. The pasted single-account
-			// state is kept exactly as provided, including across restarts.
+			// Persist the cookies Facebook rotated during THIS successful login.
+			// Sakura does the same after login. Without this, every restart
+			// presents the old xs and Facebook eventually invalidates the
+			// account. Periodic writes stay off - this is one write per login.
 			if (global.intervalRefreshFbstate) clearInterval(global.intervalRefreshFbstate);
-			if (global.GoatBot.config.autoRefreshFbstate == true) {
-				log.info("REFRESH FBSTATE", "Periodic writes disabled; state is kept as pasted.");
+			try {
+				const saved = writeOwnAppState(api.getAppState(), "post-login");
+				log.info("REFRESH FBSTATE", saved
+					? `Saved refreshed session to ${path.basename(dirAccount)}.`
+					: "Session cookies unchanged; no write needed.");
+			}
+			catch (err) {
+				log.warn("REFRESH FBSTATE", "Could not save refreshed session:", err.message || err);
 			}
 			if (hasBanned == true) {
 				log.err('GBAN', getText('login', 'youAreBanned'));
