@@ -48,17 +48,30 @@ const stateBackup = require("./stateBackup");
 const handlerWhenListenHasError = require("./handlerWhenListenHasError.js");
 const checkLiveCookie = require("./checkLiveCookie.js");
 
+// Facebook puts the checkpoint URL deep inside error.res.jsmods, not in
+// error.message ("Not logged in"). Read the whole error before deciding that
+// a session is only temporarily down - otherwise a checkpointed account keeps
+// "starting" forever while the listener retries every minute.
+function errorTextOf(error) {
+	try {
+		if (typeof error === "string") return error;
+		const parts = [error && error.message, error && error.error];
+		if (error && error.res) parts.push(JSON.stringify(error.res));
+		return parts.filter(Boolean).join(" ");
+	}
+	catch (_e) {
+		return String(error || "");
+	}
+}
 // A temporary cookie/MQTT failure must never rotate the account. Only a real
 // Facebook checkpoint / suspension / disabled account is allowed to do that.
 function isSuspendedSession(error) {
-	const text = String((error && (error.message || error.error)) || error || "").toLowerCase();
-	return /checkpoint|suspended|disabled account|account.*disabled|blocked account|\/block\//i.test(text);
+	return /checkpoint|suspended|disabled account|account.*disabled|blocked account|\/block\//i.test(errorTextOf(error));
 }
 // "Facebook blocked login" means the session/account is already flagged. Any
 // further reconnects only dig the hole deeper, so we stop immediately.
 function isFacebookBlocked(error) {
-	const text = String((error && (error.error || error.message)) || error || "").toLowerCase();
-	return /blocked login|facebook blocked login|temporarily blocked|account.*blocked/i.test(text);
+	return /blocked login|facebook blocked login|temporarily blocked|account.*blocked/i.test(errorTextOf(error));
 }
 const { callbackListenTime, storage5Message } = global.GoatBot;
 const isDuplicateMessage = require("./messageDedupe.js").createMessageDedupe(storage5Message, { size: 50 });
@@ -1185,7 +1198,7 @@ async function startBot(loginWithEmail) {
 					// Every MQTT/socket failure is a transport problem, not proof
 					// that the account is dead. Retry the listener with the SAME
 					// cookies; only a real checkpoint/suspension switches accounts.
-					const listenErrorText = String((error && (error.error || error.message)) || error || "");
+					const listenErrorText = errorTextOf(error);
 					const isTransientListenError =
 						error.error == "Not logged in" ||
 						error.error == "Not logged in." ||
