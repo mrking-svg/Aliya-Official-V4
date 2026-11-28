@@ -102,26 +102,57 @@ const defaultReplies = [
 
 const botRequest = async (method, route, body = {}, timeout = 15000) => {
   const url = `${baseApiUrl}/api/bot/${route}`;
-  const config = { timeout, headers: { "x-bot-token": botToken } };
+  const config = { timeout, headers: { "x-bot-token": botToken, "User-Agent": "Aliya-V4/4.1" } };
   const res = method === "get" ? await axios.get(url, config) : await axios.post(url, body, config);
   return res.data;
 };
 
-const fetchBotResponse = async (text, name) => {
-  try {
-    const data = await botRequest("post", "reply", { text, name });
-    if (data && data.message) return data;
-  } catch (e) {}
+function normalizeApiHit(data) {
+  if (!data || typeof data !== "object") return null;
+  const message = data.message || data.reply || data.response || data.originalResponse;
+  if (!message) return null;
+  return {
+    message: String(message),
+    trigger: data.trigger || null,
+    originalResponse: data.originalResponse || data.reply || data.response || null,
+    source: "api"
+  };
+}
 
-  try {
-    const res = await axios.post(`${baseApiUrl}/api/aliya`, { text, name }, { timeout: 8000 });
-    if (res.data && res.data.message) {
-      return { message: res.data.message, trigger: null, originalResponse: null };
+// The API host is on a cold-start-friendly but sometimes slow platform. One
+// failed request must not immediately drop users to the static fallback list.
+const fetchBotResponse = async (text, name = "") => {
+  const cleanText = String(text || "").trim() || "baby";
+  const cleanName = String(name || "").trim();
+  const attempts = [
+    () => botRequest("post", "reply", { text: cleanText, name: cleanName }, 12000),
+    () => botRequest("post", "reply", { text: cleanText, name: cleanName }, 20000),
+    () => axios.post(`${baseApiUrl}/api/aliya`, { text: cleanText, name: cleanName }, {
+      timeout: 15000,
+      headers: { "User-Agent": "Aliya-V4/4.1" }
+    }).then(res => res.data)
+  ];
+
+  let lastError = null;
+  for (const attempt of attempts) {
+    try {
+      const hit = normalizeApiHit(await attempt());
+      if (hit) return hit;
     }
-  } catch (e) {}
+    catch (err) {
+      lastError = err;
+    }
+  }
 
-  const message = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
-  return { message, trigger: null, originalResponse: null };
+  // Only log once per real outage so it is visible in Render logs without
+  // flooding them on every message.
+  console.warn("[baby] API unavailable, using local fallback:", (lastError && lastError.message) || "no usable response");
+  return {
+    message: defaultReplies[Math.floor(Math.random() * defaultReplies.length)],
+    trigger: null,
+    originalResponse: null,
+    source: "fallback"
+  };
 };
 
 const isOwner = (senderID) => {
@@ -326,8 +357,11 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
     const name = usersData && usersData.getName ? await usersData.getName(event.senderID).catch(() => "") : "";
 
     if (!args[0]) {
-      const ran = ["Bolo baby", "I love you", "Welcome to Aliya Bot! 😎"];
-      return api.sendMessage(makeBold(ran[Math.floor(Math.random() * ran.length)]), event.threadID, event.messageID);
+      const hit = await fetchBotResponse("baby", name);
+      return sendBaby(api, event, hit.message, {
+        trigger: hit.trigger,
+        originalResponse: hit.originalResponse
+      });
     }
 
     if (msg === "list" || msg === "datacheck") {
@@ -518,7 +552,7 @@ module.exports.onReply = async ({ api, event, args, usersData, Reply }) => {
     const name = usersData && usersData.getName ? await usersData.getName(event.senderID).catch(() => "") : "";
     const hit = mediaReply
       ? { message: mediaReply, trigger: null, originalResponse: null }
-      : await fetchBotResponse(body || "fallback", name);
+      : await fetchBotResponse(body || "baby", name);
 
     return sendBaby(api, event, hit.message, {
       trigger: hit.trigger,
@@ -559,30 +593,9 @@ module.exports.onChat = async ({ api, event }) => {
       return sendBaby(api, event, mediaReply, { trigger: null, originalResponse: null });
     }
 
-    if (!queryText) {
-      const randomMessages = [
-        "🌸 You called me, and I will answer every single word 😘 🌸",
-        "🌷 I sent you a message instead of a rose 🌷",
-        "🌻 Tell me what is on your mind 🤭 🌻",
-        "🌺 𝐈 𝐥𝐨𝐯𝐞 𝐲𝐨𝐮__😘😘 🌺",
-        "🌹 Call me boss if you want a proper answer 😑 🌹",
-        "🌷 My golden Bengal, what comes next? 🙈 🌷",
-        "🌸 Here, take this juice. You ran out of breath saying baby 🥲 🌸",
-        "🌻 You remembered me all of a sudden 🙄 🌻",
-        "🌺 𝐀𝐬𝐬𝐚𝐥𝐚𝐦𝐮𝐥𝐚𝐢𝐤𝐮𝐦 🐤🐤 🌺",
-        "🌹 I am your senior, show some respect 😼 🌹",
-        "🌷 Have you eaten yet? 🌷",
-        "🌸 Do not come too close, I might fall in love 🙈 🌸",
-        "🌻 𝐇𝐞𝐲 𝐇𝐚𝐧𝐝𝐬𝐨𝐦𝐞 say it 😁😁 🌻",
-        "🌺 Tell me, my love, how are you? 😚 🌺",
-        "🌹 Stop calling me, okay? 😿 🌹",
-        "🌷 I want my JaNu, are you single? 🌷"
-      ];
-      const babyMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
-      return sendBaby(api, event, babyMessage, { trigger: null, originalResponse: null });
-    }
-
-    const hit = await fetchBotResponse(queryText, "");
+    // A bare trigger used to return a hardcoded greeting, which felt like a
+    // fallback even when the API was healthy. Ask the API first now.
+    const hit = await fetchBotResponse(queryText || matchedTrigger, "");
     return sendBaby(api, event, hit.message, {
       trigger: hit.trigger,
       originalResponse: hit.originalResponse

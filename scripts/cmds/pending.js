@@ -22,9 +22,9 @@ function getBotID(api) {
 function getPrefix(threadID) {
   try {
     if (global.utils && typeof global.utils.getPrefix === "function")
-      return global.utils.getPrefix(threadID) || "(";
+      return global.utils.getPrefix(threadID) || (global.GoatBot?.config?.prefix || "!");
   } catch (_) {}
-  return (global.GoatBot && global.GoatBot.config && global.GoatBot.config.prefix) || "(";
+  return (global.GoatBot && global.GoatBot.config && global.GoatBot.config.prefix) || "!";
 }
 
 async function getRemoteImageStream(url) {
@@ -71,6 +71,9 @@ function buildConnectText(threadID) {
   ].join("\n");
 }
 
+// Returns true only when Messenger actually accepted the message. The old
+// version swallowed every error and printed "Approved successfully" even for
+// pending threads the bot had not joined yet.
 async function sendConnect(api, threadID) {
   const botID = getBotID(api);
   if (botID) {
@@ -80,13 +83,17 @@ async function sendConnect(api, threadID) {
   }
 
   const body = buildConnectText(threadID);
+  let lastError = null;
+
   try {
     const attachment = await getConnectImage(botID, getPrefix(threadID));
     if (attachment) {
       await api.sendMessage({ body, attachment }, threadID);
       return true;
     }
-  } catch (_) {}
+  } catch (err) {
+    lastError = err;
+  }
 
   const local = path.join(__dirname, "../../func/botconnect.jpeg");
   if (fs.existsSync(local)) {
@@ -95,20 +102,77 @@ async function sendConnect(api, threadID) {
       attachment.on("error", () => {});
       await api.sendMessage({ body, attachment }, threadID);
       return true;
-    } catch (_) {}
+    } catch (err) {
+      lastError = err;
+    }
   }
 
   try {
     await api.sendMessage(body, threadID);
-  } catch (_) {}
+    return true;
+  } catch (err) {
+    lastError = err;
+  }
+
+  console.warn("[pending] could not send connect message to", threadID, lastError?.message || lastError);
   return false;
+}
+
+async function fetchThreads(api, tag) {
+  const out = [];
+  let before = null;
+  for (let page = 0; page < 10; page++) {
+    const batch = (await api.getThreadList(100, before, [tag])) || [];
+    out.push(...batch.map(thread => ({ ...thread, pendingTag: tag })));
+    if (batch.length < 100) break;
+    const next = batch[batch.length - 1].timestamp;
+    if (!next || next === before) break;
+    before = next;
+  }
+  return out;
+}
+
+// A thread left in PENDING cannot receive messages yet, even if the admin saw
+// an "approved" confirmation. Re-read INBOX before claiming success.
+async function getJoinedThreadIDs(api) {
+  try {
+    const inbox = await fetchThreads(api, "INBOX");
+    return new Set(inbox.map(thread => String(thread.threadID)));
+  } catch (err) {
+    console.warn("[pending] cannot verify INBOX:", err.message || err);
+    return null;
+  }
+}
+
+function removeUser(api, userID, threadID) {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const done = err => {
+      if (settled) return;
+      settled = true;
+      if (err) reject(err);
+      else resolve();
+    };
+    try {
+      const result = api.removeUserFromGroup(userID, threadID, done);
+      if (result && typeof result.then === "function") result.then(() => done(), done);
+    } catch (err) {
+      done(err);
+    }
+    const timer = setTimeout(() => done(new Error("removeUserFromGroup timeout")), 10000);
+    if (typeof timer.unref === "function") timer.unref();
+  });
+}
+
+function label(item, index) {
+  return `${index}. ${item?.name || item?.threadID || "unknown"}`;
 }
 
 module.exports = {
   config: {
     name: "pending",
     aliases: ["pen", "পেন্ডিং"],
-    version: "6.0.0",
+    version: "6.1.0",
     author: "0xMr_King x ┃ Tanin Islam",
     countDown: 5,
     role: 2,
@@ -121,7 +185,9 @@ module.exports = {
     en: {
       invaildNumber: "%1 is not a valid number",
       cancelSuccess: "Refused %1 thread(s)!",
-      approveSuccess: "Approved successfully %1 thread(s)!",
+      approveSuccess: "Connected successfully in %1 thread(s)!",
+      approvePartial: "Connected %1 thread(s). Skipped/failed %2: %3",
+      cancelPartial: "Refused %1 thread(s). Failed %2: %3",
       cantGetPendingList: "Can't get the pending list!",
       returnListPending:
         "𓍢ִ໋🌸✧ ── ͟͟͞͞Aliya v4 Pending List ── ✧🌸𓍢ִ໋🌷͙֒\n\nᥫ᭡ Total Pending Threads: %1\n\n%2\n\n💡 Guide:\n- Approve: reply with numbers (e.g. 1 2 3)\n- Refuse: reply with c1 / cancel 1",
@@ -156,39 +222,50 @@ module.exports = {
         : "Please provide at least one valid thread number to approve.");
 
     const botID = getBotID(api);
+    const done = [];
+    const failed = [];
+    const joinedIDs = isCancel ? null : await getJoinedThreadIDs(api);
+
     for (const index of valid) {
-      const targetThread = String(Reply.pending[index - 1].threadID);
+      const item = Reply.pending[index - 1];
+      const targetThread = String(item.threadID);
+
       if (isCancel) {
         try {
-          if (botID && typeof api.removeUserFromGroup === "function")
-            await api.removeUserFromGroup(botID, targetThread);
-        } catch (_) {}
+          if (botID) await removeUser(api, botID, targetThread);
+          done.push(index);
+        } catch (err) {
+          failed.push(`${label(item, index)} (${err.message || "failed"})`);
+        }
+        continue;
       }
-      else {
-        await sendConnect(api, targetThread);
+
+      if (joinedIDs && !joinedIDs.has(targetThread)) {
+        failed.push(`${label(item, index)} (still pending - accept it in Messenger first)`);
+        continue;
       }
+
+      if (await sendConnect(api, targetThread)) done.push(index);
+      else failed.push(`${label(item, index)} (bot could not message this group)`);
     }
 
-    return message.reply(getLang(isCancel ? "cancelSuccess" : "approveSuccess", valid.length));
+    if (failed.length === 0)
+      return message.reply(getLang(isCancel ? "cancelSuccess" : "approveSuccess", done.length));
+
+    return message.reply(getLang(
+      isCancel ? "cancelPartial" : "approvePartial",
+      done.length,
+      failed.length,
+      failed.join("\n")
+    ));
   },
 
   onStart: async function ({ api, event, getLang, commandName, message }) {
     try {
-      const fetchThreads = async tag => {
-        const out = [];
-        let before = null;
-        for (let page = 0; page < 10; page++) {
-          const batch = (await api.getThreadList(100, before, [tag])) || [];
-          out.push(...batch);
-          if (batch.length < 100) break;
-          const next = batch[batch.length - 1].timestamp;
-          if (!next || next === before) break;
-          before = next;
-        }
-        return out;
-      };
-
-      const [pending, spam] = await Promise.all([fetchThreads("PENDING"), fetchThreads("OTHER")]);
+      const [pending, spam] = await Promise.all([
+        fetchThreads(api, "PENDING"),
+        fetchThreads(api, "OTHER")
+      ]);
       const seen = new Set();
       const list = [...pending, ...spam].filter(group => {
         if (!group || !group.threadID || group.isGroup === false) return false;
@@ -217,7 +294,8 @@ module.exports = {
           pending: list
         });
       }, event.messageID);
-    } catch (_) {
+    } catch (err) {
+      console.warn("[pending] list failed:", err.message || err);
       return message.reply(getLang("cantGetPendingList"));
     }
   }
