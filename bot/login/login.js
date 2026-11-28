@@ -302,22 +302,22 @@ function writeOwnAppState(state, why) {
 function scheduleAccountRelogin(reason) {
 	if (accountReloginTimer || global.__aliyaReloginBusy) return;
 	global.__aliyaReloginBusy = true;
-	// While a switch is pending, no timer may write the OLD session back into
-	// account.txt - that would destroy the state we are trying to switch to.
+	// A pasted state must REPLACE the process, not add a second login inside
+	// it. Two live MQTT sessions with the same cookies are the fastest way to
+	// get the account checkpointed or suspended. Code 7 asks the supervisor
+	// for one clean restart that reads the new account.txt from scratch.
 	global.__aliyaOutsideStatePending = true;
 	accountReloginTimer = setTimeout(async () => {
 		accountReloginTimer = null;
+		log.info("LOGIN FACEBOOK", `${reason}. Restarting the bot with the new account.txt state.`);
 		try {
-			log.info("LOGIN FACEBOOK", `${reason}. Logging in again with the new account.txt state.`);
-			await startBot();
+			await Promise.race([
+				stopListening(),
+				new Promise(resolve => setTimeout(resolve, 2000))
+			]);
 		}
-		catch (err) {
-			log.err("LOGIN FACEBOOK", "Could not relogin with the new state", err);
-		}
-		finally {
-			global.__aliyaOutsideStatePending = false;
-			global.__aliyaReloginBusy = false;
-		}
+		catch (_e) { /* the listener is best-effort; the process exit is not */ }
+		process.exit(7);
 	}, 1500);
 }
 
@@ -710,6 +710,13 @@ function stopListening(keyListen) {
 // }
 
 async function startBot(loginWithEmail) {
+	// Never build a second login on top of a live one. A duplicate session is
+	// what turns a fresh account into a checkpoint/suspension on the spot.
+	if (global.__aliyaStartBusy) {
+		log.warn("LOGIN FACEBOOK", "Login already in progress; ignoring a duplicate start.");
+		return;
+	}
+	global.__aliyaStartBusy = true;
 	// A new login owns the listener now. Drop any retry from the old session so
 	// it cannot open a second socket with stale cookies.
 	if (global.__aliyaListenerRetryTimer) {
@@ -756,7 +763,15 @@ async function startBot(loginWithEmail) {
 
 		let isSendNotiErrorMessage = false;
 
-		login({ appState }, global.GoatBot.config.optionsFca, async function (error, api) {
+		// Use ONE user agent for the whole session. Fresh appState cookies come
+		// from the browser configured in facebookAccount.userAgent (mobile in
+		// our setup). Mixing that session with the fca default desktop UA is a
+		// common reason Facebook checkpoints a new ID immediately. Keep the
+		// override in memory only so config.json is never rewritten.
+		const fcaOptions = { ...global.GoatBot.config.optionsFca };
+		if (!fcaOptions.userAgent && facebookAccount.userAgent)
+			fcaOptions.userAgent = facebookAccount.userAgent;
+		login({ appState }, fcaOptions, async function (error, api) {
 			if (!isNaN(facebookAccount.intervalGetNewCookie) && facebookAccount.intervalGetNewCookie > 0)
 				if (facebookAccount.email && facebookAccount.password) {
 					spin?._stop();
@@ -769,6 +784,7 @@ async function startBot(loginWithEmail) {
 								pushI_user(appState, facebookAccount.i_user);
 							writeOwnAppState(appState, "cookie refresh");
 							log.info("REFRESH COOKIE", getText('login', 'refreshCookieSuccess'));
+							global.__aliyaStartBusy = false;
 							return startBot(appState);
 						}
 						catch (err) {
@@ -789,10 +805,11 @@ async function startBot(loginWithEmail) {
 				global.statusAccountBot = 'can\'t login';
 				// Only a real checkpoint/suspension is allowed to switch accounts.
 				if (isSuspendedSession(error)) {
-					log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Switching accounts.");
-					return process.exit(5);
+					log.err("LOGIN FACEBOOK", "Facebook account is checkpointed or suspended. Stopping the bot process.");
+					return process.exit(3);
 				}
 				if (facebookAccount.email && facebookAccount.password) {
+					global.__aliyaStartBusy = false;
 					return startBot(true);
 				}
 				// A rejected cookie session must never leave a half-started
@@ -831,6 +848,7 @@ async function startBot(loginWithEmail) {
 			}
 
 			global.GoatBot.fcaApi = api;
+			global.__aliyaStartBusy = false;
 			// Every outgoing message (text/image/video/audio/file) keeps the typing
 			// indicator on until Facebook confirms delivery.
 			require("../handler/typingSend.js").wrap(api);
@@ -1396,7 +1414,8 @@ async function startBot(loginWithEmail) {
 	// Always watch account.txt for an externally pasted state (e.g. a new
 	// account after the old bot ID was suspended). This must not depend on
 	// autoReloginWhenChangeAccount, which is off in the deployed config.
-	// Registered once only: startBot() is called again on every relogin.
+	// Registered once only: a new state now exits with code 7 so the supervisor
+	// creates a fresh process instead of stacking a second session here.
 	if (!global.__aliyaAccountWatcher) {
 		global.__aliyaAccountWatcher = true;
 		setTimeout(function () {
